@@ -1,0 +1,186 @@
+// Generated from content/shared.json. Do not edit. No fixture/admin fields.
+export default {
+  "schemaVersion": 1,
+  "players": [
+    {
+      "id": "e52b8311-96a0-4e93-bbb3-5e525789f090",
+      "name": "Senne Lammens",
+      "shirtNumber": 1
+    },
+    {
+      "id": "01e1394a-ff22-4554-a541-b7805b05119e",
+      "name": "Diogo Dalot",
+      "shirtNumber": 2
+    },
+    {
+      "id": "6b8a5ee1-de47-4514-9957-1f7d393bcd11",
+      "name": "Noussair Mazraoui",
+      "shirtNumber": 3
+    },
+    {
+      "id": "7dae19a5-5a34-485e-85b3-fa3d6e32f351",
+      "name": "Matthijs de Ligt",
+      "shirtNumber": 4
+    },
+    {
+      "id": "7de75ec2-7805-4f04-b465-6a5806bd7a9f",
+      "name": "Harry Maguire",
+      "shirtNumber": 5
+    },
+    {
+      "id": "e51fafae-f2fb-4275-a38e-f9e079baa042",
+      "name": "Lisandro Martínez",
+      "shirtNumber": 6
+    },
+    {
+      "id": "7c4562be-ded0-4ea3-a1d4-daa6064a2258",
+      "name": "Mason Mount",
+      "shirtNumber": 7
+    },
+    {
+      "id": "d1b327b4-2453-4ad0-bb2d-e4b4e6db3545",
+      "name": "Bruno Fernandes",
+      "shirtNumber": 8
+    },
+    {
+      "id": "8fff649c-a5d3-40de-ad88-efcc27c1bc55",
+      "name": "Marcus Rashford",
+      "shirtNumber": 9
+    },
+    {
+      "id": "b4556268-8a9e-41fc-8e2e-347fee4ebaf4",
+      "name": "Matheus Cunha",
+      "shirtNumber": 10
+    },
+    {
+      "id": "0c2ad4ae-beaa-4763-ab2a-a08cfc211a32",
+      "name": "Joshua Zirkzee",
+      "shirtNumber": 11
+    },
+    {
+      "id": "43aaf8b6-3cdf-421a-b6ef-d20f1cac75d3",
+      "name": "Karl Darlow",
+      "shirtNumber": 12
+    },
+    {
+      "id": "20188722-5cf2-472e-bc58-4b9df5cc5d8c",
+      "name": "Patrick Dorgu",
+      "shirtNumber": 13
+    },
+    {
+      "id": "fcb1eaae-7f56-4518-b235-617fe5a9c589",
+      "name": "Leny Yoro",
+      "shirtNumber": 15
+    },
+    {
+      "id": "3eed00c7-3f7e-400b-b2a6-10feb7f40c06",
+      "name": "Amad",
+      "shirtNumber": 16
+    },
+    {
+      "id": "753c98ce-0008-4ec8-90d2-4fb6fbcfe743",
+      "name": "Andrey Santos",
+      "shirtNumber": 17
+    },
+    {
+      "id": "3ca920bd-718b-49c3-bb06-c446b11da400",
+      "name": "Youri Tielemans",
+      "shirtNumber": 18
+    },
+    {
+      "id": "560db6db-7b75-46b0-909b-db134aed4456",
+      "name": "Bryan Mbeumo",
+      "shirtNumber": 19
+    },
+    {
+      "id": "29320449-bcf2-42e3-9071-6c3e6746dfb1",
+      "name": "Carlos Baleba",
+      "shirtNumber": 20
+    },
+    {
+      "id": "d4b9da27-6d53-4a3f-b3da-924161c2e158",
+      "name": "Tom Heaton",
+      "shirtNumber": 22
+    },
+    {
+      "id": "090bfcc4-b776-4a14-8de8-24f636f08868",
+      "name": "Luke Shaw",
+      "shirtNumber": 23
+    },
+    {
+      "id": "f941bb0a-5f45-4ae2-aa88-ae45ffd16be1",
+      "name": "Manuel Ugarte",
+      "shirtNumber": 25
+    },
+    {
+      "id": "5f1e3188-e662-46e4-b36a-39324621fcb0",
+      "name": "Ayden Heaven",
+      "shirtNumber": 26
+    },
+    {
+      "id": "eb9225f3-64be-4a9e-905a-f19c63a203d5",
+      "name": "Benjamin Šeško",
+      "shirtNumber": 30
+    },
+    {
+      "id": "3f82d5bd-c206-4d89-98cf-2a9d27219ce9",
+      "name": "Shea Lacey",
+      "shirtNumber": 31
+    },
+    {
+      "id": "dfd0318a-996b-4403-bd77-ef0d4dcbfbd6",
+      "name": "Diego León",
+      "shirtNumber": 35
+    },
+    {
+      "id": "afcca466-1f7d-4288-9d29-c873afc5a930",
+      "name": "Kobbie Mainoo",
+      "shirtNumber": 37
+    },
+    {
+      "id": "53f6b065-a660-4e83-aa13-b5b0d8f8ef6f",
+      "name": "Jack Fletcher",
+      "shirtNumber": 38
+    },
+    {
+      "id": "4d329912-ff99-4af8-9131-67fa64f3b543",
+      "name": "Tyler Fletcher",
+      "shirtNumber": 39
+    },
+    {
+      "id": "c53e834a-288c-4c1f-b03b-0de6d6fe7112",
+      "name": "Harry Amass",
+      "shirtNumber": 41
+    },
+    {
+      "id": "149bcbd7-c1f4-4f82-9414-e65fb9110e71",
+      "name": "Dermot Mee",
+      "shirtNumber": 45
+    },
+    {
+      "id": "d5513b5b-4ab2-4644-93ed-7fe4f55ffa92",
+      "name": "Ashton Missin",
+      "shirtNumber": 58
+    },
+    {
+      "id": "718ec806-45a0-462a-9baa-bfb2f6e56b9e",
+      "name": "Victor Musa",
+      "shirtNumber": 64
+    },
+    {
+      "id": "73d868cb-9839-4cda-83c3-4c2d6c641147",
+      "name": "Reece Munro",
+      "shirtNumber": 65
+    },
+    {
+      "id": "ea861718-bd35-4b9f-a89d-becbf2fdaa07",
+      "name": "Jaydan Kamason",
+      "shirtNumber": 66
+    },
+    {
+      "id": "eb6f636b-3d74-4c4e-a129-fb53869f1f99",
+      "name": "Bendito Mantato",
+      "shirtNumber": 70
+    }
+  ]
+};
