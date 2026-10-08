@@ -9,7 +9,8 @@ export async function GET(request: NextRequest) {
   try {
     const config = adminConfig();
     const secret = process.env.CRON_SECRET;
-    if (!config || !secret || secret.length < 32 || new URL(request.url).origin !== config.origin || !equal(request.headers.get('authorization') ?? '', `Bearer ${secret}`)) throw new AdminError(401, 'Unauthorized.');
+    // Vercel invokes the production deployment URL, which need not be the admin alias.
+    if (!config || !secret || secret.length < 32 || !equal(request.headers.get('authorization') ?? '', `Bearer ${secret}`)) throw new AdminError(401, 'Unauthorized.');
     return adminJson(await refreshFixtures(config.token, process.env.FOOTBALL_DATA_TOKEN ?? ''));
   } catch (error) { return adminFailure(error); }
 }

@@ -57,7 +57,7 @@ export default function AdminWorkspace({ demo }: { demo?: SharedContent }) {
     if (!source) return;
     setBusy(true); setError(''); setNotice(''); setImportReport('');
     try {
-      const result = await call('/api/admin/import', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-csrf-token': source.csrf! }, body: '{}', signal: AbortSignal.timeout(45_000) });
+      const result = await call('/api/admin/import', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-csrf-token': source.csrf! }, body: '{}', signal: AbortSignal.timeout(75_000) });
       setSource({ ...sourceSchema.parse(result), csrf: source.csrf });
       setReload((value) => value + 1);
       const report = result.report as { added: number; updated: number; unchanged: number; ambiguous: string[]; skipped: number };

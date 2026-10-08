@@ -135,7 +135,7 @@ describe('MVP-11/15 import boundary', () => {
       const manualResponse = await manual(new NextRequest(`${config.origin}/api/admin/import`, { method: 'POST', headers: { cookie: `__Host-xi-admin=${cookie}`, origin: config.origin, 'content-type': 'application/json', 'x-csrf-token': csrf }, body: '{}' }));
       expect(manualResponse.status).toBe(200);
       expect((await manualResponse.json()).commit).toBeNull();
-      const cronResponse = await cron(new NextRequest(`${config.origin}/api/cron/fixtures`, { headers: { authorization: `Bearer ${env.CRON_SECRET}` } }));
+      const cronResponse = await cron(new NextRequest('https://unique-production-deployment.vercel.app/api/cron/fixtures', { headers: { authorization: `Bearer ${env.CRON_SECRET}` } }));
       expect(cronResponse.status).toBe(200);
       expect((await cronResponse.json()).commit).toBeNull();
       expect(fetcher).toHaveBeenCalledTimes(4);
