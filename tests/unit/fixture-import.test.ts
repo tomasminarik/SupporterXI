@@ -23,10 +23,10 @@ describe('MVP-11 fixture reconciliation', () => {
   it('imports only United PL/CL schedules and preserves stable IDs and all manual data', () => {
     const manualFixture = { id: '10000000-0000-4000-8000-000000000002', source: { kind: 'manual' as const }, values: { opponent: 'Cup FC', venue: 'away' as const, competition: 'FA Cup', round: null, status: 'scheduled' as const, kickoff: { kind: 'unknown' as const } }, overrides: {} };
     const source = { ...seed, fixtures: [manualFixture] };
-    const feed = { matches: [match, { ...match, id: 457, competition: { code: 'CL', name: 'Champions League' }, homeTeam: { id: 68, name: 'Other FC' }, awayTeam: match.homeTeam }, { ...match, id: 458, competition: { code: 'FAC', name: 'FA Cup' } }, { ...match, id: 459, homeTeam: { id: 1, name: 'Other FC' }, awayTeam: { id: 2, name: 'Another FC' } }, { ...match, id: 460, status: 'FINISHED' }] };
+    const feed = { matches: [match, { ...match, id: 457, competition: { code: 'CL', name: 'Champions League' }, homeTeam: { id: 68, name: 'Other FC' }, awayTeam: match.homeTeam }, { ...match, id: 458, competition: { code: 'FAC', name: 'FA Cup' } }, { ...match, id: 459, homeTeam: { id: 1, name: 'Other FC' }, awayTeam: { id: 2, name: 'Another FC' } }, { ...match, id: 460, status: 'FINISHED' }, { ...match, id: 461, awayTeam: { id: null, name: null } }] };
     let sequence = 0;
     const first = reconcileFixtures(source, feed, () => sequence++ ? '10000000-0000-4000-8000-000000000003' : fixtureId);
-    expect(first.report).toMatchObject({ received: 5, eligible: 2, added: 2, skipped: 3 });
+    expect(first.report).toMatchObject({ received: 6, eligible: 2, added: 2, skipped: 4 });
     expect(first.content.fixtures[0]).toEqual(manualFixture);
     expect(first.content.fixtures[1]).toMatchObject({ id: fixtureId, source: { providerId: '456' }, values: { opponent: 'Synthetic FC', venue: 'home', round: 'Matchday 10' } });
     expect(first.content.players).toEqual(seed.players);

@@ -5,8 +5,8 @@ import { validateAdminContent } from './admin';
 const providerMatchSchema = z.object({
   id: z.number().int().positive(),
   competition: z.object({ code: z.string(), name: z.string().trim().min(1) }),
-  homeTeam: z.object({ id: z.number().int(), name: z.string().trim().min(1) }),
-  awayTeam: z.object({ id: z.number().int(), name: z.string().trim().min(1) }),
+  homeTeam: z.object({ id: z.number().int().nullable(), name: z.string().trim().min(1).nullable() }),
+  awayTeam: z.object({ id: z.number().int().nullable(), name: z.string().trim().min(1).nullable() }),
   status: z.string(),
   utcDate: z.string().nullable(),
   matchday: z.number().int().positive().nullable().optional(),
@@ -38,7 +38,8 @@ export function reconcileFixtures(current: SharedContent, input: unknown, newId:
     seen.add(match.id);
     const unitedHome = match.homeTeam.id === unitedId;
     const unitedAway = match.awayTeam.id === unitedId;
-    if (!competitions.has(match.competition.code) || unitedHome === unitedAway || !(match.status in statuses)) { report.skipped++; continue; }
+    const opponent = unitedHome ? match.awayTeam.name : match.homeTeam.name;
+    if (!competitions.has(match.competition.code) || unitedHome === unitedAway || !opponent || !(match.status in statuses)) { report.skipped++; continue; }
     const status = statuses[match.status as keyof typeof statuses];
     const kickoff = match.utcDate === null ? { kind: 'unknown' as const } :
       Number.isFinite(Date.parse(match.utcDate)) && /(?:Z|[+-]\d\d:\d\d)$/.test(match.utcDate) ? { kind: 'confirmed' as const, at: match.utcDate } : null;
@@ -46,7 +47,7 @@ export function reconcileFixtures(current: SharedContent, input: unknown, newId:
     report.eligible++;
     const providerId = String(match.id);
     const values = {
-      opponent: unitedHome ? match.awayTeam.name : match.homeTeam.name,
+      opponent,
       venue: unitedHome ? 'home' as const : 'away' as const,
       competition: match.competition.name,
       round: match.matchday ? `Matchday ${match.matchday}` : match.stage ? match.stage.replaceAll('_', ' ') : null,
