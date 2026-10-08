@@ -48,6 +48,7 @@ describe('MVP-09 session and request security', () => {
     const now = Date.now(); const session = { kind: 'session', userId: config.userId, csrf: nonce(), exp: now + 1000 };
     const cookie = seal(session, config);
     expect(readSession(cookie, config, now)?.userId).toBe(config.userId);
+    expect(readSession(cookie, config, now - 120_000)?.userId).toBe(config.userId);
     expect(readSession(cookie, config, now + 1000)).toBeNull();
     expect(readSession(cookie, { ...config, userId: '1' }, now)).toBeNull();
     expect(readSession(cookie, { ...config, origin: 'https://other.test' }, now)).toBeNull();

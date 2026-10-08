@@ -37,7 +37,7 @@ export function unseal(value: string, config: AdminConfig): unknown {
 }
 export function readSession(cookie: string | undefined, config: AdminConfig, now = Date.now()) {
   const result = sessionSchema.safeParse(cookie ? unseal(cookie, config) : null);
-  return result.success && result.data.userId === config.userId && result.data.exp > now && result.data.exp <= now + 2 * 3600_000 ? result.data : null;
+  return result.success && result.data.userId === config.userId && result.data.exp > now ? result.data : null;
 }
 export function authorizedWrite(headers: Headers, config: AdminConfig, csrf: string): boolean {
   return headers.get('origin') === config.origin && headers.get('sec-fetch-site') !== 'cross-site' && equal(headers.get('x-csrf-token') ?? '', csrf) && headers.get('content-type')?.split(';')[0] === 'application/json';
