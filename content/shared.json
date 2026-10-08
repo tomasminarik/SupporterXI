@@ -218,7 +218,616 @@
       "active": true
     }
   ],
-  "fixtures": [],
+  "fixtures": [
+    {
+      "id": "0e783a4e-620b-4cff-b9c5-b6e585f0b78a",
+      "source": {
+        "kind": "football-data.org",
+        "providerId": "560600"
+      },
+      "values": {
+        "opponent": "Tottenham Hotspur FC",
+        "venue": "home",
+        "competition": "Premier League",
+        "round": "Matchday 6",
+        "status": "scheduled",
+        "kickoff": {
+          "kind": "confirmed",
+          "at": "2026-10-10T16:30:00Z"
+        }
+      },
+      "overrides": {}
+    },
+    {
+      "id": "65adb079-4983-42d5-b642-806bebcaa66d",
+      "source": {
+        "kind": "football-data.org",
+        "providerId": "575345"
+      },
+      "values": {
+        "opponent": "Club Atlético de Madrid",
+        "venue": "away",
+        "competition": "UEFA Champions League",
+        "round": "Matchday 2",
+        "status": "scheduled",
+        "kickoff": {
+          "kind": "confirmed",
+          "at": "2026-10-13T19:00:00Z"
+        }
+      },
+      "overrides": {}
+    },
+    {
+      "id": "e40ef4c3-5d18-4dfd-bd12-7498a11fb5ac",
+      "source": {
+        "kind": "football-data.org",
+        "providerId": "560605"
+      },
+      "values": {
+        "opponent": "Leeds United FC",
+        "venue": "away",
+        "competition": "Premier League",
+        "round": "Matchday 7",
+        "status": "scheduled",
+        "kickoff": {
+          "kind": "confirmed",
+          "at": "2026-10-18T13:00:00Z"
+        }
+      },
+      "overrides": {}
+    },
+    {
+      "id": "88cfbc3b-7fb7-42e8-ae42-6c6635882073",
+      "source": {
+        "kind": "football-data.org",
+        "providerId": "575368"
+      },
+      "values": {
+        "opponent": "Como 1907",
+        "venue": "away",
+        "competition": "UEFA Champions League",
+        "round": "Matchday 3",
+        "status": "scheduled",
+        "kickoff": {
+          "kind": "confirmed",
+          "at": "2026-10-21T16:45:00Z"
+        }
+      },
+      "overrides": {}
+    },
+    {
+      "id": "db141f71-587f-463c-8b00-17fda2014b04",
+      "source": {
+        "kind": "football-data.org",
+        "providerId": "560615"
+      },
+      "values": {
+        "opponent": "AFC Bournemouth",
+        "venue": "home",
+        "competition": "Premier League",
+        "round": "Matchday 8",
+        "status": "scheduled",
+        "kickoff": {
+          "kind": "confirmed",
+          "at": "2026-10-25T14:00:00Z"
+        }
+      },
+      "overrides": {}
+    },
+    {
+      "id": "31ad7bbb-e6bf-4497-9eae-dc0e755227d8",
+      "source": {
+        "kind": "football-data.org",
+        "providerId": "560626"
+      },
+      "values": {
+        "opponent": "Chelsea FC",
+        "venue": "away",
+        "competition": "Premier League",
+        "round": "Matchday 9",
+        "status": "scheduled",
+        "kickoff": {
+          "kind": "confirmed",
+          "at": "2026-10-31T12:30:00Z"
+        }
+      },
+      "overrides": {}
+    },
+    {
+      "id": "64b02491-62cd-481e-92fa-1b766ef4b91b",
+      "source": {
+        "kind": "football-data.org",
+        "providerId": "575383"
+      },
+      "values": {
+        "opponent": "AS Roma",
+        "venue": "home",
+        "competition": "UEFA Champions League",
+        "round": "Matchday 4",
+        "status": "scheduled",
+        "kickoff": {
+          "kind": "confirmed",
+          "at": "2026-11-03T20:00:00Z"
+        }
+      },
+      "overrides": {}
+    },
+    {
+      "id": "70e89caf-810d-4888-85f0-b84f77d5143d",
+      "source": {
+        "kind": "football-data.org",
+        "providerId": "560639"
+      },
+      "values": {
+        "opponent": "Aston Villa FC",
+        "venue": "home",
+        "competition": "Premier League",
+        "round": "Matchday 10",
+        "status": "scheduled",
+        "kickoff": {
+          "kind": "confirmed",
+          "at": "2026-11-08T16:30:00Z"
+        }
+      },
+      "overrides": {}
+    },
+    {
+      "id": "19b8fa46-024a-45f3-a915-6c4126926e62",
+      "source": {
+        "kind": "football-data.org",
+        "providerId": "560645"
+      },
+      "values": {
+        "opponent": "Liverpool FC",
+        "venue": "away",
+        "competition": "Premier League",
+        "round": "Matchday 11",
+        "status": "scheduled",
+        "kickoff": {
+          "kind": "confirmed",
+          "at": "2026-11-22T16:30:00Z"
+        }
+      },
+      "overrides": {}
+    },
+    {
+      "id": "a6b85954-c54a-4cb5-aba5-6ec242ee6bed",
+      "source": {
+        "kind": "football-data.org",
+        "providerId": "575411"
+      },
+      "values": {
+        "opponent": "Sporting Clube de Portugal",
+        "venue": "away",
+        "competition": "UEFA Champions League",
+        "round": "Matchday 5",
+        "status": "scheduled",
+        "kickoff": {
+          "kind": "confirmed",
+          "at": "2026-11-25T20:00:00Z"
+        }
+      },
+      "overrides": {}
+    },
+    {
+      "id": "075b23de-bc7e-42a6-a912-fcc790af05be",
+      "source": {
+        "kind": "football-data.org",
+        "providerId": "560655"
+      },
+      "values": {
+        "opponent": "Brentford FC",
+        "venue": "home",
+        "competition": "Premier League",
+        "round": "Matchday 12",
+        "status": "scheduled",
+        "kickoff": {
+          "kind": "confirmed",
+          "at": "2026-11-28T15:00:00Z"
+        }
+      },
+      "overrides": {}
+    },
+    {
+      "id": "96336ca0-6376-45a3-8f52-310bd00a6273",
+      "source": {
+        "kind": "football-data.org",
+        "providerId": "560670"
+      },
+      "values": {
+        "opponent": "Newcastle United FC",
+        "venue": "away",
+        "competition": "Premier League",
+        "round": "Matchday 13",
+        "status": "scheduled",
+        "kickoff": {
+          "kind": "confirmed",
+          "at": "2026-12-02T20:00:00Z"
+        }
+      },
+      "overrides": {}
+    },
+    {
+      "id": "68abb80a-31c2-4100-9b56-8a9eb30bab53",
+      "source": {
+        "kind": "football-data.org",
+        "providerId": "560673"
+      },
+      "values": {
+        "opponent": "Coventry City FC",
+        "venue": "home",
+        "competition": "Premier League",
+        "round": "Matchday 14",
+        "status": "scheduled",
+        "kickoff": {
+          "kind": "confirmed",
+          "at": "2026-12-05T15:00:00Z"
+        }
+      },
+      "overrides": {}
+    },
+    {
+      "id": "3af2bb80-69b1-407e-8ea8-8c2cff326363",
+      "source": {
+        "kind": "football-data.org",
+        "providerId": "575420"
+      },
+      "values": {
+        "opponent": "RB Leipzig",
+        "venue": "home",
+        "competition": "UEFA Champions League",
+        "round": "Matchday 6",
+        "status": "scheduled",
+        "kickoff": {
+          "kind": "confirmed",
+          "at": "2026-12-08T20:00:00Z"
+        }
+      },
+      "overrides": {}
+    },
+    {
+      "id": "e9cab132-5c14-49c9-be7c-4d281e362652",
+      "source": {
+        "kind": "football-data.org",
+        "providerId": "560683"
+      },
+      "values": {
+        "opponent": "Crystal Palace FC",
+        "venue": "away",
+        "competition": "Premier League",
+        "round": "Matchday 15",
+        "status": "scheduled",
+        "kickoff": {
+          "kind": "confirmed",
+          "at": "2026-12-12T15:00:00Z"
+        }
+      },
+      "overrides": {}
+    },
+    {
+      "id": "17e6abb3-78ba-4150-92ae-62242bd96426",
+      "source": {
+        "kind": "football-data.org",
+        "providerId": "560699"
+      },
+      "values": {
+        "opponent": "Arsenal FC",
+        "venue": "away",
+        "competition": "Premier League",
+        "round": "Matchday 16",
+        "status": "scheduled",
+        "kickoff": {
+          "kind": "confirmed",
+          "at": "2026-12-19T15:00:00Z"
+        }
+      },
+      "overrides": {}
+    },
+    {
+      "id": "528cca7e-e2bf-45cd-afd8-3061f33d8f96",
+      "source": {
+        "kind": "football-data.org",
+        "providerId": "560703"
+      },
+      "values": {
+        "opponent": "Nottingham Forest FC",
+        "venue": "home",
+        "competition": "Premier League",
+        "round": "Matchday 17",
+        "status": "scheduled",
+        "kickoff": {
+          "kind": "confirmed",
+          "at": "2026-12-27T16:30:00Z"
+        }
+      },
+      "overrides": {}
+    },
+    {
+      "id": "1e6ddfda-8d6a-4676-9e6e-3f05509d8928",
+      "source": {
+        "kind": "football-data.org",
+        "providerId": "560717"
+      },
+      "values": {
+        "opponent": "Sunderland AFC",
+        "venue": "home",
+        "competition": "Premier League",
+        "round": "Matchday 18",
+        "status": "scheduled",
+        "kickoff": {
+          "kind": "confirmed",
+          "at": "2026-12-30T19:30:00Z"
+        }
+      },
+      "overrides": {}
+    },
+    {
+      "id": "ae0e3e07-9a20-478b-a8f6-ab5d831f66ad",
+      "source": {
+        "kind": "football-data.org",
+        "providerId": "560730"
+      },
+      "values": {
+        "opponent": "Brighton & Hove Albion FC",
+        "venue": "away",
+        "competition": "Premier League",
+        "round": "Matchday 19",
+        "status": "scheduled",
+        "kickoff": {
+          "kind": "confirmed",
+          "at": "2027-01-02T12:30:00Z"
+        }
+      },
+      "overrides": {}
+    },
+    {
+      "id": "4ada1507-95b0-4628-b648-843eed8d27a3",
+      "source": {
+        "kind": "football-data.org",
+        "providerId": "560734"
+      },
+      "values": {
+        "opponent": "Newcastle United FC",
+        "venue": "home",
+        "competition": "Premier League",
+        "round": "Matchday 20",
+        "status": "scheduled",
+        "kickoff": {
+          "kind": "confirmed",
+          "at": "2027-01-07T20:00:00Z"
+        }
+      },
+      "overrides": {}
+    },
+    {
+      "id": "8939596b-e2c5-4961-9829-5384dee762d0",
+      "source": {
+        "kind": "football-data.org",
+        "providerId": "560746"
+      },
+      "values": {
+        "opponent": "Aston Villa FC",
+        "venue": "away",
+        "competition": "Premier League",
+        "round": "Matchday 21",
+        "status": "scheduled",
+        "kickoff": {
+          "kind": "confirmed",
+          "at": "2027-01-16T15:00:00Z"
+        }
+      },
+      "overrides": {}
+    },
+    {
+      "id": "2abd3558-4f3d-4399-bc48-31d3061b2945",
+      "source": {
+        "kind": "football-data.org",
+        "providerId": "575300"
+      },
+      "values": {
+        "opponent": "FC Bayern München",
+        "venue": "home",
+        "competition": "UEFA Champions League",
+        "round": "Matchday 7",
+        "status": "scheduled",
+        "kickoff": {
+          "kind": "confirmed",
+          "at": "2027-01-20T20:00:00Z"
+        }
+      },
+      "overrides": {}
+    },
+    {
+      "id": "946ae03b-c28b-449a-b6f9-3d90f7b2430c",
+      "source": {
+        "kind": "football-data.org",
+        "providerId": "560759"
+      },
+      "values": {
+        "opponent": "Liverpool FC",
+        "venue": "home",
+        "competition": "Premier League",
+        "round": "Matchday 22",
+        "status": "scheduled",
+        "kickoff": {
+          "kind": "confirmed",
+          "at": "2027-01-23T15:00:00Z"
+        }
+      },
+      "overrides": {}
+    },
+    {
+      "id": "63904453-e679-473f-a51f-6d55d7b23063",
+      "source": {
+        "kind": "football-data.org",
+        "providerId": "575310"
+      },
+      "values": {
+        "opponent": "Villarreal CF",
+        "venue": "away",
+        "competition": "UEFA Champions League",
+        "round": "Matchday 8",
+        "status": "scheduled",
+        "kickoff": {
+          "kind": "confirmed",
+          "at": "2027-01-27T20:00:00Z"
+        }
+      },
+      "overrides": {}
+    },
+    {
+      "id": "dc05bc7b-5b2f-4216-a427-ddb501553213",
+      "source": {
+        "kind": "football-data.org",
+        "providerId": "560763"
+      },
+      "values": {
+        "opponent": "Brentford FC",
+        "venue": "away",
+        "competition": "Premier League",
+        "round": "Matchday 23",
+        "status": "scheduled",
+        "kickoff": {
+          "kind": "confirmed",
+          "at": "2027-01-30T15:00:00Z"
+        }
+      },
+      "overrides": {}
+    },
+    {
+      "id": "f1ae53aa-97e7-48da-9068-a1d49601f5c8",
+      "source": {
+        "kind": "football-data.org",
+        "providerId": "560780"
+      },
+      "values": {
+        "opponent": "Chelsea FC",
+        "venue": "home",
+        "competition": "Premier League",
+        "round": "Matchday 24",
+        "status": "scheduled",
+        "kickoff": {
+          "kind": "confirmed",
+          "at": "2027-02-06T15:00:00Z"
+        }
+      },
+      "overrides": {}
+    },
+    {
+      "id": "8d94d6ce-68fc-4189-80dc-e004216cfc90",
+      "source": {
+        "kind": "football-data.org",
+        "providerId": "560790"
+      },
+      "values": {
+        "opponent": "Brighton & Hove Albion FC",
+        "venue": "home",
+        "competition": "Premier League",
+        "round": "Matchday 25",
+        "status": "scheduled",
+        "kickoff": {
+          "kind": "confirmed",
+          "at": "2027-02-10T20:00:00Z"
+        }
+      },
+      "overrides": {}
+    },
+    {
+      "id": "0046d6a2-e76a-42a4-9c72-53e101d3e1f5",
+      "source": {
+        "kind": "football-data.org",
+        "providerId": "560798"
+      },
+      "values": {
+        "opponent": "Nottingham Forest FC",
+        "venue": "away",
+        "competition": "Premier League",
+        "round": "Matchday 26",
+        "status": "scheduled",
+        "kickoff": {
+          "kind": "confirmed",
+          "at": "2027-02-20T15:00:00Z"
+        }
+      },
+      "overrides": {}
+    },
+    {
+      "id": "39a3ef93-c6fb-44d5-82b9-693be73e78d1",
+      "source": {
+        "kind": "football-data.org",
+        "providerId": "560803"
+      },
+      "values": {
+        "opponent": "Arsenal FC",
+        "venue": "home",
+        "competition": "Premier League",
+        "round": "Matchday 27",
+        "status": "scheduled",
+        "kickoff": {
+          "kind": "confirmed",
+          "at": "2027-02-27T15:00:00Z"
+        }
+      },
+      "overrides": {}
+    },
+    {
+      "id": "5f645265-97d0-43ab-9232-f17f7ca3db57",
+      "source": {
+        "kind": "football-data.org",
+        "providerId": "560817"
+      },
+      "values": {
+        "opponent": "Sunderland AFC",
+        "venue": "away",
+        "competition": "Premier League",
+        "round": "Matchday 28",
+        "status": "scheduled",
+        "kickoff": {
+          "kind": "confirmed",
+          "at": "2027-03-03T20:00:00Z"
+        }
+      },
+      "overrides": {}
+    },
+    {
+      "id": "782dba10-502a-43e4-b02b-f3f34d3778d7",
+      "source": {
+        "kind": "football-data.org",
+        "providerId": "560830"
+      },
+      "values": {
+        "opponent": "Everton FC",
+        "venue": "home",
+        "competition": "Premier League",
+        "round": "Matchday 29",
+        "status": "scheduled",
+        "kickoff": {
+          "kind": "confirmed",
+          "at": "2027-03-13T15:00:00Z"
+        }
+      },
+      "overrides": {}
+    },
+    {
+      "id": "189c8ab3-77a7-42b1-a264-d9a738cd8eb2",
+      "source": {
+        "kind": "football-data.org",
+        "providerId": "560834"
+      },
+      "values": {
+        "opponent": "Manchester City FC",
+        "venue": "away",
+        "competition": "Premier League",
+        "round": "Matchday 30",
+        "status": "scheduled",
+        "kickoff": {
+          "kind": "confirmed",
+          "at": "2027-03-20T15:00:00Z"
+        }
+      },
+      "overrides": {}
+    }
+  ],
   "featuredFixtureId": null,
   "fixtureAvailability": []
 }
