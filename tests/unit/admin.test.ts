@@ -52,7 +52,9 @@ describe('MVP-09 session and request security', () => {
     expect(readSession(cookie, config, now + 1000)).toBeNull();
     expect(readSession(cookie, { ...config, userId: '1' }, now)).toBeNull();
     expect(readSession(cookie, { ...config, origin: 'https://other.test' }, now)).toBeNull();
-    expect(unseal(cookie.slice(0, 20) + 'X' + cookie.slice(21), config)).toBeNull();
+    const tampered = Buffer.from(cookie, 'base64url');
+    tampered[32] ^= 1;
+    expect(unseal(tampered.toString('base64url'), config)).toBeNull();
     expect(readSession(seal({ ...session, kind: 'oauth' }, config), config, now)).toBeNull();
   });
   it('requires exact same-origin and CSRF token on writes', () => {
