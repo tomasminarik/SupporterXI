@@ -4,6 +4,10 @@
 **Project directory:** `/Users/tomasminarik/SupporterXI`
 **Purpose:** Start implementation in a new chat without depending on the previous conversation.
 
+## Current status — 8 October 2026
+
+An authorized Production refresh published 32 real Premier League/Champions League fixtures in commit `13345fb`. The live featured-fixture endpoint returned Tottenham on 10 October and all 36 original players. The native admin confirmation was replaced by an in-page confirmation to make refresh results visible. Read [import verification](import-verification.md) and [admin verification](admin-verification.md). Remaining work includes observing the first scheduled import, an operational rollback drill, PNG export as the last feature before release, and final checks. The dated sections below preserve earlier progress snapshots and may describe already completed work.
+
 ## Local implementation update — 22 September 2026
 
 The first slice below is now implemented locally. The original planning snapshot in sections 3 and 7 describes the starting point, not the present filesystem. Read [foundation verification](foundation-verification.md) and the README local-development instructions before continuing. Next: phase 2 fixture content and server selection; no factual fixture seed or credentials have been supplied. M-01 and M-02 remain open. No remote services or publishing have occurred.

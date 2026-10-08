@@ -1,6 +1,6 @@
 # Starting XI builder — implementation handoff
 
-**Updated:** 7 October 2026. **Stage:** Foundation, fixture shell and browser-local builder implemented; later MVP phases remain.
+**Updated:** 8 October 2026. **Stage:** Builder, administration and fixture import implemented; PNG and final release checks remain.
 
 The current MVP is a next-match lineup builder with optional roles, browser-local memory, PNG export, and an administrator backoffice. There are no supporter accounts, Community XI, public lineup links, archives, or T-90 lock.
 
@@ -32,7 +32,7 @@ The [initial squad](docs/product/initial-squad.md) contains 36 numbered players 
 
 The working title is neutral. No final brand or domain has been approved. `docs/research/naming.md` was missing at the audit and remains unavailable; do not fabricate it or treat Eleven Verdict as approved.
 
-The public repository is [tomasminarik/SupporterXI](https://github.com/tomasminarik/SupporterXI), connected to Vercel project `supporterxi` in the existing Tomo team. Production admin sign-in and content read/no-change save are verified. A real content-changing publication and rollback drill remain. The football-data.org token is configured in Vercel Production, and the importer/daily schedule are prepared for deployment. Provider credentials must never be committed.
+The public repository is [tomasminarik/SupporterXI](https://github.com/tomasminarik/SupporterXI), connected to Vercel project `supporterxi` in the existing Tomo team. Production admin sign-in, content publication and the live featured-fixture response are verified. The football-data.org token is configured in Vercel Production, and the importer has published 32 Premier League/Champions League fixtures. A rollback drill and observation of the first scheduled run remain. Provider credentials must never be committed.
 
 
 ## Local development
@@ -44,7 +44,7 @@ npm ci
 npm run dev
 ```
 
-Open the [interactive whiteboard](http://localhost:3000/dev/workbench) to try all 14 formations, place the supplied players, assign optional roles, and move/swap/clear the XI. This preview uses clearly synthetic match contexts and separate browser memory. Try reloading, toggling availability, and simulating the next fixture. The homepage still shows the honest no-fixture state and links to this preview during development. No credentials are required.
+Open [the homepage](http://localhost:3000/) to build an XI for the currently published fixture. Open the [interactive whiteboard](http://localhost:3000/dev/workbench) to try all 14 formations, place the supplied players, assign optional roles, and move/swap/clear the XI. The whiteboard uses clearly synthetic match contexts and separate browser memory. Try reloading, toggling availability, and simulating the next fixture. No credentials are required for either public page.
 
 For a production preview: `npm run build`, then `npm start`.
 
@@ -66,7 +66,7 @@ See [foundation verification](docs/implementation/foundation-verification.md) fo
 
 `npm run test:workbench` verifies the development preview separately. `/dev/workbench` is enabled locally and on Vercel Preview deployments; it returns 404 on production deployments and local `npm start`.
 
-Fixture content and rollover verification are documented in [fixture-shell verification](docs/implementation/fixture-shell-verification.md). No real fixtures are seeded yet.
+Fixture content and rollover verification are documented in [fixture-shell verification](docs/implementation/fixture-shell-verification.md). The initial real fixture import and its publication are documented in [import verification](docs/implementation/import-verification.md).
 
 See [browser-memory verification](docs/implementation/browser-memory-verification.md) for fixture integration, storage recovery and approved availability behavior. The admin backoffice is the next slice; PNG export is deferred until after admin/import work, immediately before release checks.
 
@@ -74,4 +74,4 @@ See [browser-memory verification](docs/implementation/browser-memory-verificatio
 
 Try the [admin form preview](http://localhost:3000/dev/admin) locally or on a Vercel Preview deployment. Its edits stay in page memory. Production [`/admin`](https://supporterxi.vercel.app/admin) now uses the configured GitHub administrator account. See [admin setup and verification](docs/implementation/admin-verification.md) for secure configuration, limitations and checks.
 
-The fixture import route and admin refresh action are described in [import verification](docs/implementation/import-verification.md). Until a real provider token is configured in Production, refresh reports an unconfigured integration and makes no content change. The public entry remains in its no-fixture state.
+The fixture import route and admin refresh action are described in [import verification](docs/implementation/import-verification.md). Production has the provider token; an authorized refresh reports its import counts and checks publication. The public entry uses the published fixtures, with an honest no-fixture state if no future fixture qualifies.
