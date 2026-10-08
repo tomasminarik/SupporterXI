@@ -32,7 +32,7 @@ The [initial squad](docs/product/initial-squad.md) contains 36 numbered players 
 
 The working title is neutral. No final brand or domain has been approved. `docs/research/naming.md` was missing at the audit and remains unavailable; do not fabricate it or treat Eleven Verdict as approved.
 
-The public repository is [tomasminarik/SupporterXI](https://github.com/tomasminarik/SupporterXI), connected to Vercel project `supporterxi` in the existing Tomo team. Admin integration code is implemented but production credentials are not configured. No provider integration is configured. Provider credentials must never be committed.
+The public repository is [tomasminarik/SupporterXI](https://github.com/tomasminarik/SupporterXI), connected to Vercel project `supporterxi` in the existing Tomo team. Production admin sign-in and content read/no-change save are verified. A real content-changing publication and rollback drill remain. No football-data.org integration is configured. Provider credentials must never be committed.
 
 
 ## Local development
@@ -72,4 +72,4 @@ See [browser-memory verification](docs/implementation/browser-memory-verificatio
 
 ## Administration
 
-Try the [admin form preview](http://localhost:3000/dev/admin) locally or on a Vercel Preview deployment. Its edits stay in page memory. Production `/admin` fails closed until configured. See [admin setup and verification](docs/implementation/admin-verification.md) for secure configuration, limitations and checks.
+Try the [admin form preview](http://localhost:3000/dev/admin) locally or on a Vercel Preview deployment. Its edits stay in page memory. Production [`/admin`](https://supporterxi.vercel.app/admin) now uses the configured GitHub administrator account. See [admin setup and verification](docs/implementation/admin-verification.md) for secure configuration, limitations and checks.

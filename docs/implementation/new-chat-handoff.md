@@ -18,7 +18,7 @@ The live fixture shell now integrates the builder and validated browser-local me
 
 ## Administration update — 8 October 2026
 
-Admin forms, server authorization, GitHub content writes and publication checking are implemented. M-01 is approved. Production credentials and a real OAuth/write/deployment smoke test remain; do not describe the integration as connected yet. Read [admin verification](admin-verification.md).
+Admin forms, server authorization, GitHub content writes and publication checking are implemented. M-01 is approved. Production OAuth credentials and repository-scoped content access are configured. Real OAuth, authenticated read and no-change save were verified on the production domain. A content-changing write, deployment attribution and rollback drill remain for real fixture content. Read [admin verification](admin-verification.md).
 
 ## 1. Start here
 
