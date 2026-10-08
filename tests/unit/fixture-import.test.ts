@@ -65,10 +65,13 @@ describe('MVP-11 fixture reconciliation', () => {
 describe('MVP-11/15 import boundary', () => {
   it('uses a bounded team-specific request and retries provider throttling', async () => {
     expect(providerWindow(new Date('2026-10-08T12:00:00Z'))).toContain('/v4/teams/66/matches?dateFrom=2026-10-01&dateTo=2027-04-06&limit=500');
-    const fetcher = vi.fn<typeof fetch>().mockResolvedValueOnce(new Response('', { status: 429 })).mockResolvedValueOnce(Response.json({ matches: [match] }));
+    const fetcher = vi.fn<typeof fetch>().mockResolvedValueOnce(new Response('', { status: 429, headers: { 'X-RequestCounter-Reset': '0' } })).mockResolvedValueOnce(Response.json({ matches: [match] }));
     expect(await fetchFixtures('fake-key', fetcher, new Date('2026-10-08T12:00:00Z'))).toEqual({ matches: [match] });
     expect(fetcher).toHaveBeenCalledTimes(2);
     expect(fetcher.mock.calls[0][1]?.headers).toMatchObject({ 'X-Auth-Token': 'fake-key' });
+    const wait = vi.fn<typeof fetch>().mockResolvedValue(new Response('', { status: 429, headers: { 'X-RequestCounter-Reset': '23' } }));
+    await expect(fetchFixtures('fake-key', wait)).rejects.toMatchObject({ status: 429 });
+    expect(wait).toHaveBeenCalledTimes(1);
   });
   it('validates before one atomic GitHub PUT, with no commit on repeated import', async () => {
     const fetcher = vi.fn<typeof fetch>().mockResolvedValueOnce(Response.json({ matches: [match] })).mockResolvedValueOnce(Response.json(sourceFile())).mockResolvedValueOnce(Response.json({ content: { sha: 'b'.repeat(40) }, commit: { sha: 'c'.repeat(40) } }));

@@ -21,7 +21,16 @@ export async function fetchFixtures(providerToken: string, fetcher = fetch, now 
     try {
       response = await fetcher(providerWindow(now), { headers: { 'X-Auth-Token': providerToken, Accept: 'application/json' }, cache: 'no-store', redirect: 'error', signal: AbortSignal.timeout(12_000) });
     } catch { throw new AdminError(502, 'Fixture provider is unavailable. Accepted content is unchanged.'); }
-    if ((response.status === 429 || response.status >= 500) && attempt < 2) { await new Promise((resolve) => setTimeout(resolve, 200 * 2 ** attempt)); continue; }
+    if (response.status === 429) {
+      // The v4 reset header is seconds until quota renewal. Avoid repeated calls
+      // when the provider asks us to wait longer than a short request can afford.
+      const resetHeader = response.headers.get('x-requestcounter-reset') ?? response.headers.get('retry-after');
+      const reset = resetHeader === null ? NaN : Number(resetHeader);
+      if (!Number.isFinite(reset) || reset < 0 || reset > 2 || attempt === 2) throw new AdminError(429, 'Fixture provider rate limit reached. Retry after its request counter resets; accepted content is unchanged.');
+      await new Promise((resolve) => setTimeout(resolve, reset * 1000 + 100));
+      continue;
+    }
+    if (response.status >= 500 && attempt < 2) { await new Promise((resolve) => setTimeout(resolve, 200 * 2 ** attempt)); continue; }
     if (!response.ok) throw new AdminError(502, 'Fixture provider rejected the request. Accepted content is unchanged.');
     const body = await response.text();
     if (body.length > 1_500_000) throw new AdminError(502, 'Fixture provider response is too large. Accepted content is unchanged.');

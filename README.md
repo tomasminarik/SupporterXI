@@ -32,7 +32,7 @@ The [initial squad](docs/product/initial-squad.md) contains 36 numbered players 
 
 The working title is neutral. No final brand or domain has been approved. `docs/research/naming.md` was missing at the audit and remains unavailable; do not fabricate it or treat Eleven Verdict as approved.
 
-The public repository is [tomasminarik/SupporterXI](https://github.com/tomasminarik/SupporterXI), connected to Vercel project `supporterxi` in the existing Tomo team. Production admin sign-in and content read/no-change save are verified. A real content-changing publication and rollback drill remain. The football-data.org importer is implemented and tested locally, but no provider credentials or daily schedule are configured. Provider credentials must never be committed.
+The public repository is [tomasminarik/SupporterXI](https://github.com/tomasminarik/SupporterXI), connected to Vercel project `supporterxi` in the existing Tomo team. Production admin sign-in and content read/no-change save are verified. A real content-changing publication and rollback drill remain. The football-data.org token is configured in Vercel Production, and the importer/daily schedule are prepared for deployment. Provider credentials must never be committed.
 
 
 ## Local development

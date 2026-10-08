@@ -22,7 +22,7 @@ Admin forms, server authorization, GitHub content writes and publication checkin
 
 ## Fixture import update — 8 October 2026
 
-The importer, manual refresh action and protected scheduler route are implemented with recorded provider-response tests. Provider credentials and daily schedule are not yet configured. Read [import verification](import-verification.md). No real fixture has been imported or published.
+The importer, manual refresh action and protected scheduler route are implemented with recorded provider-response tests. The provider token is configured as a Production-only secret, and the daily schedule is prepared for deployment. Read [import verification](import-verification.md). No real fixture has been imported or published yet.
 
 ## 1. Start here
 
