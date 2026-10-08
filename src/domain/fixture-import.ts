@@ -1,5 +1,6 @@
 import { z } from 'zod';
-import { contentSchema, type Fixture, type SharedContent } from './content';
+import { type Fixture, type SharedContent } from './content';
+import { validateAdminContent } from './admin';
 
 const providerMatchSchema = z.object({
   id: z.number().int().positive(),
@@ -62,5 +63,5 @@ export function reconcileFixtures(current: SharedContent, input: unknown, newId:
     }
   }
   // Imports never remove absent matches, manual fixtures, players or availability.
-  return { content: contentSchema.parse(next), report };
+  return { content: validateAdminContent(next), report };
 }

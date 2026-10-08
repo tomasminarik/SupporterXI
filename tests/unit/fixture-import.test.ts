@@ -56,6 +56,9 @@ describe('MVP-11 fixture reconciliation', () => {
     expect(reconcileFixtures(first, { matches: [] }, () => 'wrong').content).toEqual(first);
     expect(() => reconcileFixtures(first, { matches: [match, match] }, () => 'wrong')).toThrow('Duplicate provider match');
     expect(() => reconcileFixtures(first, { matches: [{ ...match, utcDate: 'not-a-date' }] }, () => 'wrong')).toThrow('Invalid kickoff');
+    const invalidPlayers = structuredClone(first);
+    invalidPlayers.players[0].shirtNumber = invalidPlayers.players[1].shirtNumber;
+    expect(() => reconcileFixtures(invalidPlayers, { matches: [] }, () => 'wrong')).toThrow('Active shirt numbers must be unique');
   });
 });
 
