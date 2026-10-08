@@ -47,7 +47,7 @@ test('MVP-01–05, 13: inspect and edit a real in-memory XI', async ({ page }) =
   await expect(formation).toHaveValue('3-4-3-wide');
   await expect(page.getByRole('button', { name: /: Empty/ })).toHaveCount(11);
   await page.reload();
-  await expect(formation).toHaveValue('');
+  await expect(formation).toHaveValue('3-4-3-wide');
 });
 
 test('MVP-13: keyboard placement, roles and remove', async ({ page }) => {

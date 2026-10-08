@@ -18,13 +18,17 @@ These do not block project setup, catalogue work or builder interaction design. 
 **Alternative:** Permit duplicate active numbers, using stable IDs/names to distinguish players.
 **Approval status:** Not explicitly selected in the conversation. Blocks final player-form validation, not the catalogue or editor shell.
 
-### M-02 — availability changes to an existing browser XI
+### M-02 — availability changes to an existing browser XI (approved 7 October 2026)
 
 MVP+ protected a previously saved submission. Current MVP has no such submission, so that exact rule cannot be inherited.
 
 **Recommendation:** Keep a previously selected player in the same locally remembered fixture XI when they later become inactive/unavailable; allow export, but prevent re-adding after removal. Moves/swaps preserve selection. Treat this as a browser convenience, not secure submission eligibility.
 **Alternative:** Keep the player visible but require replacement before PNG export once current published data marks them ineligible.
-**Approval status:** New edge rule needing confirmation before availability reconciliation and related export validation. No player should be silently replaced.
+**Approval status:** User explicitly approved the recommendation on 7 October 2026. Preserve existing same-fixture selections through inactive/unavailable changes, allow eventual PNG export, and prevent re-adding once removed. Moves/swaps retain the selection; no player is silently replaced.
+
+## Initial squad activation — approved 7 October 2026
+
+The user explicitly approved all 36 supplied players starting Active, with Available as the fixture default until manually changed. This does not decide M-01.
 
 ## Non-blocking recommendations
 

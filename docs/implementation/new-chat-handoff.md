@@ -12,6 +12,10 @@ The first slice below is now implemented locally. The original planning snapshot
 
 The original squad JSON has been moved to `content/shared.json` with all 36 records unchanged. Read [fixture-shell verification](fixture-shell-verification.md) for current schema, API, refresh and deployment status. M-01/M-02 remain open. The earlier sections record planning history.
 
+## Browser-builder update — 8 October 2026
+
+The live fixture shell now integrates the builder and validated browser-local memory. M-02 and initial activation of all 36 players are approved; M-01 remains open. See [browser-memory verification](browser-memory-verification.md). Historical status statements below describe earlier phases. No real fixtures are seeded; the workbench uses explicitly synthetic contexts. Next: PNG export.
+
 ## 1. Start here
 
 Read `AGENTS.md`, `README.md`, and every active document in the README's reading order completely. Also read `docs/product/initial-squad.md` and `content/shared.json`. This handoff summarizes context; it does not replace the specifications.

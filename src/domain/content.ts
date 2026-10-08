@@ -22,11 +22,11 @@ export const fixtureSchema = z.strictObject({
   values: fixtureValuesSchema,
   overrides: fixtureValuesSchema.partial(),
 });
-// Foundation player shape only. Active state and final number rules await M-01
-// and explicit squad-state integration; do not use this as an admin write schema.
-const playerSchema = z.strictObject({ id: z.uuid(), name: label, shirtNumber: z.number().int() });
+// Active state approved on 7 October 2026. Final admin number rules await M-01.
+// This remains a content-read schema, not an admin write authorization boundary.
+const playerSchema = z.strictObject({ id: z.uuid(), name: label, shirtNumber: z.number().int(), active: z.boolean() });
 export const contentSchema = z.strictObject({
-  schemaVersion: z.literal(1),
+  schemaVersion: z.literal(2),
   players: z.array(playerSchema),
   fixtures: z.array(fixtureSchema),
   featuredFixtureId: z.uuid().nullable(),

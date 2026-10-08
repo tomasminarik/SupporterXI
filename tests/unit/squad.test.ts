@@ -1,7 +1,8 @@
 import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
-import seed from '../../content/shared.json';
+import content from '../../content/shared.json';
+const seed = { schemaVersion: 1, players: content.players.map(({ id, name, shirtNumber }) => ({ id, name, shirtNumber })) };
 import { initialSquad, validateSquadSeed } from '../../src/domain/squad';
 
 describe('MVP-10: supplied seed integrity (not admin policy)', () => {

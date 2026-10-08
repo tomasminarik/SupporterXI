@@ -1,6 +1,6 @@
 # Starting XI builder — implementation handoff
 
-**Updated:** 7 October 2026. **Stage:** Foundation, interactive preview and fixture shell implemented; later MVP phases remain.
+**Updated:** 7 October 2026. **Stage:** Foundation, fixture shell and browser-local builder implemented; later MVP phases remain.
 
 The current MVP is a next-match lineup builder with optional roles, browser-local memory, PNG export, and an administrator backoffice. There are no supporter accounts, Community XI, public lineup links, archives, or T-90 lock.
 
@@ -44,7 +44,7 @@ npm ci
 npm run dev
 ```
 
-Open the [interactive whiteboard](http://localhost:3000/dev/workbench) to try all 14 formations, place the supplied players, assign optional roles, and move/swap/clear the XI. This is a development-only preview without a fixture or availability policy; selections reset on reload. The homepage still shows the honest no-fixture state and links to this preview during development. No credentials are required.
+Open the [interactive whiteboard](http://localhost:3000/dev/workbench) to try all 14 formations, place the supplied players, assign optional roles, and move/swap/clear the XI. This preview uses clearly synthetic match contexts and separate browser memory. Try reloading, toggling availability, and simulating the next fixture. The homepage still shows the honest no-fixture state and links to this preview during development. No credentials are required.
 
 For a production preview: `npm run build`, then `npm start`.
 
@@ -58,8 +58,8 @@ npm run check
 `check` runs lint, TypeScript, catalogue parity and unit tests, a production build, then Chromium browser/accessibility checks at four widths for both the production entry and local workbench. Production browser checks use port 3100; workbench checks start a development server on port 3101. Stop `npm run dev` before running the checks because Next.js permits only one development server for this directory. On Linux, use `npx playwright install --with-deps chromium`.
 
 - Edit normative catalogue documents, then run `npm run catalogues:generate`. Do not edit `src/data/*.generated.ts`; build validation rejects stale outputs and specification/table discrepancies.
-- `content/shared.json` is the single shared-content source. The original 36 squad records were moved here without changing IDs, names or numbers. Run `npm run content:generate` after player edits; `src/data/squad.generated.ts` is a generated public-only projection, never an independently edited roster. Active state and M-01/M-02 policies remain undecided.
-- M-01 and M-02 remain open. No admin number policy or availability reconciliation has been implemented.
+- `content/shared.json` is the single shared-content source. The original 36 squad records were moved here without changing IDs, names or numbers. Run `npm run content:generate` after player edits; `src/data/squad.generated.ts` is a generated public-only projection, never an independently edited roster. All 36 players start Active as approved; fixture availability defaults to Available.
+- M-01 remains open. M-02 is approved: existing selections survive availability changes, while removed ineligible players cannot be re-added.
 - GitHub Actions runs validation and browser checks; Vercel builds from the connected repository. Verify deployment success separately from commit/push success.
 
 See [foundation verification](docs/implementation/foundation-verification.md) for test mapping, limitations and the next slice.
@@ -67,3 +67,5 @@ See [foundation verification](docs/implementation/foundation-verification.md) fo
 `npm run test:workbench` verifies the development preview separately. `/dev/workbench` is enabled locally and on Vercel Preview deployments; it returns 404 on production deployments and local `npm start`.
 
 Fixture content and rollover verification are documented in [fixture-shell verification](docs/implementation/fixture-shell-verification.md). No real fixtures are seeded yet.
+
+See [browser-memory verification](docs/implementation/browser-memory-verification.md) for fixture integration, storage recovery and approved availability behavior. PNG export is the next slice.

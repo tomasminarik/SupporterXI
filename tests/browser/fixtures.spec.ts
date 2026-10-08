@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 const now = '2026-10-25T14:59:59.800Z';
 const response = (opponent = 'Synthetic Preview FC', unknown = false, boundary = false) => ({
-  schemaVersion: 1, contentRevision: 'a'.repeat(64), serverNow: now,
+  schemaVersion: 2, players: [], contentRevision: 'a'.repeat(64), serverNow: now,
   nextRefreshAt: boundary ? '2026-10-25T15:00:00.000Z' : null,
   fixture: { id: '10000000-0000-4000-8000-000000000001', opponent, venue: 'away', competition: 'Synthetic Cup', round: 'Test round', status: 'scheduled', kickoff: unknown ? { kind: 'unknown' } : { kind: 'confirmed', at: '2026-10-25T12:00:00Z' } },
 });
@@ -16,7 +16,7 @@ test('MVP-07: endpoint is fresh, read-only, server-timed and excludes internal c
   expect(data.fixture).toBeNull();
   expect(Date.parse(data.serverNow)).toBeGreaterThanOrEqual(before);
   expect(Date.parse(data.serverNow)).toBeLessThanOrEqual(Date.now());
-  expect(Object.keys(data).sort()).toEqual(['schemaVersion', 'contentRevision', 'serverNow', 'nextRefreshAt', 'fixture'].sort());
+  expect(Object.keys(data).sort()).toEqual(['schemaVersion', 'contentRevision', 'serverNow', 'nextRefreshAt', 'fixture', 'players'].sort());
   expect((await request.post('/api/featured-fixture', { data: {} })).status()).toBe(405);
 });
 
@@ -26,7 +26,7 @@ test('MVP-07: initial error offers retry; unknown kickoff stays honest', async (
   await page.goto('/');
   await expect(page.getByRole('heading', { name: 'Fixture unavailable' })).toBeVisible();
   await page.getByRole('button', { name: 'Try again' }).click();
-  await expect(page.getByText('Time to be confirmed')).toBeVisible();
+  await expect(page.getByText('Time to be confirmed').first()).toBeVisible();
   await expect(page.locator('time')).toHaveCount(0);
 });
 

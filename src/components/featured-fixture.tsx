@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import FixtureBuilder from './fixture-builder';
 import { featuredResponseSchema, formatKickoff, type FeaturedResponse } from '../domain/featured-fixture';
 
 export default function FeaturedFixture() {
@@ -40,7 +41,7 @@ export default function FeaturedFixture() {
   }, [attempt]);
 
   const fixture = data?.fixture;
-  return <section className="whiteboard" aria-labelledby="fixture-title" aria-busy={!data && !failed}>
+  return <><section className="whiteboard" aria-labelledby="fixture-title" aria-busy={!data && !failed}>
     <div className="board-heading"><span>01 / Next fixture</span><span className="status">{failed ? 'Unable to refresh' : !data ? 'Loading fixture' : fixture ? 'Next match' : 'Awaiting fixture'}</span></div>
     <div className="board-body"><div className="empty-copy">
       <span className="small-rule" aria-hidden="true" />
@@ -52,5 +53,5 @@ export default function FeaturedFixture() {
       </> : <><h2 id="fixture-title">No upcoming fixture</h2><p>No eligible match is currently published. There’s no lineup to pick until a fixture is available.</p><p className="quiet">Check back once the next match is added.</p></>}
       {failed && <div role="alert">{data && <p className="quiet">Showing the last loaded fixture information. It may be out of date.</p>}<button className="fixture-retry" type="button" onClick={() => { setFailed(false); setAttempt((value) => value + 1); }}>Try again</button></div>}
     </div><div className="pitch-wrap" aria-hidden="true"><svg className="pitch" viewBox="0 0 260 340" fill="none"><rect x="20" y="15" width="220" height="310" rx="1"/><path d="M20 170H240M75 15V64H185V15M100 15V34H160V15M75 325V276H185V325M100 325V306H160V325"/><circle cx="130" cy="170" r="35"/><circle cx="130" cy="170" r="2"/><path d="M110 64Q130 88 150 64M110 276Q130 252 150 276"/></svg><span className="pitch-caption">The board is yours. Soon.</span></div></div>
-  </section>;
+  </section>{data && <FixtureBuilder context={data}/>}</>;
 }

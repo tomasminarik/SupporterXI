@@ -23,8 +23,7 @@ export function changeFormation(state: Lineup, target: Formation) {
   return { state: { formationId: target.id, slots } as Lineup, releasedPlayers, clearedRoles };
 }
 
-// The caller supplies selectable identities. The workbench uses seed IDs only;
-// a future live builder must supply fixture eligibility after content integration.
+// Eligibility applies to new selections; moves preserve existing selections (M-02).
 export function placePlayer(state: Lineup, slotId: string, playerId: string, selectableIds: readonly string[]): Lineup {
   if (!(slotId in state.slots) || !selectableIds.includes(playerId) || Object.values(state.slots).some((slot) => slot?.playerId === playerId)) return state;
   return { ...state, slots: { ...state.slots, [slotId]: { playerId, roleId: state.slots[slotId]?.roleId ?? null } } };
