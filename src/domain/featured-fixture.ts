@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { effectiveFixture, fixtureValuesSchema, type SharedContent } from './content';
 
-export const publicPlayerSchema = z.strictObject({ id: z.uuid(), name: z.string().min(1), shirtNumber: z.number().int(), selectable: z.boolean() });
+export const publicPlayerSchema = z.strictObject({ id: z.uuid(), name: z.string().min(1), shirtNumber: z.number().int().nullable(), selectable: z.boolean() });
 export type PublicPlayer = z.infer<typeof publicPlayerSchema>;
 
 export const featuredResponseSchema = z.strictObject({

@@ -28,6 +28,10 @@ Deliver a responsive Manchester United next-match XI builder: formation, eleven 
 
 Follow [ADR 001](../decisions/001-mvp-architecture.md): one Next.js/TypeScript application on Vercel; browser builder/export; server admin and fixture-selection routes; GitHub content and admin identity; daily/manual provider refresh. Original Supabase/email/account architecture is superseded.
 
+## Updated execution order — 8 October 2026
+
+User requested PNG export as the last implementation feature before release. Execute the original phases in order 1 → 2 → 3 → 5 (backoffice) → 6 (imports) → 4 (PNG) → 7 (release checks). M-01 and M-02 are now approved; consult the current decision register. The numbered table below preserves phase identities, not the newly requested order.
+
 ## Ordered phases
 
 | Phase | Deliverable | Verification / exit condition | Dependency |

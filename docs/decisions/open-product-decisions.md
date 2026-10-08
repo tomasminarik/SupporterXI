@@ -12,11 +12,11 @@ The original OD register is [preserved here](../mvp-plus/docs/decisions/open-pro
 
 These do not block project setup, catalogue work or builder interaction design. Earlier conversation said there were no remaining blockers; this audit corrects that overstatement: removing accounts does not itself choose these player policies.
 
-### M-01 — active-player shirt numbers (carried from OD-03)
+### M-01 — active-player shirt numbers (approved 8 October 2026)
 
 **Recommendation:** Active players have unique integer numbers 1–99; allow an absent number only for Inactive players. Historical/local identity never uses a shirt number.
 **Alternative:** Permit duplicate active numbers, using stable IDs/names to distinguish players.
-**Approval status:** Not explicitly selected in the conversation. Blocks final player-form validation, not the catalogue or editor shell.
+**Approval status:** Explicitly approved on 8 October 2026. Active players require unique integer numbers 1–99. Only Inactive players may have no number. Stable UUIDs remain independent of numbers.
 
 ### M-02 — availability changes to an existing browser XI (approved 7 October 2026)
 

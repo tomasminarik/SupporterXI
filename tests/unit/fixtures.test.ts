@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import raw from '../../content/shared.json';
+import raw from '../fixtures/initial-content.json';
 import { contentSchema, effectiveFixture, type Fixture, type SharedContent } from '../../src/domain/content';
 import { selectFeaturedFixture, featuredResponse, formatKickoff } from '../../src/domain/featured-fixture';
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import raw from '../../content/shared.json';
+import raw from '../fixtures/initial-content.json';
 import { contentSchema } from '../../src/domain/content';
 import { featuredResponse } from '../../src/domain/featured-fixture';
 import { formations } from '../../src/domain/catalogues';

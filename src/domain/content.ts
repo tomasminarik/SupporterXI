@@ -22,9 +22,9 @@ export const fixtureSchema = z.strictObject({
   values: fixtureValuesSchema,
   overrides: fixtureValuesSchema.partial(),
 });
-// Active state approved on 7 October 2026. Final admin number rules await M-01.
+// Active state approved on 7 October 2026. M-01 approved on 8 October 2026; admin writes enforce number policy.
 // This remains a content-read schema, not an admin write authorization boundary.
-const playerSchema = z.strictObject({ id: z.uuid(), name: label, shirtNumber: z.number().int(), active: z.boolean() });
+const playerSchema = z.strictObject({ id: z.uuid(), name: label, shirtNumber: z.number().int().nullable(), active: z.boolean() });
 export const contentSchema = z.strictObject({
   schemaVersion: z.literal(2),
   players: z.array(playerSchema),

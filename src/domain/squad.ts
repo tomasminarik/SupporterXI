@@ -1,9 +1,9 @@
 import seed from '../data/squad.generated';
 
-export type SeedPlayer = Readonly<{ id: string; name: string; shirtNumber: number }>;
+export type SeedPlayer = Readonly<{ id: string; name: string; shirtNumber: number | null }>;
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-// Seed validation only. M-01's future admin number policy remains undecided.
+// Public projection shape validation. M-01 is enforced by the server admin validator.
 // Active state and fixture availability are intentionally not inferred here.
 export function validateSquadSeed(input: unknown): readonly SeedPlayer[] {
   if (!input || typeof input !== 'object' || !('schemaVersion' in input) || input.schemaVersion !== 1 || !('players' in input) || !Array.isArray(input.players)) {
@@ -11,7 +11,7 @@ export function validateSquadSeed(input: unknown): readonly SeedPlayer[] {
   }
   const ids = new Set<string>();
   const players: SeedPlayer[] = input.players.map((player: unknown) => {
-    if (!player || typeof player !== 'object' || !('id' in player) || typeof player.id !== 'string' || !uuid.test(player.id) || ids.has(player.id) || !('name' in player) || typeof player.name !== 'string' || !player.name.trim() || !('shirtNumber' in player) || typeof player.shirtNumber !== 'number' || !Number.isInteger(player.shirtNumber)) {
+    if (!player || typeof player !== 'object' || !('id' in player) || typeof player.id !== 'string' || !uuid.test(player.id) || ids.has(player.id) || !('name' in player) || typeof player.name !== 'string' || !player.name.trim() || !('shirtNumber' in player) || (player.shirtNumber !== null && (typeof player.shirtNumber !== 'number' || !Number.isInteger(player.shirtNumber)))) {
       throw new Error('Invalid squad seed player or duplicate identity');
     }
     ids.add(player.id);

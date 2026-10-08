@@ -14,7 +14,7 @@ Use stable internal IDs independent of names, shirt numbers, kickoff timestamps 
 
 Admin and import mutations require server authorization, schema validation and optimistic concurrency against the Git content revision. Publish related fields atomically in one Git change. Build-time validation is an additional gate, not a replacement for server write validation. Reject invalid or conflicting updates without partially changing shared content.
 
-Pending shirt-number policy M-01 must be resolved before final player validation. No test or seed may silently establish that unapproved policy.
+M-01 was approved on 8 October 2026: Active players require unique integer shirt numbers 1–99; only Inactive players may omit a number. See the decision register.
 
 ## Imports
 
@@ -24,7 +24,7 @@ Manual cup fixtures retain identity. If they later appear in a feed, require exp
 
 ## Browser integrity and export
 
-Validate canonical formation/slot membership, eleven unique players for export, and compatible optional roles. Browser data is untrusted, including restored JSON. Render names as text, not markup; never execute content from files or drafts. Availability-change handling awaits M-02.
+Validate canonical formation/slot membership, eleven unique players for export, and compatible optional roles. Browser data is untrusted, including restored JSON. Render names as text, not markup; never execute content from files or drafts. Approved M-02 retains existing same-fixture selections through availability changes and allows eventual export, but blocks re-addition after removal.
 
 An export uses one coherent snapshot, including labels and fixture context, so edits during rendering do not mix versions. There is no requirement for historical server snapshots or immutable public pages. Git content history is operational recovery, not a supporter archive.
 

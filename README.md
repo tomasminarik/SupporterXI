@@ -32,7 +32,7 @@ The [initial squad](docs/product/initial-squad.md) contains 36 numbered players 
 
 The working title is neutral. No final brand or domain has been approved. `docs/research/naming.md` was missing at the audit and remains unavailable; do not fabricate it or treat Eleven Verdict as approved.
 
-The public repository is [tomasminarik/SupporterXI](https://github.com/tomasminarik/SupporterXI), connected to Vercel project `supporterxi` in the existing Tomo team. No provider or admin write integration is configured. Provider credentials must never be committed.
+The public repository is [tomasminarik/SupporterXI](https://github.com/tomasminarik/SupporterXI), connected to Vercel project `supporterxi` in the existing Tomo team. Admin integration code is implemented but production credentials are not configured. No provider integration is configured. Provider credentials must never be committed.
 
 
 ## Local development
@@ -59,7 +59,7 @@ npm run check
 
 - Edit normative catalogue documents, then run `npm run catalogues:generate`. Do not edit `src/data/*.generated.ts`; build validation rejects stale outputs and specification/table discrepancies.
 - `content/shared.json` is the single shared-content source. The original 36 squad records were moved here without changing IDs, names or numbers. Run `npm run content:generate` after player edits; `src/data/squad.generated.ts` is a generated public-only projection, never an independently edited roster. All 36 players start Active as approved; fixture availability defaults to Available.
-- M-01 remains open. M-02 is approved: existing selections survive availability changes, while removed ineligible players cannot be re-added.
+- M-01 was approved on 8 October: Active players require unique integer numbers 1–99; only Inactive players may lack a number. M-02 is approved: existing selections survive availability changes, while removed ineligible players cannot be re-added.
 - GitHub Actions runs validation and browser checks; Vercel builds from the connected repository. Verify deployment success separately from commit/push success.
 
 See [foundation verification](docs/implementation/foundation-verification.md) for test mapping, limitations and the next slice.
@@ -68,4 +68,8 @@ See [foundation verification](docs/implementation/foundation-verification.md) fo
 
 Fixture content and rollover verification are documented in [fixture-shell verification](docs/implementation/fixture-shell-verification.md). No real fixtures are seeded yet.
 
-See [browser-memory verification](docs/implementation/browser-memory-verification.md) for fixture integration, storage recovery and approved availability behavior. PNG export is the next slice.
+See [browser-memory verification](docs/implementation/browser-memory-verification.md) for fixture integration, storage recovery and approved availability behavior. The admin backoffice is the next slice; PNG export is deferred until after admin/import work, immediately before release checks.
+
+## Administration
+
+Try the [admin form preview](http://localhost:3000/dev/admin) locally or on a Vercel Preview deployment. Its edits stay in page memory. Production `/admin` fails closed until configured. See [admin setup and verification](docs/implementation/admin-verification.md) for secure configuration, limitations and checks.

@@ -13,7 +13,8 @@ test('MVP-07: endpoint is fresh, read-only, server-timed and excludes internal c
   expect(result.status()).toBe(200);
   expect(result.headers()['cache-control']).toContain('no-store');
   const data = await result.json();
-  expect(data.fixture).toBeNull();
+  expect(data.schemaVersion).toBe(2);
+  expect(Array.isArray(data.players)).toBe(true);
   expect(Date.parse(data.serverNow)).toBeGreaterThanOrEqual(before);
   expect(Date.parse(data.serverNow)).toBeLessThanOrEqual(Date.now());
   expect(Object.keys(data).sort()).toEqual(['schemaVersion', 'contentRevision', 'serverNow', 'nextRefreshAt', 'fixture', 'players'].sort());

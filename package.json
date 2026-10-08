@@ -20,7 +20,8 @@
     "check": "npm run lint && npm run typecheck && npm run build && npm run test:browser && npm run test:workbench",
     "test:workbench": "playwright test --config playwright.workbench.config.ts",
     "content:generate": "node scripts/generate-squad.mjs",
-    "content:check": "node scripts/generate-squad.mjs --check"
+    "content:check": "node scripts/generate-squad.mjs --check",
+    "prevalidate": "npm run content:generate"
   },
   "dependencies": {
     "next": "16.4.0",

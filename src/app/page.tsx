@@ -20,7 +20,7 @@ export default function Home() {
         <details className="squad">
           <summary><span>Squad list <span className="count">{initialSquad.length} players</span></span><span className="expand" aria-hidden="true">+</span></summary>
           <p className="squad-note">The supplied squad. Match availability will be shown when a fixture is ready.</p>
-          <ul>{initialSquad.map((player) => <li key={player.id}><span className="shirt-number"><span className="sr-only">Number </span>{player.shirtNumber}</span><span>{player.name}</span></li>)}</ul>
+          <ul>{initialSquad.map((player) => <li key={player.id}><span className="shirt-number"><span className="sr-only">Number </span>{player.shirtNumber ?? '—'}</span><span>{player.name}</span></li>)}</ul>
         </details>
       </main>
       <footer><span>Starting XI · Working title</span><span>Independent supporter project</span></footer>

@@ -23,7 +23,7 @@
 | Remove | Player released if eligible | Slot role clears |
 | Clear | All slots empty; formation retained | All roles clear |
 
-Formation changes compute an entire proposed state from canonical equivalence keys before mutation. Warn about dropped players/roles; cancellation preserves state. Invalid roles never map to similar labels. New selections respect published availability; retained-player behaviour after availability edits is pending M-02.
+Formation changes compute an entire proposed state from canonical equivalence keys before mutation. Warn about dropped players/roles; cancellation preserves state. Invalid roles never map to similar labels. New selections respect published availability; approved M-02 retains existing selections through availability changes, including eventual export, and prevents re-addition after removal.
 
 ## Local memory
 

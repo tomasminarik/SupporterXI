@@ -56,7 +56,7 @@ export default function LineupEditor({ lineup, players, onChange }: { lineup: Li
                 onDragStart={(event) => { event.dataTransfer.setData('text/plain', id); event.dataTransfer.effectAllowed = 'move'; }}
                 onDragOver={(event) => event.preventDefault()} onDrop={(event) => { event.preventDefault(); const from = event.dataTransfer.getData('text/plain'); if (lineup.slots[from]) move(from, id); }}
                 onClick={() => { setSelected(id); setQuery(''); setNotice(`${abbreviation} selected. ${occupant ? 'Edit the player or role in the position panel.' : 'Choose a player in the position panel.'}`); }}>
-                <span className="lab-token">{occupant?.shirtNumber ?? '+'}</span><span className="lab-position">{abbreviation}</span><span className="lab-name">{occupant?.name ?? 'Add player'}</span>{role && <span className="lab-role-indicator" aria-hidden="true">Role assigned</span>}
+                <span className="lab-token">{occupant ? (occupant.shirtNumber ?? '—') : '+'}</span><span className="lab-position">{abbreviation}</span><span className="lab-name">{occupant?.name ?? 'Add player'}</span>{role && <span className="lab-role-indicator" aria-hidden="true">Role assigned</span>}
               </button>;
             })}
           </div>

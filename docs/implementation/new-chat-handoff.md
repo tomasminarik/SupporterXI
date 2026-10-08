@@ -14,7 +14,11 @@ The original squad JSON has been moved to `content/shared.json` with all 36 reco
 
 ## Browser-builder update — 8 October 2026
 
-The live fixture shell now integrates the builder and validated browser-local memory. M-02 and initial activation of all 36 players are approved; M-01 remains open. See [browser-memory verification](browser-memory-verification.md). Historical status statements below describe earlier phases. No real fixtures are seeded; the workbench uses explicitly synthetic contexts. Next: PNG export.
+The live fixture shell now integrates the builder and validated browser-local memory. M-02 and initial activation of all 36 players are approved; M-01 remains open. See [browser-memory verification](browser-memory-verification.md). Historical status statements below describe earlier phases. No real fixtures are seeded; the workbench uses explicitly synthetic contexts. User deferred PNG export until after backoffice/imports, immediately before release checks.
+
+## Administration update — 8 October 2026
+
+Admin forms, server authorization, GitHub content writes and publication checking are implemented. M-01 is approved. Production credentials and a real OAuth/write/deployment smoke test remain; do not describe the integration as connected yet. Read [admin verification](admin-verification.md).
 
 ## 1. Start here
 
