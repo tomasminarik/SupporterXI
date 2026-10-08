@@ -1,0 +1,42 @@
+{
+  "matches": [
+    {
+      "id": 560600,
+      "competition": {
+        "code": "PL",
+        "name": "Premier League"
+      },
+      "homeTeam": {
+        "id": 66,
+        "name": "Manchester United FC"
+      },
+      "awayTeam": {
+        "id": 73,
+        "name": "Tottenham Hotspur FC"
+      },
+      "status": "TIMED",
+      "utcDate": "2026-10-10T16:30:00Z",
+      "matchday": 6,
+      "stage": "REGULAR_SEASON"
+    },
+    {
+      "id": 575345,
+      "competition": {
+        "code": "CL",
+        "name": "UEFA Champions League"
+      },
+      "homeTeam": {
+        "id": 78,
+        "name": "Club Atlético de Madrid"
+      },
+      "awayTeam": {
+        "id": 66,
+        "name": "Manchester United FC"
+      },
+      "status": "TIMED",
+      "utcDate": "2026-10-13T19:00:00Z",
+      "matchday": 2,
+      "stage": "LEAGUE_STAGE"
+    }
+  ]
+}

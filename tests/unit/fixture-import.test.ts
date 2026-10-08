@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 vi.mock('server-only', () => ({}));
 import { NextRequest } from 'next/server';
 import raw from '../fixtures/initial-content.json';
+import recorded from '../fixtures/football-data-v4.json';
 import { contentSchema } from '../../src/domain/content';
 import { reconcileFixtures } from '../../src/domain/fixture-import';
 import { fetchFixtures, providerWindow, refreshFixtures } from '../../src/server/fixture-import';
@@ -20,6 +21,17 @@ const sourceFile = (content = seed) => ({ sha: 'a'.repeat(40), encoding: 'base64
 const config: AdminConfig = { origin: 'https://example.test', clientId: 'test', clientSecret: 'not-real', secret: 'a'.repeat(48), userId: '326405858', token: 'not-real' };
 
 describe('MVP-11 fixture reconciliation', () => {
+  it('accepts sanitized PL and CL records captured from the free v4 team feed', () => {
+    let index = 0;
+    const result = reconcileFixtures(seed, recorded, () => index++ ? '10000000-0000-4000-8000-000000000002' : fixtureId);
+    expect(result.report).toMatchObject({ received: 2, eligible: 2, added: 2, ambiguous: [] });
+    expect(result.content.fixtures.map((fixture) => fixture.source)).toEqual([
+      { kind: 'football-data.org', providerId: '560600' },
+      { kind: 'football-data.org', providerId: '575345' },
+    ]);
+    expect(result.content.fixtures[0].values).toMatchObject({ opponent: 'Tottenham Hotspur FC', status: 'scheduled', kickoff: { at: '2026-10-10T16:30:00Z' } });
+    expect(result.content.fixtures[1].values).toMatchObject({ opponent: 'Club Atlético de Madrid', venue: 'away', competition: 'UEFA Champions League' });
+  });
   it('imports only United PL/CL schedules and preserves stable IDs and all manual data', () => {
     const manualFixture = { id: '10000000-0000-4000-8000-000000000002', source: { kind: 'manual' as const }, values: { opponent: 'Cup FC', venue: 'away' as const, competition: 'FA Cup', round: null, status: 'scheduled' as const, kickoff: { kind: 'unknown' as const } }, overrides: {} };
     const source = { ...seed, fixtures: [manualFixture] };
