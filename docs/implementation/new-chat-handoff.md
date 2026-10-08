@@ -20,6 +20,10 @@ The live fixture shell now integrates the builder and validated browser-local me
 
 Admin forms, server authorization, GitHub content writes and publication checking are implemented. M-01 is approved. Production OAuth credentials and repository-scoped content access are configured. Real OAuth, authenticated read and no-change save were verified on the production domain. A content-changing write, deployment attribution and rollback drill remain for real fixture content. Read [admin verification](admin-verification.md).
 
+## Fixture import update — 8 October 2026
+
+The importer, manual refresh action and protected scheduler route are implemented with recorded provider-response tests. Provider credentials and daily schedule are not yet configured. Read [import verification](import-verification.md). No real fixture has been imported or published.
+
 ## 1. Start here
 
 Read `AGENTS.md`, `README.md`, and every active document in the README's reading order completely. Also read `docs/product/initial-squad.md` and `content/shared.json`. This handoff summarizes context; it does not replace the specifications.

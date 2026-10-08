@@ -9,7 +9,7 @@ import './admin.css';
 type Source = { revision: string; content: SharedContent; csrf?: string };
 const sourceSchema = z.object({ revision: z.string(), content: contentSchema, csrf: z.string().optional(), publication: z.object({ commit: z.string(), digest: z.string(), state: z.string() }).optional() });
 async function call(url: string, init?: RequestInit) {
-  const response = await fetch(url, { ...init, cache: 'no-store', signal: AbortSignal.timeout(20_000) });
+  const response = await fetch(url, { ...init, cache: 'no-store', signal: init?.signal ?? AbortSignal.timeout(20_000) });
   const body = await response.json();
   if (!response.ok) throw new Error(body.error ?? 'Request failed. Your edits are still here.');
   return body;
@@ -22,6 +22,7 @@ export default function AdminWorkspace({ demo }: { demo?: SharedContent }) {
   const [busy, setBusy] = useState(!demo);
   const [notice, setNotice] = useState('');
   const [publish, setPublish] = useState<{ commit: string; digest: string; state: string } | null>(null);
+  const [importReport, setImportReport] = useState('');
   const load = useCallback(async () => {
     setBusy(true); setError('');
     try { const result = sourceSchema.parse(await call('/api/admin/content')); setSource(result); setPublish(result.publication ?? null); setReload((value) => value + 1); } catch (e) { setError(e instanceof z.ZodError ? 'Invalid fields. Check required names, shirt numbers and the kickoff timezone.' : (e as Error).message); } finally { setBusy(false); }
@@ -52,9 +53,23 @@ export default function AdminWorkspace({ demo }: { demo?: SharedContent }) {
     setBusy(true); setError('');
     try { const result = await call(`/api/admin/publish?commit=${publish.commit}&digest=${publish.digest}`); setPublish({ ...publish, state: result.state }); } catch (e) { setError(e instanceof z.ZodError ? 'Invalid fields. Check required names, shirt numbers and the kickoff timezone.' : (e as Error).message); } finally { setBusy(false); }
   }
+  async function importFixtures() {
+    if (!source) return;
+    setBusy(true); setError(''); setNotice(''); setImportReport('');
+    try {
+      const result = await call('/api/admin/import', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-csrf-token': source.csrf! }, body: '{}', signal: AbortSignal.timeout(45_000) });
+      setSource({ ...sourceSchema.parse(result), csrf: source.csrf });
+      setReload((value) => value + 1);
+      const report = result.report as { added: number; updated: number; unchanged: number; ambiguous: string[]; skipped: number };
+      setImportReport(`${report.added} added, ${report.updated} updated, ${report.unchanged} unchanged, ${report.skipped} outside scope.${report.ambiguous.length ? ` Potential manual duplicates (provider IDs): ${report.ambiguous.join(', ')}. Review these manually; none were merged.` : ''}`);
+      if (result.commit) { setPublish({ commit: result.commit, digest: result.digest, state: 'pending' }); setNotice('Fixture import saved to GitHub. Publication is pending.'); }
+      else setNotice('Import made no content changes.');
+    } catch (e) { setError((e as Error).message); } finally { setBusy(false); }
+  }
   return <>
-    <div className="admin-actions">{!demo && <><button disabled={busy} onClick={() => { if (!source || window.confirm('Reload current content? Unsaved form edits will be discarded.')) void load(); }}>Reload latest content</button><button disabled={busy || !source} onClick={async () => { try { await call('/api/admin/auth/logout', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-csrf-token': source!.csrf! }, body: '{}' }); router.replace('/admin'); router.refresh(); } catch (e) { setError(e instanceof z.ZodError ? 'Invalid fields. Check required names, shirt numbers and the kickoff timezone.' : (e as Error).message); } }}>Sign out</button></>}</div>
+    <div className="admin-actions">{!demo && <><button disabled={busy} onClick={() => { if (!source || window.confirm('Reload current content? Unsaved form edits will be discarded.')) void load(); }}>Reload latest content</button><button disabled={busy || !source} onClick={() => { if (window.confirm('Refresh covered Manchester United fixtures? Unsaved form edits will be discarded.')) void importFixtures(); }}>Refresh PL / Champions League fixtures</button><button disabled={busy || !source} onClick={async () => { try { await call('/api/admin/auth/logout', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-csrf-token': source!.csrf! }, body: '{}' }); router.replace('/admin'); router.refresh(); } catch (e) { setError(e instanceof z.ZodError ? 'Invalid fields. Check required names, shirt numbers and the kickoff timezone.' : (e as Error).message); } }}>Sign out</button></>}</div>
     {busy && <p role="status">Working…</p>}{error && <p className="admin-error" role="alert">{error}</p>}{notice && <p role="status">{notice}</p>}
+    {importReport && <p role="status">Import: {importReport}</p>}
     {publish && <aside className="admin-box" aria-label="Publication status"><strong>{publish.state === 'live' ? 'Live content verified' : publish.state === 'failed' ? 'Deployment failed — previous site retained' : 'Publication pending / not yet verified live'}</strong><p>Commit {publish.commit.slice(0, 7)}. A successful save alone does not mean the public site has updated.</p><button disabled={busy} onClick={checkPublish}>Check publication</button></aside>}
     {source && <AdminForms key={reload} revision={source.revision} content={source.content} save={save} busy={busy}/>}
   </>;

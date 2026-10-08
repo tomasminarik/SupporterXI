@@ -1,7 +1,7 @@
 import 'server-only';
 import { createHash, randomUUID } from 'node:crypto';
 import { z } from 'zod';
-import { contentSchema } from '../../domain/content';
+import { contentSchema, type SharedContent } from '../../domain/content';
 import { adminRequestSchema, applyAdminCommand } from '../../domain/admin';
 
 const repo = 'https://api.github.com/repos/tomasminarik/SupporterXI';
@@ -23,9 +23,13 @@ export async function saveSource(input: unknown, token: string, fetcher = fetch)
   const source = await readSource(token, fetcher);
   if (source.revision !== request.revision) throw new AdminError(409, 'Content changed. Reload and review before retrying.');
   const next = applyAdminCommand(source.content, request.command, randomUUID);
+  return writeSource(source, next, token, `Update shared content: ${request.command.kind}`, fetcher);
+}
+export async function writeSource(source: { revision: string; content: SharedContent }, next: SharedContent, token: string, message: string, fetcher = fetch) {
+  contentSchema.parse(next);
   if (JSON.stringify(next) === JSON.stringify(source.content)) return { revision: source.revision, content: next, commit: null, digest: null };
   const result = z.object({ content: z.object({ sha: z.string() }), commit: z.object({ sha: z.string() }) }).parse(await github(`${repo}${path}`, token, {
-    method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: `Update shared content: ${request.command.kind}`, branch: 'main', sha: source.revision, content: Buffer.from(JSON.stringify(next, null, 2) + '\n').toString('base64'), committer: { name: 'Tomo', email: '326405858+tomasminarik@users.noreply.github.com' } }),
+    method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message, branch: 'main', sha: source.revision, content: Buffer.from(JSON.stringify(next, null, 2) + '\n').toString('base64'), committer: { name: 'Tomo', email: '326405858+tomasminarik@users.noreply.github.com' } }),
   }, fetcher));
   return { revision: result.content.sha, content: next, commit: result.commit.sha, digest: createHash('sha256').update(JSON.stringify(next)).digest('hex') };
 }
