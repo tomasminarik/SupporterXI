@@ -61,6 +61,28 @@ test('MVP-01–05, 13: inspect and edit a real in-memory XI', async ({ page }) =
     await expect(page.getByRole('button', { name: 'GK: Bruno Fernandes', exact: true })).toBeVisible();
     await page.getByRole('button', { name: '30 Benjamin Šeško' }).dragTo(page.getByRole('button', { name: 'ST: Empty', exact: true }));
     await expect(page.getByRole('button', { name: 'ST: Benjamin Šeško', exact: true })).toBeVisible();
+    // A card dropped near a position, not exactly on it, still lands there.
+    await page.getByRole('searchbox', { name: 'Search players' }).fill('Ugarte');
+    await page.getByRole('button', { name: '25 Manuel Ugarte' }).scrollIntoViewIfNeeded();
+    const card = (await page.getByRole('button', { name: '25 Manuel Ugarte' }).boundingBox())!;
+    const lwb = (await page.getByRole('button', { name: 'LWB: Empty', exact: true }).boundingBox())!;
+    await page.mouse.move(card.x + card.width / 2, card.y + card.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(lwb.x + lwb.width / 2 + 25, lwb.y + lwb.height / 2 + 20, { steps: 8 });
+    await expect(page.getByRole('button', { name: 'LWB: Empty', exact: true })).toHaveAttribute('data-drop', 'true');
+    await page.mouse.up();
+    await expect(page.getByRole('button', { name: 'LWB: Manuel Ugarte', exact: true })).toBeVisible();
+    // Escape cancels a drag in progress.
+    await page.getByRole('searchbox', { name: 'Search players' }).fill('Mainoo');
+    const other = (await page.getByRole('button', { name: '37 Kobbie Mainoo' }).boundingBox())!;
+    const rwb = (await page.getByRole('button', { name: 'RWB: Empty', exact: true }).boundingBox())!;
+    await page.mouse.move(other.x + other.width / 2, other.y + other.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(rwb.x + rwb.width / 2, rwb.y + rwb.height / 2, { steps: 8 });
+    await page.keyboard.press('Escape');
+    await page.mouse.up();
+    await expect(page.getByRole('button', { name: 'RWB: Empty', exact: true })).toBeVisible();
+    await page.getByRole('searchbox', { name: 'Search players' }).fill('');
   }
   // Player first, then position.
   await page.getByRole('button', { name: '9 Marcus Rashford' }).click();

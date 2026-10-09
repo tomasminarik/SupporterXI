@@ -51,3 +51,12 @@ test('MVP-07: rollover uses server interval despite a wrong browser clock', asyn
   await page.clock.fastForward(201);
   await expect(page.getByRole('heading', { name: /Second Synthetic FC/ })).toBeVisible();
 });
+
+test.describe('kickoff language', () => {
+  test.use({ locale: 'sk-SK', timezoneId: 'Europe/Bratislava' });
+  test('MVP-07: kickoff is written in English, in the visitor’s own time zone', async ({ page }) => {
+    await page.route('**/api/featured-fixture', (route) => route.fulfill({ json: response() }));
+    await page.goto('/');
+    await expect(page.locator('time')).toHaveText('Sun, 25 Oct 2026, 13:00 CET');
+  });
+});

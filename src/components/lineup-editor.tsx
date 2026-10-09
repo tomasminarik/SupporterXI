@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type DragEvent, type KeyboardEvent } from 'react';
+import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent, type PointerEvent as ReactPointerEvent } from 'react';
 import { formations, roles, rolesForFamily, type Formation } from '../domain/catalogues';
 import type { PublicPlayer } from '../domain/featured-fixture';
 import type { Lineup } from '../domain/lineup';
@@ -10,6 +10,7 @@ import { fieldPercent, markerLabel, placeLabels, positionNoun, projectSlot, shor
 import './lineup-editor.css';
 
 type Slot = Formation['slots'][number];
+type Dragged = { kind: 'player' | 'slot'; id: string; x: number; y: number; over: string | null };
 type Proposal = { target: Formation; state: Lineup; leaving: string[]; clearedRoles: string[] };
 
 export default function LineupEditor({ lineup, players, onChange }: { lineup: Lineup; players: readonly PublicPlayer[]; onChange: (state: Lineup) => void }) {
@@ -28,6 +29,9 @@ export default function LineupEditor({ lineup, players, onChange }: { lineup: Li
   const [placements, setPlacements] = useState<ReadonlyMap<string, Placement>>(new Map());
   const names = useMemo(() => shortNames(players), [players]);
   const short = (player: PublicPlayer) => names.get(player.id) ?? player.name;
+  const [dragged, setDragged] = useState<Dragged | null>(null);
+  const dropRef = useRef<(drag: Dragged) => void>(() => {});
+  const suppressClick = useRef(false);
 
   const formation = formationFor(lineup);
   const selectableIds = players.filter((player) => player.selectable).map((player) => player.id);
@@ -137,13 +141,58 @@ export default function LineupEditor({ lineup, players, onChange }: { lineup: Li
     else if (selectedSlot || selectedPlayer) { resetSelection(); setNotice('Selection cleared.'); }
   }
 
-  function onDrop(event: DragEvent, slot: Slot) {
-    event.preventDefault();
-    const [kind, id] = event.dataTransfer.getData('text/plain').split(':');
-    if (kind === 'slot' && lineup.slots[id]) move(id, slot[0]);
-    const player = kind === 'player' ? byId(id) : undefined;
+  // Desktop drag and drop with the mouse: a squad card onto a position, or a pill
+  // onto another position (move or swap). Click and keyboard remain the alternatives.
+  function dropOn(drag: Dragged) {
+    const slot = slotOf(drag.over);
+    if (!slot) return;
+    if (drag.kind === 'slot') { if (drag.id !== slot[0] && lineup.slots[drag.id]) move(drag.id, slot[0]); return; }
+    const player = byId(drag.id);
     if (player?.selectable && !pickedIds.has(player.id)) place(slot, player);
   }
+  // The window listeners outlive a render; always drop with the latest lineup.
+  useLayoutEffect(() => { dropRef.current = dropOn; });
+  function startDrag(event: ReactPointerEvent, kind: Dragged['kind'], id: string) {
+    if (event.button !== 0 || event.pointerType === 'touch') return;
+    const startX = event.clientX;
+    const startY = event.clientY;
+    let current: Dragged | null = null;
+    const nearest = (x: number, y: number) => {
+      let best: string | null = null;
+      let distance = 64;
+      for (const marker of editorRef.current?.querySelectorAll<HTMLElement>('.sx-marker') ?? []) {
+        const anchor = (marker.querySelector('.sx-no') ?? marker).getBoundingClientRect();
+        const body = (marker.querySelector('.sx-pill-body') ?? marker).getBoundingClientRect();
+        const inside = x >= body.left && x <= body.right && y >= body.top && y <= body.bottom;
+        const gap = inside ? 0 : Math.hypot(x - (anchor.left + anchor.right) / 2, y - (anchor.top + anchor.bottom) / 2);
+        if (gap < distance) { distance = gap; best = marker.dataset.slot ?? null; }
+      }
+      return best;
+    };
+    const onMove = (move: PointerEvent) => {
+      if (!current && Math.hypot(move.clientX - startX, move.clientY - startY) < 6) return;
+      current = { kind, id, x: move.clientX, y: move.clientY, over: nearest(move.clientX, move.clientY) };
+      document.body.classList.add('sx-dragging');
+      setDragged(current);
+    };
+    const finish = (commit: boolean) => {
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+      window.removeEventListener('keydown', onKey);
+      document.body.classList.remove('sx-dragging');
+      if (!current) return;
+      suppressClick.current = true;
+      setTimeout(() => { suppressClick.current = false; }, 0);
+      setDragged(null);
+      if (commit) dropRef.current(current);
+    };
+    const onUp = () => finish(true);
+    const onKey = (key: globalThis.KeyboardEvent) => { if (key.key === 'Escape') finish(false); };
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+    window.addEventListener('keydown', onKey);
+  }
+  const draggedPlayer = dragged && (dragged.kind === 'player' ? byId(dragged.id) : occupantOf(dragged.id));
 
   function pickFormation(next: Formation) {
     if (next.id === lineup.formationId) { setPickerOpen(false); return; }
@@ -202,20 +251,21 @@ export default function LineupEditor({ lineup, players, onChange }: { lineup: Li
         const selected = selectedSlot === id;
         const common = {
           id: `slot-${id}`, type: 'button' as const, style, 'aria-pressed': selected, 'data-slot': id,
-          onClick: () => chooseSlot(slot),
-          onDragOver: (event: DragEvent) => event.preventDefault(),
-          onDrop: (event: DragEvent) => onDrop(event, slot),
+          onClick: () => { if (!suppressClick.current) chooseSlot(slot); },
+          'data-drop': dragged?.over === id ? 'true' : undefined,
         };
         if (!occupant) return <button key={id} {...common} className={`sx-marker sx-empty${heldPlayer ? ' sx-target' : ''}`} aria-label={`${abbreviation}: Empty`}>{markerLabel(abbreviation)}</button>;
         const unavailable = !occupant.selectable;
         const placement = placements.get(id);
         return <button key={id} {...common} data-side={placement?.side ?? 'right'} data-tag={placement?.tag ?? 'below'} className={`sx-marker sx-pill${unavailable ? ' sx-unavailable' : ''}`} aria-expanded={menuSlot === id} aria-label={`${abbreviation}: ${occupant.name}${role ? `, ${role.name}` : ''}${unavailable ? ', unavailable' : ''}`}
-          draggable onDragStart={(event) => { event.dataTransfer.setData('text/plain', `slot:${id}`); event.dataTransfer.effectAllowed = 'move'; }}>
+          onPointerDown={(event) => startDrag(event, 'slot', id)}>
           <span className="sx-pill-body"><span className="sx-no">{occupant.shirtNumber ?? '–'}</span>{short(occupant)}</span>
           {(role || unavailable) && <span className="sx-tags">{role && <span className="sx-role">{role.name}</span>}{unavailable && <span className="sx-role sx-flag">Unavailable</span>}</span>}
         </button>;
       })}
     </PitchStage>
+
+    {dragged && draggedPlayer && <div className="sx-ghost" aria-hidden="true" style={{ left: dragged.x, top: dragged.y }}><span className="sx-pill-body"><span className="sx-no">{draggedPlayer.shirtNumber ?? '–'}</span>{short(draggedPlayer)}</span></div>}
 
     {unavailablePicked && <p className="sx-notice" role="status">Some selected players are now unavailable. They can stay in this XI, but cannot be added again after removal.</p>}
 
@@ -229,9 +279,9 @@ export default function LineupEditor({ lineup, players, onChange }: { lineup: Li
       </div>
       {visible.length > 0 && <div className="sx-cards" role="list" aria-label="Players not picked">
         {visible.map((player) => <div role="listitem" key={player.id}>
-          <button type="button" className="sx-card" aria-label={`${player.shirtNumber ?? ''} ${player.name}`.trim()} aria-pressed={selectedPlayer === player.id} draggable
-            onDragStart={(event) => { event.dataTransfer.setData('text/plain', `player:${player.id}`); event.dataTransfer.effectAllowed = 'copy'; }}
-            onClick={() => chooseCard(player)}>
+          <button type="button" className="sx-card" aria-label={`${player.shirtNumber ?? ''} ${player.name}`.trim()} aria-pressed={selectedPlayer === player.id} data-dragging={dragged?.kind === 'player' && dragged.id === player.id ? 'true' : undefined}
+            onPointerDown={(event) => startDrag(event, 'player', player.id)}
+            onClick={() => { if (!suppressClick.current) chooseCard(player); }}>
             <span className="sx-card-no" aria-hidden="true">{player.shirtNumber ?? '–'}</span><span className="sx-card-name" aria-hidden="true">{short(player)}</span>
           </button>
         </div>)}
