@@ -24,8 +24,9 @@
 .sx-share-format:has(input:checked) { background: #ffffff; border-color: #ffffff; color: #14160f; }
 .sx-share-format:has(input:focus-visible) { outline: 3px solid #ffffff; outline-offset: 3px; }
 .sx-share-shape { flex: none; width: 24px; border: 2px solid currentColor; border-radius: 2px; }
-.sx-share-shape[data-format=feed] { aspect-ratio: 4 / 5; }
-.sx-share-shape[data-format=story] { width: 20px; margin: 0 2px; aspect-ratio: 9 / 16; }
+.sx-share-shape[data-format=square] { aspect-ratio: 1; }
+.sx-share-shape[data-format=portrait] { width: 16px; margin: 0 4px; aspect-ratio: 9 / 16; }
+.sx-share-shape[data-format=landscape] { aspect-ratio: 16 / 9; }
 .sx-share-format-text { display: grid; gap: 1px; font-size: 14px; }
 .sx-share-format-text strong { font: 800 22px/1.1 var(--display); text-transform: uppercase; }
 .sx-share-format-text span { color: var(--soft); }
@@ -47,11 +48,13 @@
   .sx-share-head h2 { font-size: 26px; }
   .sx-share-head .sx-close { margin-right: -12px; }
   .sx-share-preview { order: 4; height: 44dvh; padding: 12px 16px; border-right: 0; }
-  .sx-share-formats { order: 3; margin: 12px 16px 0; grid-template-columns: 1fr 1fr; }
+  .sx-share-formats { order: 3; margin: 12px 16px 0; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
   .sx-share-formats legend { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
-  .sx-share-format { min-height: 56px; padding: 6px 10px; gap: 10px; }
-  .sx-share-format-text strong { font-size: 19px; }
-  .sx-share-format-text span { font-size: 12px; }
+  .sx-share-format { min-height: 60px; padding: 8px 4px; gap: 4px; flex-direction: column; justify-content: center; text-align: center; }
+  .sx-share-shape { width: 18px; }
+  .sx-share-shape[data-format=portrait] { width: 12px; margin: 0; }
+  .sx-share-format-text strong { font-size: 17px; }
+  .sx-share-format-text span { font-size: 11px; white-space: nowrap; }
   .sx-share-actions { order: 2; margin: 0 16px; padding-top: 12px; grid-auto-flow: column; grid-auto-columns: 1fr; }
   .sx-share-actions .sx-secondary { min-height: 52px; }
   .sx-share-message { order: 1; margin: 8px 16px 0; min-height: 0; }

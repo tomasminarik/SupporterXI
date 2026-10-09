@@ -14,7 +14,7 @@ export default function ShareDialog({ snapshot, onClose }: { snapshot: ShareSnap
   const dialog = useRef<HTMLDialogElement>(null);
   const heading = useRef<HTMLHeadingElement>(null);
   const titleId = useId();
-  const [format, setFormat] = useState<ShareFormat>('feed');
+  const [format, setFormat] = useState<ShareFormat>('square');
   const [results, setResults] = useState<Partial<Record<ShareFormat, Result>>>({});
   const [attempt, setAttempt] = useState(0);
   const [message, setMessage] = useState('');

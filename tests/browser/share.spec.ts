@@ -40,7 +40,7 @@ test('MVP-08: an incomplete XI cannot be exported and says what is missing', asy
   await expect(page.getByRole('button', { name: 'ST: Empty', exact: true })).toBeFocused();
 });
 
-test('MVP-08, 13, 14: both portrait PNGs download at their exact size, by keyboard, without leaving the browser', async ({ page, baseURL }) => {
+test('MVP-08, 13, 14: all three PNGs download at their exact size, by keyboard, without leaving the browser', async ({ page, baseURL }) => {
   const elsewhere: string[] = [];
   const writes: string[] = [];
   page.on('request', (request) => {
@@ -60,20 +60,40 @@ test('MVP-08, 13, 14: both portrait PNGs download at their exact size, by keyboa
   expect(await preview(page).getAttribute('alt')).not.toContain('Stay-Back');
   expect((await new AxeBuilder({ page }).include('dialog').withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze()).violations).toEqual([]);
 
-  await expect(dialog(page).getByRole('radio', { name: /Feed/ })).toBeChecked();
+  await expect(dialog(page).getByRole('radio', { name: /Square/ })).toBeChecked();
   const downloadButton = dialog(page).getByRole('button', { name: 'Download image' });
   await downloadButton.focus();
-  const [feed] = await Promise.all([page.waitForEvent('download'), page.keyboard.press('Enter')]);
-  expect(feed.suggestedFilename()).toBe('supporter-xi-v-synthetic-a-feed.png');
-  expect(await pngSize(feed)).toEqual({ width: 1080, height: 1350 });
+  const [square] = await Promise.all([page.waitForEvent('download'), page.keyboard.press('Enter')]);
+  expect(square.suggestedFilename()).toBe('supporter-xi-v-synthetic-a-square.png');
+  expect(await pngSize(square)).toEqual({ width: 1080, height: 1080 });
   await expect(dialog(page).getByRole('status').filter({ hasText: 'Download started' })).toBeVisible();
 
-  await dialog(page).getByRole('radio', { name: /Feed/ }).focus();
+  await dialog(page).getByRole('radio', { name: /Square/ }).focus();
   await page.keyboard.press('ArrowDown');
-  await expect(dialog(page).getByRole('radio', { name: /Story/ })).toBeChecked();
+  await page.keyboard.press('ArrowDown');
+  await expect(dialog(page).getByRole('radio', { name: /Landscape/ })).toBeChecked();
+  await expect(preview(page)).toHaveJSProperty('naturalWidth', 1920);
+  const [landscape] = await Promise.all([page.waitForEvent('download'), downloadButton.click()]);
+  expect(landscape.suggestedFilename()).toBe('supporter-xi-v-synthetic-a-landscape.png');
+  expect(await pngSize(landscape)).toEqual({ width: 1920, height: 1080 });
+  // Landscape shows the desktop pitch: grass in the middle, the dark page beside the far touchline.
+  const wide = await preview(page).evaluate((image: HTMLImageElement) => {
+    const canvas = document.createElement('canvas');
+    canvas.width = image.naturalWidth; canvas.height = image.naturalHeight;
+    const ctx = canvas.getContext('2d')!;
+    ctx.drawImage(image, 0, 0);
+    const at = (x: number, y: number) => [...ctx.getImageData(x, y, 1, 1).data.slice(0, 3)];
+    return { grass: at(700, 760), beside: at(60, 300) };
+  });
+  expect(wide.grass[1]).toBeGreaterThan(wide.grass[0] + 20);
+  expect(wide.beside).toEqual([12, 14, 13]);
+
+  await dialog(page).getByRole('radio', { name: /Landscape/ }).focus();
+  await page.keyboard.press('ArrowUp');
+  await expect(dialog(page).getByRole('radio', { name: /Portrait/ })).toBeChecked();
   await expect(preview(page)).toHaveJSProperty('naturalHeight', 1920);
   const [story] = await Promise.all([page.waitForEvent('download'), downloadButton.click()]);
-  expect(story.suggestedFilename()).toBe('supporter-xi-v-synthetic-a-story.png');
+  expect(story.suggestedFilename()).toBe('supporter-xi-v-synthetic-a-portrait.png');
   expect(await pngSize(story)).toEqual({ width: 1080, height: 1920 });
 
   // The picture itself: the dark page at the corner, grass in the middle of the pitch, white and red on a player.
@@ -84,18 +104,21 @@ test('MVP-08, 13, 14: both portrait PNGs download at their exact size, by keyboa
     ctx.drawImage(image, 0, 0);
     const at = (x: number, y: number) => [...ctx.getImageData(x, y, 1, 1).data.slice(0, 3)];
     const all = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-    let red = 0; let white = 0;
+    let red = 0; let white = 0; let yellow = 0;
     for (let index = 0; index < all.length; index += 4) {
       if (all[index] === 218 && all[index + 1] === 54 && all[index + 2] === 46) red++;
       if (all[index] === 255 && all[index + 1] === 255 && all[index + 2] === 255) white++;
+      if (all[index] === 245 && all[index + 1] === 197 && all[index + 2] === 24) yellow++;
     }
-    return { corner: at(4, 4), grass: at(300, 1000), red, white };
+    return { corner: at(4, 4), grass: at(300, 1000), red, white, yellow };
   });
   expect(colours.corner).toEqual([12, 14, 13]);
   expect(colours.grass[1]).toBeGreaterThan(colours.grass[0] + 20);
   expect(colours.grass[1]).toBeGreaterThan(colours.grass[2] + 20);
   expect(colours.red).toBeGreaterThan(20_000);
   expect(colours.white).toBeGreaterThan(20_000);
+  // The address in the footer is the only yellow on the image.
+  expect(colours.yellow).toBeGreaterThan(1_500);
 
   // Escape closes, focus returns to the button, and the XI is as it was.
   await page.keyboard.press('Escape');
@@ -133,9 +156,9 @@ test('MVP-08: the image is drawn from the XI as it was when sharing started', as
   await page.route('**/api/featured-fixture', (route) => route.fulfill({ json: { ...context, fixture: { ...fixture, opponent: 'Renamed' }, players: players.map((player, index) => index === 0 ? { ...player, name: 'Changed Name' } : player) } }));
   await page.evaluate(() => window.dispatchEvent(new Event('focus')));
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Renamed');
-  await dialog(page).getByRole('radio', { name: /Story/ }).check();
+  await dialog(page).getByRole('radio', { name: /Portrait/ }).check();
   await expect(preview(page)).toHaveJSProperty('naturalHeight', 1920);
   expect(await preview(page).getAttribute('alt')).toBe(before);
   const [story] = await Promise.all([page.waitForEvent('download'), dialog(page).getByRole('button', { name: 'Download image' }).click()]);
-  expect(story.suggestedFilename()).toBe('supporter-xi-v-synthetic-a-story.png');
+  expect(story.suggestedFilename()).toBe('supporter-xi-v-synthetic-a-portrait.png');
 });
