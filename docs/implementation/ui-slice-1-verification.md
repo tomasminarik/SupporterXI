@@ -34,3 +34,9 @@
 - Logo order (disc first or last) is still undecided; disc first is used.
 - "Start new fixture" still uses the browser's confirmation box.
 - Mobile layout (slice 3) and admin restyle (slice 4) are not started. PNG export is not started.
+
+## Follow-up tweaks (9 October 2026, user request)
+
+- **Drag and drop:** native HTML drag was replaced by a pointer drag that works in every desktop browser: a pill follows the cursor, the nearest position within 64px lights up, Escape cancels. Tests: `tests/browser/workbench.spec.ts` (drop near a position, Escape cancels).
+- **Kickoff language:** always English (en-GB) in the visitor's own time zone. Test: `tests/browser/fixtures.spec.ts` (Slovak browser still shows "Sun, 25 Oct 2026, 13:00 CET").
+- **Formation chooser (user chose option 1):** the formation button opens a panel above it, grouped by back line. Hovering (after a real mouse movement) or arrowing through a formation previews it on the real pitch, with players leaving and roles cleared listed in the panel; click or Enter commits, Escape or moving away reverts. On touch the first tap previews and the second commits. This replaces the separate confirmation dialog and satisfies MVP-04's preview-before-confirm and cancel-leaves-state-unchanged rules. Tests: `tests/browser/workbench.spec.ts` (hover preview and Escape, keyboard picker), `tests/browser/memory.spec.ts`.
