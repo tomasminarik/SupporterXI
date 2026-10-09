@@ -24,6 +24,17 @@ export function projectSlot(x: number, y: number) {
   };
 }
 
+/** The mobile pitch is a bird's-eye portrait view, attacking upwards. It is not to scale: central players
+    are spread a little wider than the catalogue places them, so that three abreast have room for their
+    names, and the wings keep their place. Returns percentages of the pitch box. */
+export function portraitSpot(x: number, y: number) {
+  const offset = x - 50;
+  const spread = Math.sign(offset) * Math.pow(Math.abs(offset), 0.8) * Math.pow(50, 0.2);
+  // The goalkeeper sits a little deeper than the catalogue's line, clear of a central defender's labels.
+  const depth = y < 10 ? (10 - y) * 1.1 : 0;
+  return { left: Math.round((50 + spread * 0.93) * 100) / 100, top: Math.round((5.5 + (100 - y) * 0.86 + depth) * 100) / 100 };
+}
+
 // The user's sketch labels central pairs by line only (CB, CB rather than LCB, RCB).
 const pairedCentral = new Set(['CB', 'DM', 'CM', 'AM', 'ST']);
 export function markerLabel(abbreviation: string): string {
