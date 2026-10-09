@@ -5,7 +5,7 @@ const makeContext = () => ({ schemaVersion: 2, contentRevision: 'a'.repeat(64), 
 const formationButton = (page: Page) => page.locator('.sx-formation');
 async function chooseFormation(page: Page, name: string) {
   await formationButton(page).click();
-  await page.getByRole('dialog').getByRole('button', { name, exact: true }).click();
+  await page.getByRole('group', { name: 'Choose a formation' }).getByRole('button', { name, exact: true }).click();
 }
 
 test('MVP-02: the live builder starts on 4-2-3-1 Wide with eleven empty positions', async ({ page }) => {

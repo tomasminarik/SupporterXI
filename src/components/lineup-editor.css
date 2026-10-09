@@ -100,27 +100,27 @@ body.sx-dragging, body.sx-dragging * { cursor: grabbing !important; user-select:
 .sx-card-name { font-size: 16px; font-weight: 500; line-height: 1.2; overflow-wrap: anywhere; }
 .sx-empty-list { color: var(--quiet); margin: 12px 0; }
 
-/* Formation picker (proposal) */
-.sx-dialog { width: min(880px, calc(100% - 32px)); max-height: calc(100vh - 48px); padding: 0; background: var(--surface); color: var(--text); border: 1px solid var(--edge-strong); font-family: var(--body); }
-.sx-dialog::backdrop { background: rgba(5,6,5,.72); }
-.sx-dialog h2 { margin: 0; font: 800 30px var(--display); text-transform: uppercase; letter-spacing: 0; }
-.sx-dialog-head { display: flex; justify-content: space-between; align-items: center; padding: 16px 16px 8px 24px; }
-.sx-formations { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; padding: 8px 24px 24px; }
-.sx-formation-option { display: flex; flex-direction: column; gap: 8px; padding: 10px; background: var(--bg); border: 1px solid var(--edge); color: var(--text); font: 800 19px var(--display); text-align: left; cursor: pointer; }
-.sx-formation-option:hover { border-color: var(--text); }
-.sx-formation-option[aria-pressed=true] { border: 3px solid var(--red); padding: 8px; }
-.sx-current { font: 600 12px var(--body); color: var(--soft); text-transform: uppercase; letter-spacing: .6px; }
-.sx-thumb { width: 100%; height: auto; display: block; background: #2f6e2a; fill: none; stroke: rgba(255,255,255,.55); stroke-width: .8; }
-.sx-thumb .dot { fill: var(--red); stroke: #ffffff; stroke-width: 1; }
-.sx-confirm { padding: 24px; max-width: 560px; }
-.sx-confirm p { line-height: 1.6; color: var(--soft); }
-.sx-confirm strong { color: var(--text); }
-.sx-dialog-actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: flex-end; margin-top: 20px; }
+/* Formation picker: opens above its button so the pitch stays in view; hovering or
+   arrowing through a formation previews it on the real pitch. */
+.sx-picker { position: absolute; left: 50%; bottom: calc(100% - 74px * var(--k) + 10px); transform: translateX(-50%); z-index: 8; width: min(760px, calc(100vw - 32px)); padding: 16px 18px 14px; background: var(--surface); border: 1px solid var(--edge-strong); box-shadow: 0 18px 40px rgba(0,0,0,.6); }
+.sx-picker-groups { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 18px; }
+.sx-picker-group h3 { margin: 0 0 8px; font: 600 12px var(--body); text-transform: uppercase; letter-spacing: .8px; color: var(--quiet); }
+.sx-chips { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 6px; }
+.sx-chip { min-height: 40px; padding: 0 10px; background: var(--bg); border: 1px solid var(--edge); color: var(--text); font: 800 19px var(--display); text-align: left; cursor: pointer; white-space: nowrap; }
+.sx-chip:hover, .sx-chip[data-preview=true] { border-color: var(--text); background: #222623; }
+.sx-chip[aria-pressed=true] { border: 2px solid var(--red); padding: 0 9px; }
+.sx-picker-note { margin: 12px 0 0; min-height: 40px; font-size: 14px; line-height: 1.45; color: var(--soft); }
+.sx-picker-note strong { color: var(--text); }
+.sx-marker { transition: left .28s ease, top .28s ease; }
+.sx-previewing .sx-marker { pointer-events: none; }
+.sx-previewing .sx-formation { border-color: var(--text); }
 
 /* Below 900px: a flat bird's-eye stand-in until the mobile layout (slice 3) is designed. */
 @media (max-width: 899px) {
   .sx-pitch { height: auto; padding: 0 16px; margin-top: 20px; }
   .sx-formation { position: relative; left: auto; top: auto; transform: none; margin: 0 auto 14px; }
+  .sx-picker { position: static; transform: none; width: auto; margin: 0 0 14px; }
+  .sx-picker-groups { grid-template-columns: 1fr; }
   .sx-glow, .sx-floor-shadow, .sx-scene, .sx-furniture { display: none; }
   .sx-overlay { position: relative; left: auto; bottom: auto; transform: none; width: 100%; max-width: 460px; height: auto; margin: 0 auto; aspect-ratio: 68 / 105; }
   .sx-overlay .sx-flat { display: block; position: absolute; inset: 0; }

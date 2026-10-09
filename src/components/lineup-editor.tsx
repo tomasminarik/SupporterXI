@@ -11,7 +11,7 @@ import './lineup-editor.css';
 
 type Slot = Formation['slots'][number];
 type Dragged = { kind: 'player' | 'slot'; id: string; x: number; y: number; over: string | null };
-type Proposal = { target: Formation; state: Lineup; leaving: string[]; clearedRoles: string[] };
+type Change = { target: Formation; state: Lineup; leaving: string[]; clearedRoles: string[] };
 
 export default function LineupEditor({ lineup, players, onChange }: { lineup: Lineup; players: readonly PublicPlayer[]; onChange: (state: Lineup) => void }) {
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
@@ -20,11 +20,14 @@ export default function LineupEditor({ lineup, players, onChange }: { lineup: Li
   const [query, setQuery] = useState('');
   const [notice, setNotice] = useState('');
   const [pickerOpen, setPickerOpen] = useState(false);
-  const [proposal, setProposal] = useState<Proposal | null>(null);
+  const [previewId, setPreviewId] = useState<string | null>(null);
   const squadHeading = useRef<HTMLHeadingElement>(null);
   const squadSection = useRef<HTMLElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
-  const dialogRef = useRef<HTMLDialogElement>(null);
+  const pickerRef = useRef<HTMLDivElement>(null);
+  const formationButton = useRef<HTMLButtonElement>(null);
+  const hoverOrigin = useRef<{ x: number; y: number } | null>(null);
+  const hoverArmed = useRef(false);
   const editorRef = useRef<HTMLDivElement>(null);
   const [placements, setPlacements] = useState<ReadonlyMap<string, Placement>>(new Map());
   const names = useMemo(() => shortNames(players), [players]);
@@ -47,6 +50,12 @@ export default function LineupEditor({ lineup, players, onChange }: { lineup: Li
   const menu = slotOf(menuSlot);
   const menuPlayer = menu && occupantOf(menu[0]);
   const heldPlayer = byId(selectedPlayer ?? undefined);
+  // While the formation picker previews a formation, the pitch shows it.
+  const previewTarget = formations.find((item) => item.id === previewId && item.id !== lineup.formationId);
+  const preview = previewTarget ? describeChange(previewTarget) : null;
+  const shown = preview?.state ?? lineup;
+  const shownFormation = formationFor(shown);
+  const shownOccupant = (slotId: string) => byId(shown.slots[slotId]?.playerId);
 
   // Close the pill menu when the pointer goes down anywhere else.
   useEffect(() => {
@@ -59,11 +68,15 @@ export default function LineupEditor({ lineup, players, onChange }: { lineup: Li
     return () => document.removeEventListener('pointerdown', onPointer);
   }, [menuSlot]);
 
+  // Close the formation picker, without changing anything, on a click elsewhere.
   useEffect(() => {
-    const dialog = dialogRef.current;
-    if (!dialog) return;
-    if (pickerOpen && !dialog.open) dialog.showModal();
-    if (!pickerOpen && dialog.open) dialog.close();
+    if (!pickerOpen) return;
+    const onPointer = (event: PointerEvent) => {
+      const element = event.target as Element;
+      if (!pickerRef.current?.contains(element) && !formationButton.current?.contains(element)) { setPickerOpen(false); setPreviewId(null); }
+    };
+    document.addEventListener('pointerdown', onPointer);
+    return () => document.removeEventListener('pointerdown', onPointer);
   }, [pickerOpen]);
 
   // Measure the rendered pills and tags, then choose where each label sits.
@@ -82,7 +95,7 @@ export default function LineupEditor({ lineup, players, onChange }: { lineup: Li
     measure();
     window.addEventListener('resize', measure);
     return () => window.removeEventListener('resize', measure);
-  }, [lineup, players]);
+  }, [shown, players]);
 
   const focusSlot = (slotId: string) => requestAnimationFrame(() => document.getElementById(`slot-${slotId}`)?.focus());
   function resetSelection() { setSelectedSlot(null); setSelectedPlayer(null); setMenuSlot(null); }
@@ -194,8 +207,8 @@ export default function LineupEditor({ lineup, players, onChange }: { lineup: Li
   }
   const draggedPlayer = dragged && (dragged.kind === 'player' ? byId(dragged.id) : occupantOf(dragged.id));
 
-  function pickFormation(next: Formation) {
-    if (next.id === lineup.formationId) { setPickerOpen(false); return; }
+  // Formation changes are previewed on the real pitch before they are committed.
+  function describeChange(next: Formation): Change {
     const result = changeFormation(lineup, next);
     const kept = new Set(Object.values(result.state.slots).flatMap((entry) => entry ? [entry.playerId] : []));
     const leaving = Object.values(lineup.slots).flatMap((entry) => entry && !kept.has(entry.playerId) ? [byId(entry.playerId)?.name ?? 'Unknown player'] : []);
@@ -205,15 +218,49 @@ export default function LineupEditor({ lineup, players, onChange }: { lineup: Li
       const after = Object.values(result.state.slots).find((item) => item?.playerId === entry.playerId);
       return after?.roleId ? [] : [`${byId(entry.playerId)?.name} (${roles.find((role) => role.id === entry.roleId)?.name})`];
     });
-    const change = { target: next, state: result.state, leaving, clearedRoles };
-    if (leaving.length || clearedRoles.length) setProposal(change);
-    else applyFormation(change);
+    return { target: next, state: result.state, leaving, clearedRoles };
   }
-  function applyFormation(change: Proposal) {
+  // Hover previews only after the mouse really moves, so a panel opening under a
+  // resting pointer never previews a formation nobody pointed at.
+  function hoverPreview(event: ReactPointerEvent, id: string | null) {
+    if (event.pointerType !== 'mouse') return;
+    if (!hoverArmed.current) {
+      const origin = hoverOrigin.current ?? (hoverOrigin.current = { x: event.clientX, y: event.clientY });
+      if (Math.abs(event.clientX - origin.x) + Math.abs(event.clientY - origin.y) < 4) return;
+      hoverArmed.current = true;
+    }
+    setPreviewId(id);
+  }
+  function openPicker(from?: { x: number; y: number }) {
+    hoverOrigin.current = from ?? null; hoverArmed.current = false;
+    resetSelection();
+    setPickerOpen(true);
+    requestAnimationFrame(() => pickerRef.current?.querySelector<HTMLElement>('[aria-pressed=true], button')?.focus());
+  }
+  function closePicker(focusButton = true) {
+    setPickerOpen(false); setPreviewId(null);
+    if (focusButton) requestAnimationFrame(() => formationButton.current?.focus());
+  }
+  function chooseFormation(next: Formation) {
+    if (next.id === lineup.formationId) return closePicker();
+    // Touch has no hover: the first tap previews, the second commits.
+    if (previewId !== next.id) { setPreviewId(next.id); return; }
+    const change = describeChange(next);
     onChange(change.state);
-    resetSelection(); setQuery(''); setProposal(null); setPickerOpen(false);
-    setNotice(`${change.target.name} selected. ${change.leaving.length} players left the XI; ${change.clearedRoles.length} roles cleared.`);
+    setQuery('');
+    setNotice(`${next.name} selected. ${change.leaving.length} players left the XI; ${change.clearedRoles.length} roles cleared.`);
+    closePicker();
   }
+  function onPickerKey(event: KeyboardEvent) {
+    if (event.key === 'Escape') { event.stopPropagation(); closePicker(); return; }
+    const keys: Record<string, number> = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
+    if (!(event.key in keys)) return;
+    event.preventDefault();
+    const options = [...(pickerRef.current?.querySelectorAll<HTMLElement>('.sx-chip') ?? [])];
+    const index = options.indexOf(document.activeElement as HTMLElement);
+    options[(index + keys[event.key] + options.length) % options.length]?.focus();
+  }
+
 
   const heading = count === 11 && !target && !menu && !heldPlayer ? 'Your XI is complete'
     : menuPlayer ? `Replace ${short(menuPlayer)}`
@@ -222,30 +269,43 @@ export default function LineupEditor({ lineup, players, onChange }: { lineup: Li
     : 'Pick your XI';
   const unavailablePicked = Object.values(lineup.slots).some((entry) => entry && !selectableIds.includes(entry.playerId));
 
-  const shadows = formation?.slots.map(([id, , x, y]) => {
+  const shadows = shownFormation?.slots.map(([id, , x, y]) => {
     const { left, top } = fieldPercent(x, y);
-    const occupant = occupantOf(id);
-    const role = roles.find((item) => item.id === lineup.slots[id]?.roleId);
+    const occupant = shownOccupant(id);
+    const role = roles.find((item) => item.id === shown.slots[id]?.roleId);
     const width = occupant ? 48 + Math.max(short(occupant).length * 9.5, role ? role.name.length * 6.6 : 0) : 0;
     return occupant
       ? <div key={id} className="sx-shadow" data-side={placements.get(id)?.side ?? 'right'} style={{ left: `${left}%`, top: `${top + 8}%`, width }} />
       : <div key={id} className="sx-shadow sx-shadow-empty" style={{ left: `${left}%`, top: `${top}%` }} />;
   });
 
-  const toolbar = <button type="button" className="sx-formation" aria-haspopup="dialog" aria-label={formation ? `Formation: ${formation.name}. Change formation` : 'Choose a formation'} onClick={() => { setMenuSlot(null); setPickerOpen(true); }}>
-    {formation?.name ?? 'Choose formation'}<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 9l7 7 7-7" /></svg>
-  </button>;
+  const groups = [['Back four', '4'], ['Back three', '3'], ['Back five', '5']].map(([label, digit]) => ({ label, items: formations.filter((item) => item.name.startsWith(digit)) }));
+  const toolbar = <>
+    <button ref={formationButton} type="button" className="sx-formation" aria-expanded={pickerOpen} aria-controls="formation-picker" aria-label={formation ? `Formation: ${formation.name}. Change formation` : 'Choose a formation'} onClick={(event) => pickerOpen ? closePicker() : openPicker(event.detail ? { x: event.clientX, y: event.clientY } : undefined)}>
+      {(preview?.target ?? formation)?.name ?? 'Choose formation'}<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 9l7 7 7-7" /></svg>
+    </button>
+    {pickerOpen && <div ref={pickerRef} id="formation-picker" className="sx-picker" role="group" aria-label="Choose a formation" onKeyDown={onPickerKey} onPointerLeave={(event) => { if (hoverArmed.current) hoverPreview(event, null); }}>
+      <div className="sx-picker-groups">
+        {groups.map((group) => <div key={group.label} className="sx-picker-group"><h3>{group.label}</h3><div className="sx-chips">
+          {group.items.map((item) => <button key={item.id} type="button" className="sx-chip" aria-pressed={item.id === lineup.formationId} data-preview={item.id === previewId && item.id !== lineup.formationId ? 'true' : undefined}
+            onPointerMove={(event) => { if (previewId !== item.id) hoverPreview(event, item.id); }} onFocus={() => setPreviewId(item.id)} onClick={() => chooseFormation(item)}>{item.name}</button>)}
+        </div></div>)}
+      </div>
+      <p className="sx-picker-note" aria-live="polite">{!preview ? `Current: ${formation?.name ?? 'none'}. Hover or use the arrow keys to preview a formation on the pitch.`
+        : <>{preview.leaving.length ? <><strong>Leaves your XI:</strong> {preview.leaving.join(', ')}. </> : null}{preview.clearedRoles.length ? <><strong>Roles cleared:</strong> {preview.clearedRoles.join(', ')}. </> : null}{!preview.leaving.length && !preview.clearedRoles.length ? 'Everyone keeps their place. ' : ''}Click or press Enter to use {preview.target.name}; Escape keeps {formation?.name ?? 'the current formation'}.</>}</p>
+    </div>}
+  </>;
 
-  return <div ref={editorRef} className="sx-editor" onKeyDown={onKeyDown}>
+  return <div ref={editorRef} className={preview ? 'sx-editor sx-previewing' : 'sx-editor'} onKeyDown={onKeyDown}>
     <p className="sr-only" role="status">{notice}</p>
     <PitchStage toolbar={toolbar} shadows={shadows} menu={menu && menuPlayer && <PillMenu ref={menuRef} short={short(menuPlayer)} slot={menu} lineup={lineup} formation={formation!} player={menuPlayer} occupantOf={occupantOf} onClose={closeMenu}
         onRole={(roleId) => { onChange(assignRole(lineup, menu[0], roleId)); setNotice(roleId ? `Role set: ${roles.find((role) => role.id === roleId)?.name}.` : 'Role removed.'); }}
         onMove={(to) => move(menu[0], to)}
         onRemove={() => { onChange(removePlayer(lineup, menu[0])); setNotice(`${menuPlayer.name} removed. The position’s role is cleared.`); closeMenu(); }} />}>
-      {formation?.slots.map((slot) => {
+      {shownFormation?.slots.map((slot) => {
         const [id, abbreviation, x, y] = slot;
-        const occupant = occupantOf(id);
-        const role = roles.find((item) => item.id === lineup.slots[id]?.roleId);
+        const occupant = shownOccupant(id);
+        const role = roles.find((item) => item.id === shown.slots[id]?.roleId);
         const point = projectSlot(x, y);
         const style = { '--x': point.x, '--y': point.y, '--fx': 6 + x * 0.88, '--fy': 4 + (100 - y) * 0.92 } as React.CSSProperties;
         const selected = selectedSlot === id;
@@ -289,33 +349,7 @@ export default function LineupEditor({ lineup, players, onChange }: { lineup: Li
       {!visible.length && <p className="sx-empty-list">{unused.length ? 'No players match your search.' : 'No eligible players left to pick.'}</p>}
     </section>
 
-    <dialog ref={dialogRef} className="sx-dialog" aria-labelledby="formation-title" onClose={() => { setPickerOpen(false); setProposal(null); }}>
-      {proposal ? <div className="sx-confirm">
-        <h2 id="formation-title">Change to {proposal.target.name}?</h2>
-        {proposal.leaving.length > 0 && <p><strong>Leaving your XI:</strong> {proposal.leaving.join(', ')}</p>}
-        {proposal.clearedRoles.length > 0 && <p><strong>Roles cleared:</strong> {proposal.clearedRoles.join(', ')}</p>}
-        <p className="sx-muted">Players in matching positions keep their place.</p>
-        <div className="sx-dialog-actions">
-          <button type="button" className="sx-secondary" onClick={() => setProposal(null)}>Keep {formation?.name ?? 'current formation'}</button>
-          <button type="button" className="sx-primary" onClick={() => applyFormation(proposal)}>Change to {proposal.target.name}</button>
-        </div>
-      </div> : <>
-        <div className="sx-dialog-head"><h2 id="formation-title">Choose a formation</h2><button type="button" className="sx-close" aria-label="Close" onClick={() => setPickerOpen(false)}>×</button></div>
-        <div className="sx-formations">
-          {formations.map((item) => <button type="button" key={item.id} className="sx-formation-option" aria-pressed={item.id === lineup.formationId} onClick={() => pickFormation(item)}>
-            <FormationThumb formation={item} /><span>{item.name}</span>{item.id === lineup.formationId && <span className="sx-current">Current</span>}
-          </button>)}
-        </div>
-      </>}
-    </dialog>
   </div>;
-}
-
-function FormationThumb({ formation }: { formation: Formation }) {
-  return <svg aria-hidden="true" viewBox="0 0 105 68" className="sx-thumb">
-    <rect x="1" y="1" width="103" height="66" /><path d="M52.5 1V67M1 17H17V51H1M104 17H88V51H104" /><circle cx="52.5" cy="34" r="9" />
-    {formation.slots.map(([id, , x, y]) => { const p = fieldPercent(x, y); return <circle key={id} className="dot" cx={p.left * 1.05} cy={p.top * 0.68} r="3.2" />; })}
-  </svg>;
 }
 
 type MenuProps = {
