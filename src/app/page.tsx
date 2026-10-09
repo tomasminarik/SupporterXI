@@ -19,7 +19,7 @@ export default function Home() {
         <FeaturedFixture />
         <details className="squad">
           <summary><span>Squad list <span className="count">{initialSquad.length} players</span></span><span className="expand" aria-hidden="true">+</span></summary>
-          <p className="squad-note">The supplied squad. Match availability will be shown when a fixture is ready.</p>
+          <p className="squad-note">Match availability is shown in the lineup builder when a fixture is available.</p>
           <ul>{initialSquad.map((player) => <li key={player.id}><span className="shirt-number"><span className="sr-only">Number </span>{player.shirtNumber ?? '—'}</span><span>{player.name}</span></li>)}</ul>
         </details>
       </main>

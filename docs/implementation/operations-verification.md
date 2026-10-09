@@ -50,9 +50,12 @@ The failure drill exercises an actual Preview build and preserves production; it
 - **MVP-06/13:** A restored formation starts with guidance to choose a position, rather than incorrectly asking the user to choose a formation again.
 - **MVP-02/13:** The chooser distinguishes a search with no matches from having no eligible unselected players.
 - **MVP-12:** Checking publication clears the obsolete save notice so verified live content is not accompanied by an old “publication pending” message.
+- **MVP-01/02:** The public fixture and squad captions describe the available builder, removing the obsolete “Soon” promise. Existing entry and fixture browser checks cover the populated and no-fixture states.
 - `tests/browser/workbench.spec.ts` verifies keyboard focus order, visible mobile panel, focus return, repeat selection, search feedback and axe at 320/390/768/1440px. Four new browser cases bring coverage to 40 production and 16 workbench/admin checks; 102 unit/integration tests remain.
 
 The final local `npm run check` passed after the polish: lint, TypeScript, catalogue/content parity, 102 unit/integration tests, production build, 40 production and 16 workbench/admin browser checks. Mobile screenshots were inspected to confirm the chooser itself is visible after position selection. Shared content, catalogue data and browser draft schema remain unchanged.
+
+The subsequent caption-only cleanup passed the production build (including all 102 unit/integration tests and parity checks) and all 24 entry/fixture browser checks across the same four widths.
 
 Dependency review during the drill: `npm audit --omit=dev` reported zero vulnerabilities. Full audit reported the `braces` stack-exhaustion advisory through the development-only Next.js lint dependency chain (five affected package entries). Its suggested automatic remedy downgrades the framework lint configuration; no forced downgrade was applied. Recheck the available compatible remedy during final release review.
 
