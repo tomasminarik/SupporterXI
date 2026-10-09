@@ -7,7 +7,8 @@ export function XiMark({ width, height, heavy = false }: { width: number; height
   return <svg aria-hidden="true" width={width} height={height} viewBox="0 0 36 28"><path d={heavy ? bold : regular} fill="none" stroke="currentColor" strokeWidth={heavy ? 8.5 : 6.5} /></svg>;
 }
 
-/** Full logo, 40px tall as in the agreed header. The full pill is only used at 32px and above. */
+/** Full logo, 40px tall as in the agreed header: the word, then the XI disc, so it reads "Supporter XI"
+    (order chosen by the user, 9 October 2026). The full pill is only used at 32px and above. */
 export function Logo() {
-  return <span className="sx-logo" role="img" aria-label="Supporter XI"><span className="sx-logo-disc"><XiMark width={18} height={14} /></span><span aria-hidden="true">Supporter</span></span>;
+  return <span className="sx-logo" role="img" aria-label="Supporter XI"><span aria-hidden="true">Supporter</span><span className="sx-logo-disc"><XiMark width={18} height={14} /></span></span>;
 }

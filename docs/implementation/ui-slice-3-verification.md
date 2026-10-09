@@ -32,6 +32,5 @@ With all eleven placed and the longest role on every player: no label overlaps a
 
 ## Not done yet
 
-- Manual checks on a real iPhone (Safari) and Android Chrome.
-- Header and headline sizing on phones were left as they are.
+- Done since: the user checked the builder on their own phones (9 October 2026), and the phone header and headline were tuned ([polish verification](ui-polish-verification.md)).
 - Touch dragging (optional per AGENTS.md) is not built.

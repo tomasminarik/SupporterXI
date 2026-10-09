@@ -37,7 +37,7 @@ body:has(.sx) { background: #0c0e0d; color-scheme: dark; }
 .sx-skip:focus { top: 12px; }
 
 .sx-header { max-width: 1320px; margin: 0 auto; padding: 22px 32px; display: flex; align-items: center; gap: 14px; }
-.sx-logo { display: inline-flex; align-items: center; height: 40px; border-radius: 20px; background: var(--red); border: 2px solid #ffffff; padding: 0 16px 0 3px; gap: 8px; color: #ffffff; font: 800 22px/1 var(--display); text-transform: uppercase; white-space: nowrap; }
+.sx-logo { display: inline-flex; align-items: center; height: 40px; border-radius: 20px; background: var(--red); border: 2px solid #ffffff; padding: 0 3px 0 16px; gap: 8px; color: #ffffff; font: 800 22px/1 var(--display); text-transform: uppercase; white-space: nowrap; }
 .sx-logo-disc { width: 30px; height: 30px; border-radius: 50%; background: #ffffff; color: #c42a23; display: grid; place-items: center; }
 .sx-share { margin-left: auto; height: 44px; padding: 0 20px; background: var(--yellow); color: var(--on-yellow); border: 1px solid var(--yellow); font: 600 15px var(--body); cursor: pointer; }
 .sx-share:hover:not(:disabled, .sx-share-waiting) { background: #ffd43b; }
@@ -47,8 +47,10 @@ body:has(.sx) { background: #0c0e0d; color-scheme: dark; }
 .sx-share-waiting:hover { background: rgba(245,197,24,.12); }
 
 .sx-fixture { max-width: 1320px; margin: 0 auto; padding: 18px 32px 0; text-align: center; }
-.sx-headline { margin: 0; font: 800 clamp(56px, 9.2vw, 132px)/0.92 var(--display); text-transform: uppercase; letter-spacing: -1px; text-wrap: balance; overflow-wrap: anywhere; }
-.sx-headline.sx-long { font-size: clamp(48px, 7.4vw, 108px); }
+/* On narrow screens the type follows the width, so the club's name always fits on one line. */
+.sx-headline { margin: 0; font: 800 min(132px, max(9.2vw, min(56px, 13vw)))/0.92 var(--display); text-transform: uppercase; letter-spacing: -1px; text-wrap: balance; overflow-wrap: anywhere; }
+.sx-headline.sx-long { font-size: min(108px, max(7.4vw, min(48px, 13vw))); }
+.sx-versus { white-space: nowrap; }
 .sx-club { color: var(--red); display: block; }
 .sx-v { color: #8a8d86; }
 .sx-opponent { color: #ffffff; }
@@ -108,10 +110,24 @@ body:has(.sx) { background: #0c0e0d; color-scheme: dark; }
 @media (max-width: 700px) {
   .sx-header { padding: 16px; }
   .sx-fixture { padding: 12px 16px 0; }
-  .sx-details { font-size: 15px; }
+  .sx-details { font-size: 15px; margin-top: 16px; gap: 4px 12px; }
+  .sx-details > span + span::before { margin-right: 12px; }
+  /* The kickoff takes its own line, so no separator is left hanging at the start of one. */
+  .sx-details > span:last-child { flex-basis: 100%; }
+  .sx-details > span:last-child::before { content: none; }
+  .sx-logo { height: 36px; font-size: 20px; padding-left: 13px; gap: 7px; }
+  .sx-logo-disc { width: 26px; height: 26px; }
+  .sx-share { height: 40px; padding: 0 14px; font-size: 14px; white-space: nowrap; }
   .sx-dev { margin-left: 16px; margin-right: 16px; }
   .sx-memory, .sx-footer { padding-left: 16px; padding-right: 16px; }
   .sx-footer { flex-direction: column; gap: 4px; }
+}
+/* The narrowest phones: the logo collapses to its disc (red with a white XI), leaving room for the button. */
+@media (max-width: 359px) {
+  .sx-logo { width: 40px; height: 40px; padding: 0; justify-content: center; border-width: 0; }
+  .sx-logo > span[aria-hidden] { display: none; }
+  .sx-logo-disc { width: auto; height: auto; background: transparent; color: #ffffff; }
+  .sx-logo-disc svg { width: 22px; height: 17px; }
 }
 @media (max-width: 792px) {
   .sx-notice { margin-left: 16px; margin-right: 16px; flex-wrap: wrap; }

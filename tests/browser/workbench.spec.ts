@@ -1,5 +1,8 @@
 import { expect, test, type Page } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
+import { formations, rolesForFamily } from '../../src/domain/catalogues';
+import { catalogueVersion, previewDraftKey } from '../../src/domain/draft';
+import { initialSquad } from '../../src/domain/squad';
 
 const formationButton = (page: Page) => page.locator('.sx-formation');
 const picker = (page: Page) => page.getByRole('group', { name: 'Choose a formation' });
@@ -344,4 +347,29 @@ test.describe('touch layout', () => {
       expect(result, formation).toEqual({ hits: [], outside: [] });
     }
   });
+});
+
+test('MVP-13: desktop labels stay apart in all 14 formations with the longest names and the longest role on every player', async ({ page }) => {
+  test.skip(test.info().project.name !== 'desktop', 'Measured at 1440px, the full design width');
+  test.slow();
+  const players = initialSquad.map((player) => ({ ...player, selectable: true }));
+  const surname = (name: string) => name.split(' ').at(-1)!;
+  const longest = [...players].sort((a, b) => surname(b.name).length - surname(a.name).length).slice(0, 11);
+  const fixture = { id: '20000000-0000-4000-8000-000000000001', opponent: 'Preview opponent A (synthetic)', venue: 'home', competition: 'Development example', round: null, status: 'scheduled', kickoff: { kind: 'unknown' } };
+  for (const formation of formations) {
+    const slots = Object.fromEntries(formation.slots.map((slot, index) => [slot[0], { playerId: longest[index].id, roleId: [...rolesForFamily(slot[4])].sort((a, b) => b.name.length - a.name.length)[0].id }]));
+    const draft = { schemaVersion: 1, catalogueVersion, contentRevision: 'a'.repeat(64), fixture, players, lineup: { formationId: formation.id, slots } };
+    await page.goto('/dev/workbench');
+    await page.evaluate(([key, value]) => localStorage.setItem(key, value), [previewDraftKey, JSON.stringify(draft)]);
+    await page.reload();
+    await expect(formationButton(page)).toHaveText(formation.name);
+    await expect(page.locator('.sx-pill .sx-role')).toHaveCount(11);
+    // Placement settles a frame after the labels are measured. A touch of up to 3px is not counted as an overlap.
+    await expect.poll(() => page.evaluate(() => {
+      const parts = [...document.querySelectorAll<HTMLElement>('.sx-marker')].flatMap((marker) => [...marker.querySelectorAll('.sx-pill-body, .sx-role')].map((element) => ({ id: marker.dataset.slot!, box: element.getBoundingClientRect() })));
+      const hits: string[] = [];
+      for (const a of parts) for (const b of parts) if (a.id < b.id && Math.min(a.box.right, b.box.right) - Math.max(a.box.left, b.box.left) > 3 && Math.min(a.box.bottom, b.box.bottom) - Math.max(a.box.top, b.box.top) > 3) hits.push(`${a.id}/${b.id}`);
+      return hits;
+    }), { message: formation.name }).toEqual([]);
+  }
 });

@@ -20,6 +20,10 @@ test('MVP-07 empty state, Supporter XI name, initial MVP-13/14', async ({ page }
   await expect(page.locator('main')).toBeFocused();
   await expect(page.getByRole('img', { name: 'Supporter XI' })).toBeVisible();
   await expect(page).toHaveTitle(/^Supporter XI/);
+  // Search engines are kept out until supporterxi.com is the production domain (tests/unit/site.test.ts).
+  await expect(page.locator('meta[name=robots]')).toHaveAttribute('content', /noindex/);
+  await expect(page.locator('link[rel=canonical]')).toHaveAttribute('href', 'https://supporterxi.com');
+  expect(await (await page.request.get('/robots.txt')).text()).toMatch(/Disallow: \/\s*$/m);
   await expect(page.getByRole('region', { name: 'Lineup pitch' })).toHaveCount(0);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze()).violations).toEqual([]);

@@ -1,19 +1,36 @@
 import { describe, expect, it } from 'vitest';
 import { formations } from '../../src/domain/catalogues';
 import { initialSquad } from '../../src/domain/squad';
-import { markerLabel, placeLabels, portraitSpot, projectSlot, shortName, shortNames } from '../../src/components/pitch-geometry';
+import { fieldPercent, markerLabel, placeLabels, portraitSpot, projectSlot, shortName, shortNames } from '../../src/components/pitch-geometry';
 
 describe('MVP-13 desktop pitch presentation (UI redesign handoff)', () => {
-  it('projects catalogue coordinates to the agreed mockup positions', () => {
-    // Points read from docs/design/reference/full-xi-pills.dc.html (4-2-3-1 Wide). The handoff
-    // formula reproduces the back six within 2px; the mockup nudged forwards by hand (up to 8px).
-    const expected: Record<string, [number, number]> = { gk: [210, 565], lb: [384, 476], lcb: [346, 535], rcb: [331, 597], rb: [341, 674], ldm: [538, 535], rdm: [536, 597], lw: [753, 476], cam: [736, 565], rw: [791, 674], st: [907, 565] };
+  it('projects catalogue coordinates to the agreed mockup positions along the middle of the pitch', () => {
+    // Points read from docs/design/reference/full-xi-pills.dc.html (4-2-3-1 Wide). Players on the line
+    // between the goals are where the mockup put them (it nudged the forwards by hand, up to 8px).
+    const expected: Record<string, [number, number]> = { gk: [210, 565], cam: [736, 565], st: [907, 565] };
     for (const [id, , x, y] of formations[0].slots) {
+      if (!expected[id]) continue;
       const point = projectSlot(x, y);
-      const tolerance = ['lw', 'rw', 'st'].includes(id) ? 8.5 : 2;
+      const tolerance = id === 'gk' ? 2 : 8.5;
       expect(Math.abs(point.x - expected[id][0])).toBeLessThanOrEqual(tolerance);
       expect(Math.abs(point.y - expected[id][1])).toBeLessThanOrEqual(tolerance);
     }
+  });
+  it('spreads central players across the pitch for their labels, keeping order, symmetry and the field', () => {
+    // Decided 9 October 2026 to end label overlaps: a pill with its role is 54px tall, and the catalogue
+    // puts three central players about 45px apart on screen.
+    for (const formation of formations) {
+      for (const [id, , x, y] of formation.slots) {
+        const { top } = fieldPercent(x, y);
+        expect(top, `${formation.name} ${id}`).toBeGreaterThan(6);
+        expect(top, `${formation.name} ${id}`).toBeLessThan(94);
+        expect(fieldPercent(100 - x, y).top).toBeCloseTo(100 - top, 6);
+      }
+      for (const a of formation.slots) for (const b of formation.slots) if (a[2] < b[2]) expect(fieldPercent(a[2], a[3]).top).toBeLessThan(fieldPercent(b[2], b[3]).top);
+    }
+    const midfield = formations.find((item) => item.id === '3-5-2')!.slots.filter((slot) => ['lcm', 'cm', 'rcm'].includes(slot[0])).map((slot) => projectSlot(slot[2], slot[3]).y);
+    expect(midfield[1] - midfield[0]).toBeGreaterThanOrEqual(54);
+    expect(midfield[2] - midfield[1]).toBeGreaterThanOrEqual(54);
   });
   it('labels paired central positions by line only', () => {
     expect(['LCB', 'RCB', 'CB', 'LDM', 'LCM', 'RAM', 'LST', 'CAM', 'CDM', 'LB', 'RWB', 'LW', 'RM', 'GK'].map(markerLabel)).toEqual(['CB', 'CB', 'CB', 'DM', 'CM', 'AM', 'ST', 'CAM', 'CDM', 'LB', 'RWB', 'LW', 'RM', 'GK']);

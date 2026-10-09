@@ -2,6 +2,9 @@ import FeaturedFixture from '../components/featured-fixture';
 import SiteHeader from '../components/site-header';
 import { ShareProvider } from '../share/share-context';
 
+// One address for search engines, whichever domain served the page.
+export const metadata = { alternates: { canonical: '/' } };
+
 export default function Home() {
   return (
     <div className="sx">

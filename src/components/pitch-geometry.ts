@@ -6,9 +6,17 @@ export const plane = { width: 1160, height: 760, insetX: 30, insetY: 34, tilt: 5
 const field = { width: plane.width - plane.insetX * 2, height: plane.height - plane.insetY * 2 };
 const radians = (plane.tilt * Math.PI) / 180;
 
+// Neither pitch is to scale across its width: central players are spread a little wider than the
+// catalogue places them, so that three abreast have room for their labels. The wings keep their
+// place and the order from touchline to touchline never changes.
+function spreadAcross(x: number, power: number) {
+  const offset = x - 50;
+  return 50 + Math.sign(offset) * Math.pow(Math.abs(offset), power) * Math.pow(50, 1 - power);
+}
+
 /** Catalogue coordinates (x across 0–100 from the left touchline, y forward 0–100) as percentages of the field. */
 export function fieldPercent(x: number, y: number) {
-  return { left: 3 + y * 0.94, top: 4 + x * 0.92 };
+  return { left: 3 + y * 0.94, top: 4 + spreadAcross(x, 0.75) * 0.92 };
 }
 
 /** Projects a catalogue coordinate onto the flat overlay that sits over the tilted plane. */
@@ -24,15 +32,12 @@ export function projectSlot(x: number, y: number) {
   };
 }
 
-/** The mobile pitch is a bird's-eye portrait view, attacking upwards. It is not to scale: central players
-    are spread a little wider than the catalogue places them, so that three abreast have room for their
-    names, and the wings keep their place. Returns percentages of the pitch box. */
+/** The mobile pitch is a bird's-eye portrait view, attacking upwards, with the same spread across the
+    pitch as the desktop one. Returns percentages of the pitch box. */
 export function portraitSpot(x: number, y: number) {
-  const offset = x - 50;
-  const spread = Math.sign(offset) * Math.pow(Math.abs(offset), 0.8) * Math.pow(50, 0.2);
   // The goalkeeper sits a little deeper than the catalogue's line, clear of a central defender's labels.
   const depth = y < 10 ? (10 - y) * 1.1 : 0;
-  return { left: Math.round((50 + spread * 0.93) * 100) / 100, top: Math.round((5.5 + (100 - y) * 0.86 + depth) * 100) / 100 };
+  return { left: Math.round((50 + (spreadAcross(x, 0.8) - 50) * 0.93) * 100) / 100, top: Math.round((5.5 + (100 - y) * 0.86 + depth) * 100) / 100 };
 }
 
 // The user's sketch labels central pairs by line only (CB, CB rather than LCB, RCB).
@@ -83,28 +88,46 @@ function rectsFor(box: LabelBox, placement: Placement): Rect[] {
 const gap = 3;
 const overlap = (a: Rect, b: Rect) => Math.max(0, Math.min(a.r, b.r) - Math.max(a.l, b.l) + gap) * Math.max(0, Math.min(a.b, b.b) - Math.max(a.t, b.t) + gap);
 export function placeLabels(boxes: readonly LabelBox[]): Map<string, Placement> {
-  // Every spot is fixed: discs and empty markers are obstacles from the start.
+  // Every spot is fixed: discs and empty markers are obstacles whatever the labels do.
   const fixed = boxes.map((box) => ({ id: box.id, rect: 'radius' in box ? rectsFor(box, options[0])[0] : { l: box.x - 17, r: box.x + 17, t: box.y - 16, b: box.y + 16 } }));
   const pills = boxes.filter((box) => !('radius' in box));
-  const result = new Map<string, Placement>();
-  const costOf = (box: LabelBox, option: Placement) => {
-    const others = [...fixed, ...pills.flatMap((other) => other.id !== box.id && result.has(other.id) ? rectsFor(other, result.get(other.id)!).map((rect) => ({ id: other.id, rect })) : [])];
-    return rectsFor(box, option).reduce((sum, rect) => sum + others.reduce((inner, other) => other.id === box.id ? inner : inner + overlap(rect, other.rect), 0), 0);
+  const against = (index: number, option: Placement, chosen: readonly Placement[]) => {
+    let sum = 0;
+    for (const rect of rectsFor(pills[index], option)) {
+      for (const other of fixed) if (other.id !== pills[index].id) sum += overlap(rect, other.rect);
+      for (let j = 0; j < pills.length; j++) if (j !== index) for (const otherRect of rectsFor(pills[j], chosen[j])) sum += overlap(rect, otherRect);
+    }
+    return sum;
   };
-  // A greedy pass in slot order, then two passes where each label reconsiders
-  // with all of its neighbours placed. The default placement wins ties.
+  const total = (chosen: readonly Placement[]) => pills.reduce((sum, _, index) => sum + against(index, chosen[index], chosen), 0);
+  // Start from the agreed placement and let each label reconsider with its neighbours in place; the
+  // default wins ties. Then, while anything still collides, try changing two labels together, which
+  // frees pairs that block each other.
+  let chosen: Placement[] = pills.map(() => options[0]);
   for (let pass = 0; pass < 3; pass++) {
-    for (const box of pills) {
+    pills.forEach((_, index) => {
       let best = options[0];
       let bestCost = Infinity;
       for (const option of options) {
-        const cost = costOf(box, option);
+        const cost = against(index, option, chosen);
         if (cost < bestCost) { best = option; bestCost = cost; }
       }
-      result.set(box.id, best);
-    }
+      chosen = chosen.map((value, at) => at === index ? best : value);
+    });
   }
-  return result;
+  let best = total(chosen);
+  for (let round = 0; round < 6 && best > 0; round++) {
+    let improved = false;
+    for (let i = 0; i < pills.length && best > 0; i++) for (let j = i + 1; j < pills.length && best > 0; j++) {
+      for (const first of options) for (const second of options) {
+        const trial = chosen.map((value, at) => at === i ? first : at === j ? second : value);
+        const cost = total(trial);
+        if (cost < best - 0.5) { best = cost; chosen = trial; improved = true; }
+      }
+    }
+    if (!improved) break;
+  }
+  return new Map(pills.map((box, index) => [box.id, chosen[index]]));
 }
 
 const familyNouns: Record<RoleFamily, string> = {
