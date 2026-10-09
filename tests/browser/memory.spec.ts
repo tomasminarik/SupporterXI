@@ -15,7 +15,7 @@ test('MVP-02: the live builder starts on 4-2-3-1 Wide with eleven empty position
   await expect(formationButton(page)).toHaveText('4-2-3-1 Wide');
   await expect(page.getByRole('button', { name: /: Empty$/ })).toHaveCount(11);
   await expect(page.locator('.sx-pill')).toHaveCount(0);
-  await expect(page.getByRole('button', { name: 'Share your XI' })).toBeDisabled();
+  await expect(page.getByRole('button', { name: 'Pick 11 more to share' })).toBeVisible();
 });
 
 test('MVP-06/07: restore, availability, and explicit fixture transition', async ({ page }) => {

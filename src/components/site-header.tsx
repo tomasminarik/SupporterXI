@@ -1,12 +1,10 @@
 import { Logo } from './brand';
+import ShareButton from '../share/share-button';
 
-// The share action is shown as designed but stays disabled until PNG export is built.
+// The share action needs the builder's XI; pages without a builder leave it out.
 export default function SiteHeader({ share = true }: { share?: boolean }) {
   return <header className="sx-header">
     <Logo />
-    {share && <>
-      <button type="button" className="sx-share" disabled aria-describedby="share-note">Share your XI</button>
-      <span id="share-note" className="sr-only">Image sharing is not available yet.</span>
-    </>}
+    {share && <ShareButton />}
   </header>;
 }

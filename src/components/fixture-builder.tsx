@@ -7,6 +7,7 @@ import { type FeaturedResponse } from '../domain/featured-fixture';
 import { FixtureHeadline, FixtureMessage } from './fixture-headline';
 import LineupEditor from './lineup-editor';
 import Notice from './notice';
+import { usePublishShareSource } from '../share/share-context';
 
 const subscribe = () => () => {};
 type Props = { context: FeaturedResponse; storageKey?: string; alert?: ReactNode };
@@ -27,6 +28,8 @@ function Session({ context, storageKey = draftKey, alert }: Props) {
   useEffect(() => {
     if (state.draft && !state.recovery) dispatch({ type: 'memory', ok: writeDraft(() => localStorage, state.draft, storageKey) });
   }, [state.draft, state.recovery, storageKey]);
+  // The header's share button works from the open XI.
+  usePublishShareSource(state.draft && !state.recovery ? state.draft : null);
   const changed = state.draft && context.fixture?.id !== state.draft.fixture.id;
   // Starting the next fixture discards the open XI, so the notice asks once more in place.
   const [asked, setAsked] = useState<string | null>(null);

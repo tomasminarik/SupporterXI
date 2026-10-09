@@ -40,7 +40,11 @@ body:has(.sx) { background: #0c0e0d; color-scheme: dark; }
 .sx-logo { display: inline-flex; align-items: center; height: 40px; border-radius: 20px; background: var(--red); border: 2px solid #ffffff; padding: 0 16px 0 3px; gap: 8px; color: #ffffff; font: 800 22px/1 var(--display); text-transform: uppercase; white-space: nowrap; }
 .sx-logo-disc { width: 30px; height: 30px; border-radius: 50%; background: #ffffff; color: #c42a23; display: grid; place-items: center; }
 .sx-share { margin-left: auto; height: 44px; padding: 0 20px; background: var(--yellow); color: var(--on-yellow); border: 1px solid var(--yellow); font: 600 15px var(--body); cursor: pointer; }
+.sx-share:hover:not(:disabled, .sx-share-waiting) { background: #ffd43b; }
 .sx-share:disabled { cursor: not-allowed; opacity: .55; }
+/* Not yet eleven: an outline that says what is missing; it fills in yellow when the XI is complete. */
+.sx-share-waiting { background: transparent; color: var(--yellow); }
+.sx-share-waiting:hover { background: rgba(245,197,24,.12); }
 
 .sx-fixture { max-width: 1320px; margin: 0 auto; padding: 18px 32px 0; text-align: center; }
 .sx-headline { margin: 0; font: 800 clamp(56px, 9.2vw, 132px)/0.92 var(--display); text-transform: uppercase; letter-spacing: -1px; text-wrap: balance; overflow-wrap: anywhere; }

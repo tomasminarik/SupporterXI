@@ -1,0 +1,59 @@
+/* Share dialog: preview on the left, choices on the right. Below 900px it is a sheet fixed to the
+   bottom of the screen, like the squad and role sheets. */
+.sx-share-dialog { width: min(920px, calc(100vw - 32px)); max-width: none; max-height: calc(100dvh - 32px); padding: 0; background: var(--surface); color: var(--text); border: 1px solid var(--edge-strong); box-shadow: 0 24px 60px rgba(0,0,0,.7); font-family: var(--body); overflow: hidden; }
+.sx-share-dialog::backdrop { background: rgba(6,7,6,.78); }
+.sx-share-dialog[open] { animation: sx-grow .16s cubic-bezier(.2,.8,.2,1); }
+.sx-share-body { display: grid; grid-template-columns: minmax(0, 1fr) 340px; }
+.sx-share-preview { height: min(660px, calc(100dvh - 34px)); padding: 24px; background: #0c0e0d; display: grid; place-items: center; border-right: 1px solid var(--edge); }
+.sx-share-preview img { display: block; max-width: 100%; max-height: 100%; width: auto; height: auto; min-height: 0; box-shadow: 0 0 0 1px var(--edge-strong), 0 14px 34px rgba(0,0,0,.6); }
+.sx-share-preview .sx-notice { margin: 0; flex-wrap: wrap; }
+.sx-share-drawing { margin: 0; display: flex; align-items: center; gap: 12px; color: var(--soft); font-size: 15px; }
+.sx-share-spinner { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--edge-strong); border-top-color: var(--text); animation: sx-spin .7s linear infinite; }
+@keyframes sx-spin { to { rotate: 360deg; } }
+@media (prefers-reduced-motion: reduce) { .sx-share-spinner { border-top-color: var(--edge-strong); } }
+.sx-share-panel { padding: 8px 24px 24px; display: flex; flex-direction: column; min-width: 0; }
+.sx-share-head { display: flex; align-items: center; justify-content: space-between; min-height: 60px; }
+.sx-share-head h2 { margin: 0; font: 800 30px/1.1 var(--display); text-transform: uppercase; letter-spacing: 0; }
+.sx-share-head h2:focus { outline: none; }
+.sx-share-head .sx-close { margin-right: -14px; }
+.sx-share-formats { margin: 12px 0 0; padding: 0; border: 0; display: grid; gap: 8px; }
+.sx-share-formats legend { padding: 0; margin: 0 0 8px; font: 600 12px var(--body); text-transform: uppercase; letter-spacing: .8px; color: var(--quiet); }
+.sx-share-format { position: relative; display: flex; align-items: center; gap: 14px; min-height: 64px; padding: 8px 14px; background: var(--bg); border: 1px solid var(--edge); cursor: pointer; }
+.sx-share-format input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.sx-share-format:hover { border-color: var(--text); }
+.sx-share-format:has(input:checked) { background: #ffffff; border-color: #ffffff; color: #14160f; }
+.sx-share-format:has(input:focus-visible) { outline: 3px solid #ffffff; outline-offset: 3px; }
+.sx-share-shape { flex: none; width: 24px; border: 2px solid currentColor; border-radius: 2px; }
+.sx-share-shape[data-format=feed] { aspect-ratio: 4 / 5; }
+.sx-share-shape[data-format=story] { width: 20px; margin: 0 2px; aspect-ratio: 9 / 16; }
+.sx-share-format-text { display: grid; gap: 1px; font-size: 14px; }
+.sx-share-format-text strong { font: 800 22px/1.1 var(--display); text-transform: uppercase; }
+.sx-share-format-text span { color: var(--soft); }
+.sx-share-format:has(input:checked) .sx-share-format-text span { color: #4a4d45; }
+.sx-share-actions { margin-top: auto; padding-top: 24px; display: grid; gap: 8px; }
+.sx-share-go { min-height: 52px; padding: 0 20px; background: var(--yellow); color: var(--on-yellow); border: 1px solid var(--yellow); font: 600 17px var(--body); cursor: pointer; }
+.sx-share-go:hover:not(:disabled) { background: #ffd43b; }
+.sx-share-go:disabled { opacity: .5; cursor: default; }
+.sx-share-actions .sx-secondary { min-height: 48px; }
+.sx-share-message { margin: 10px 0 0; min-height: 20px; font-size: 14px; line-height: 1.4; color: var(--text); overflow-wrap: anywhere; }
+.sx-share-note { margin: 6px 0 0; font-size: 13px; line-height: 1.45; color: var(--quiet); }
+
+@media (max-width: 899px) {
+  .sx-share-dialog { position: fixed; inset: auto 0 0 0; width: 100%; max-width: 100%; margin: 0; max-height: 94dvh; border: 0; border-top: 1px solid var(--edge-strong); overflow-y: auto; }
+  .sx-share-dialog[open] { animation: sx-sheet-up .22s cubic-bezier(.2,.8,.2,1); }
+  .sx-share-body { display: flex; flex-direction: column-reverse; }
+  .sx-share-panel { display: contents; }
+  .sx-share-head { order: 5; padding: 0 16px; min-height: 52px; }
+  .sx-share-head h2 { font-size: 26px; }
+  .sx-share-head .sx-close { margin-right: -12px; }
+  .sx-share-preview { order: 4; height: 44dvh; padding: 12px 16px; border-right: 0; }
+  .sx-share-formats { order: 3; margin: 12px 16px 0; grid-template-columns: 1fr 1fr; }
+  .sx-share-formats legend { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .sx-share-format { min-height: 56px; padding: 6px 10px; gap: 10px; }
+  .sx-share-format-text strong { font-size: 19px; }
+  .sx-share-format-text span { font-size: 12px; }
+  .sx-share-actions { order: 2; margin: 0 16px; padding-top: 12px; grid-auto-flow: column; grid-auto-columns: 1fr; }
+  .sx-share-actions .sx-secondary { min-height: 52px; }
+  .sx-share-message { order: 1; margin: 8px 16px 0; min-height: 0; }
+  .sx-share-note { order: 0; margin: 6px 16px calc(14px + env(safe-area-inset-bottom)); }
+}
