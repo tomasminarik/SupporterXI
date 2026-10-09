@@ -11,7 +11,7 @@
 | MVP-05 | Roles optional; No role option; exact family filtering; unknown IDs never guessed; no duty UI | Unit + browser |
 | MVP-06 | Same-fixture local restoration; no silent cross-fixture carryover; malformed/version-mismatched/disabled/quota-exceeded storage handled without crashing | Unit + browser |
 | MVP-07 | Automatic selection immediately before/at kickoff+3h, updated kickoffs, local timezone/DST, no T-90 restriction, unknown kickoff and manual override, cancelled/postponed exclusion, no fixture state | Unit + server integration + browser |
-| MVP-08 | Incomplete export rejected; exact 1080×1350 and 1080×1920 PNG; required content; no roles/prohibited imagery; snapshot isolation; download and retry on supported mobile/desktop browsers | Image inspection + browser |
+| MVP-08 | Incomplete export rejected; exact 1080×1080, 1080×1920 and 1920×1080 PNG (sizes decided 9 October 2026); required content; no roles/prohibited imagery; snapshot isolation; download and retry on supported mobile/desktop browsers | Image inspection + browser |
 | MVP-09 | Anonymous/non-allowlisted callers cannot access privileged editor data or mutate via direct routes; OAuth/session/CSRF protections; secrets absent from browser bundles and logs | Server integration + browser |
 | MVP-10 | Fixture/squad/availability forms validate; timezone required; stale edits rejected; stable identities; no destructive delete or formation/role CRUD; M-01/M-02 approved before dependent checks | Unit + integration + browser |
 | MVP-11 | Provider fixtures map once; repeated imports idempotent; per-field overrides persist; clear-one affects only one; manual cups coexist; ambiguity flagged; errors/missing data never erase accepted content | Recorded provider fixtures + integration |
@@ -28,7 +28,7 @@ AR-06's compatibility invariant remains, but supporter server-save/Community ass
 
 ## Release gates
 
-The [9 October operational checkpoint](operations-verification.md) maps publication recovery regression tests to MVP-10/12, records completed live cron/stale-write/rollback and isolated deployment-recovery drills (MVP-09/10/12/15), and maps mobile focus polish to MVP-02/06/13. Alternate-account live rejection remains pending because no second account is available. PNG remains unimplemented and MVP-08 is not passed.
+The [9 October operational checkpoint](operations-verification.md) maps publication recovery regression tests to MVP-10/12, records completed live cron/stale-write/rollback and isolated deployment-recovery drills (MVP-09/10/12/15), and maps mobile focus polish to MVP-02/06/13. Alternate-account live rejection remains pending because no second account is available. PNG export is built and covered by automated checks ([sharing verification](sharing-verification.md)); MVP-08 still needs its manual checks on real phones.
 
 All MVP-01–15 pass, with critical journeys exercised in a production-like deployment. No relevant blocking decision may be treated as passed through an assumed default. Add M-01 number cases and M-02 availability/restore/export cases after their approval.
 

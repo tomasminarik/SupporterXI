@@ -1,6 +1,6 @@
 # Starting XI builder — implementation handoff
 
-**Updated:** 9 October 2026. **Stage:** Builder, administration, fixture import and operational recovery verified; PNG and final release checks remain.
+**Updated:** 9 October 2026. **Stage:** Builder, administration, fixture import, operational recovery and PNG export built; phone checks of the export and final release checks remain.
 
 The current MVP is a next-match lineup builder with optional roles, browser-local memory, PNG export, and an administrator backoffice. There are no supporter accounts, Community XI, public lineup links, archives, or T-90 lock.
 
@@ -30,9 +30,9 @@ The active formation and role catalogues retain their original taxonomy. The rol
 
 The [initial squad](docs/product/initial-squad.md) contains 36 numbered players transcribed from the user's screenshots. Its linked JSON is the seed source; it does not change the formation/role catalogue or decide pending admin validation policies.
 
-The product name is **Supporter XI**, approved by the user on 9 October 2026. No domain has been approved. `docs/research/naming.md` was missing at the audit and remains unavailable; do not fabricate it or treat Eleven Verdict as approved.
+The product name is **Supporter XI**, approved by the user on 9 October 2026. The user had supporterxi.com printed on the share image (9 October 2026); the domain is not yet connected to the site. `docs/research/naming.md` was missing at the audit and remains unavailable; do not fabricate it or treat Eleven Verdict as approved.
 
-A UI redesign was agreed on 9 October 2026 and is live for the desktop and mobile builder (slices 1 to 3 and motion). Read the [UI redesign handoff](docs/design/ui-redesign-handoff.md) before changing any interface code. Two pieces remain: the admin restyle (slice 4, assigned to Codex) and sharing, the PNG export behind "Share your XI" (assigned to Claude; start from the [sharing handoff](docs/design/sharing-handoff.md)).
+A UI redesign was agreed on 9 October 2026 and is live for the desktop and mobile builder (slices 1 to 3 and motion). Read the [UI redesign handoff](docs/design/ui-redesign-handoff.md) before changing any interface code. Two pieces remain: the admin restyle (slice 4, assigned to Codex) and sharing, the PNG export behind "Share your XI" (assigned to Claude; start from the [sharing handoff](docs/design/sharing-handoff.md)). Sharing is built in three sizes (square, portrait, landscape); see [sharing verification](docs/implementation/sharing-verification.md). The images print supporterxi.com at the user's direction; that domain is not yet connected to the site.
 
 The public repository is [tomasminarik/SupporterXI](https://github.com/tomasminarik/SupporterXI), connected to Vercel project `supporterxi` in the existing Tomo team. Production admin sign-in, content publication and the live featured-fixture response are verified. The football-data.org token is configured in Vercel Production, and the importer has published 32 Premier League/Champions League fixtures. The first scheduled run, live stale-write rejection, content rollback and isolated Preview failure/recovery are verified in [operational readiness](docs/implementation/operations-verification.md). Live alternate-account rejection remains pending because no second account is available. Provider credentials must never be committed.
 

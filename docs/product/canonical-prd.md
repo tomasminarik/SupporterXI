@@ -17,7 +17,7 @@ Core loop: next fixture → formation → eleven players → optional roles → 
 - Eleven unique players; any eligible player can occupy any slot regardless of real-world position.
 - Responsive browser experience with mobile, desktop and keyboard support.
 - Best-effort remembering of the current working lineup in the same browser.
-- PNG export only: feed portrait 1080 × 1350 and story 1080 × 1920, plus a landscape format whose dimensions are still to be decided (see section 6).
+- PNG export only: square 1080 × 1080, portrait 1080 × 1920 and landscape 1920 × 1080 (see section 6).
 - Administrator backoffice for fixtures, squad and fixture availability.
 - Predefined initial squad and fixture list; future fixtures may be maintained internally but are not supporter destinations.
 - football-data.org for Premier League and Champions League fixture information. Domestic cups and missing fixtures are entered manually.
@@ -56,15 +56,15 @@ Do not carry a lineup silently into a different fixture. Recommended detail: ret
 
 ## 6. Sharing
 
-Export one complete, structurally valid XI as PNG. Incomplete lineups cannot produce a final sharing image. Include fixture context, formation, players and pitch. Roles remain in the builder but are excluded from every PNG format, as in the original approved export requirement.
+Export one complete, structurally valid XI as PNG. Incomplete lineups cannot produce a final sharing image. Include the fixture (Manchester United v opponent), formation, players and pitch. By the user's decision of 9 October 2026 the image does not print competition, round, venue or kickoff, and it carries the line "Build your own XI at supporterxi.com". Roles remain in the builder but are excluded from every PNG format, as in the original approved export requirement.
 
-The portrait formats (1080 × 1350 and 1080 × 1920) use a bird's-eye portrait pitch. A landscape export uses the landscape pitch of the desktop builder; its exact dimensions are not yet decided and must be confirmed before that format is built. The entry point in the builder is labelled "Share your XI".
+Sizes decided by the user on 9 October 2026: Square 1080 × 1080 and Portrait 1080 × 1920 use a bird's-eye pitch; Landscape 1920 × 1080 uses the landscape pitch of the desktop builder. The earlier 4:5 size (1080 × 1350) was replaced by Square. The entry point in the builder is labelled "Share your XI".
 
 PNG export is built only after the UI redesign is finished.
 
 No shareable lineup URLs, URL-encoded lineups, URL shortener, uploaded image storage or personalized link previews. Download is the baseline; native file sharing may be used where supported without being the only delivery method.
 
-Use original visual assets. No club crests, player photographs or licensed kit reproductions. The approved product name is **Supporter XI** (approved 9 October 2026), with the pill logo recorded in the UI redesign handoff. No domain has been approved.
+Use original visual assets. No club crests, player photographs or licensed kit reproductions. The approved product name is **Supporter XI** (approved 9 October 2026), with the pill logo recorded in the UI redesign handoff. The user had supporterxi.com printed on the share image (9 October 2026); the domain is not yet connected to the site.
 
 ## 7. Administration and imports
 
