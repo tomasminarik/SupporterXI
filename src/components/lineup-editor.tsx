@@ -5,6 +5,7 @@ import { formations, roles, rolesForFamily, type Formation } from '../domain/cat
 import type { PublicPlayer } from '../domain/featured-fixture';
 import type { Lineup } from '../domain/lineup';
 import { assignRole, changeFormation, clearLineup, formationFor, movePlayer, placePlayer, removePlayer } from '../domain/lineup';
+import { crisp, ghostOut, glideFrom, reducedMotion } from './motion';
 import Notice from './notice';
 import PitchStage from './pitch-stage';
 import { fieldPercent, markerLabel, placeLabels, positionNoun, projectSlot, shortNames, type LabelBox, type Placement } from './pitch-geometry';
@@ -36,6 +37,14 @@ export default function LineupEditor({ lineup, players, onChange }: { lineup: Li
   const [dragged, setDragged] = useState<Dragged | null>(null);
   const dropRef = useRef<(drag: Dragged) => void>(() => {});
   const suppressClick = useRef(false);
+  // Motion: the first second is the arrival wave; Clear XI replays a shorter one.
+  const [wave, setWave] = useState<'arrive' | 'clear' | null>('arrive');
+  const pendingGlide = useRef<Map<string, { x: number; y: number }> | null>(null);
+  const cardSpots = useRef(new Map<string, { x: number; y: number }>());
+  const bodyOf = (slotId: string) => document.getElementById(`slot-${slotId}`)?.querySelector<HTMLElement>('.sx-pill-body');
+  const lift: Keyframe[] = [{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateY(-18px) scale(.94)' }];
+  const leave = (slotId: string, delay = 0) => ghostOut(bodyOf(slotId), editorRef.current, lift, { delay, inside: { className: 'sx-pill', side: document.getElementById(`slot-${slotId}`)?.dataset.side } });
+  useEffect(() => { const timer = setTimeout(() => setWave(null), 1100); return () => clearTimeout(timer); }, []);
 
   const formation = formationFor(lineup);
   const selectableIds = players.filter((player) => player.selectable).map((player) => player.id);
@@ -101,18 +110,35 @@ export default function LineupEditor({ lineup, players, onChange }: { lineup: Li
   const focusSlot = (slotId: string) => requestAnimationFrame(() => document.getElementById(`slot-${slotId}`)?.focus());
   function resetSelection() { setSelectedSlot(null); setSelectedPlayer(null); setMenuSlot(null); }
 
-  function place(slot: Slot, player: PublicPlayer) {
+  function place(slot: Slot, player: PublicPlayer, dropped = false) {
     const replaced = occupantOf(slot[0]);
+    if (!dropped) ghostOut(editorRef.current?.querySelector(`[data-card="${player.id}"] .sx-card`), editorRef.current, [{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'scale(.6)' }], { duration: 160 });
+    if (replaced) leave(slot[0]);
+    if (!replaced && pickedIds.size === 10) setTimeout(cheer, 260);
     onChange(placePlayer(lineup, slot[0], player.id, selectableIds));
     setNotice(`${player.name} placed at ${slot[1]}${replaced ? `, replacing ${replaced.name}` : ''}.`);
     resetSelection(); setQuery('');
     focusSlot(slot[0]);
   }
-  function move(from: string, to: string) {
+  // The eleventh player: a quick pulse runs through the XI from the goalkeeper forward.
+  function cheer() {
+    if (reducedMotion()) return;
+    for (const marker of editorRef.current?.querySelectorAll<HTMLElement>('.sx-pill') ?? []) {
+      marker.querySelector('.sx-pill-body')?.animate([{ scale: 1 }, { scale: 1.14, boxShadow: '0 0 0 6px rgba(255,255,255,.35), 0 8px 14px rgba(0,0,0,.38)' }, { scale: 1 }], { duration: 420, delay: Number(marker.style.getPropertyValue('--i')) * 35, easing: crisp });
+    }
+  }
+  function move(from: string, to: string, droppedAt?: { x: number; y: number }) {
     const destination = slotOf(to);
     if (!destination) return;
     const moving = occupantOf(from);
     const other = occupantOf(to);
+    const corner = (slotId: string) => { const box = bodyOf(slotId)?.getBoundingClientRect(); return box && { x: box.left, y: box.top }; };
+    const glides = new Map<string, { x: number; y: number }>();
+    const start = droppedAt ? { x: droppedAt.x - 17, y: droppedAt.y - 16 } : corner(from);
+    if (moving && start) glides.set(moving.id, start);
+    const otherStart = other && corner(to);
+    if (other && otherStart) glides.set(other.id, otherStart);
+    pendingGlide.current = glides;
     onChange(movePlayer(lineup, from, to));
     setNotice(other ? `${moving?.name} and ${other.name} swapped.` : `${moving?.name} moved to ${destination[1]}.`);
     resetSelection();
@@ -160,12 +186,31 @@ export default function LineupEditor({ lineup, players, onChange }: { lineup: Li
   function dropOn(drag: Dragged) {
     const slot = slotOf(drag.over);
     if (!slot) return;
-    if (drag.kind === 'slot') { if (drag.id !== slot[0] && lineup.slots[drag.id]) move(drag.id, slot[0]); return; }
+    if (drag.kind === 'slot') { if (drag.id !== slot[0] && lineup.slots[drag.id]) move(drag.id, slot[0], { x: drag.x, y: drag.y }); return; }
     const player = byId(drag.id);
-    if (player?.selectable && !pickedIds.has(player.id)) place(slot, player);
+    if (player?.selectable && !pickedIds.has(player.id)) place(slot, player, true);
   }
   // The window listeners outlive a render; always drop with the latest lineup.
   useLayoutEffect(() => { dropRef.current = dropOn; });
+  // After a move or swap the pills glide from where they were. Squad cards slide to close a gap.
+  useLayoutEffect(() => {
+    const root = editorRef.current;
+    if (!root) return;
+    const glides = pendingGlide.current;
+    pendingGlide.current = null;
+    for (const [playerId, before] of glides ?? []) glideFrom(root.querySelector(`.sx-pill-body[data-player="${playerId}"]`), before);
+    const spots = new Map<string, { x: number; y: number }>();
+    const still = reducedMotion();
+    for (const item of root.querySelectorAll<HTMLElement>('[data-card]')) {
+      const spot = { x: item.offsetLeft, y: item.offsetTop };
+      const before = cardSpots.current.get(item.dataset.card!);
+      const dx = before ? before.x - spot.x : 0;
+      const dy = before ? before.y - spot.y : 0;
+      if (!still && (dx || dy) && Math.abs(dx) < 800) item.animate([{ transform: `translate(${dx}px, ${dy}px)` }, { transform: 'none' }], { duration: 200, easing: crisp });
+      spots.set(item.dataset.card!, spot);
+    }
+    cardSpots.current = spots;
+  });
   function startDrag(event: ReactPointerEvent, kind: Dragged['kind'], id: string) {
     if (event.button !== 0 || event.pointerType === 'touch') return;
     const startX = event.clientX;
@@ -276,10 +321,12 @@ export default function LineupEditor({ lineup, players, onChange }: { lineup: Li
     const role = roles.find((item) => item.id === shown.slots[id]?.roleId);
     const width = occupant ? 48 + Math.max(short(occupant).length * 9.5, role ? role.name.length * 6.6 : 0) : 0;
     return occupant
-      ? <div key={id} className="sx-shadow" data-side={placements.get(id)?.side ?? 'right'} style={{ left: `${left}%`, top: `${top + 8}%`, width }} />
+      ? <div key={`${id}:${occupant.id}`} className="sx-shadow" data-side={placements.get(id)?.side ?? 'right'} style={{ left: `${left}%`, top: `${top + 8}%`, width }} />
       : <div key={id} className="sx-shadow sx-shadow-empty" style={{ left: `${left}%`, top: `${top}%` }} />;
   });
 
+  // Waves run from the goalkeeper forward.
+  const waveOrder = new Map([...(shownFormation?.slots ?? [])].sort((a, b) => a[3] - b[3] || a[2] - b[2]).map((slot, index) => [slot[0], index]));
   const groups = [['Back four', '4'], ['Back three', '3'], ['Back five', '5']].map(([label, digit]) => ({ label, items: formations.filter((item) => item.name.startsWith(digit)) }));
   const toolbar = <>
     <button ref={formationButton} type="button" className="sx-formation" aria-expanded={pickerOpen} aria-controls="formation-picker" aria-label={formation ? `Formation: ${formation.name}. Change formation` : 'Choose a formation'} onClick={(event) => pickerOpen ? closePicker() : openPicker(event.detail ? { x: event.clientX, y: event.clientY } : undefined)}>
@@ -300,14 +347,15 @@ export default function LineupEditor({ lineup, players, onChange }: { lineup: Li
   return <div ref={editorRef} className={preview ? 'sx-editor sx-previewing' : 'sx-editor'} onKeyDown={onKeyDown}>
     <p className="sr-only" role="status">{notice}</p>
     <PitchStage toolbar={toolbar} shadows={shadows} menu={menu && menuPlayer && <PillMenu ref={menuRef} short={short(menuPlayer)} slot={menu} lineup={lineup} player={menuPlayer} onClose={closeMenu}
-        onRole={(roleId) => { onChange(assignRole(lineup, menu[0], roleId)); setNotice(roleId ? `Role set: ${roles.find((role) => role.id === roleId)?.name}.` : 'Role removed.'); }}
-        onRemove={() => { onChange(removePlayer(lineup, menu[0])); setNotice(`${menuPlayer.name} removed. The position’s role is cleared.`); closeMenu(); }} />}>
+        onRole={(roleId) => { if (!roleId) ghostOut(document.getElementById(`slot-${menu[0]}`)?.querySelector('.sx-role:not(.sx-flag)'), editorRef.current, [{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateY(-10px)' }], { duration: 140 }); onChange(assignRole(lineup, menu[0], roleId)); setNotice(roleId ? `Role set: ${roles.find((role) => role.id === roleId)?.name}.` : 'Role removed.'); }}
+        onRemove={() => { leave(menu[0]); onChange(removePlayer(lineup, menu[0])); setNotice(`${menuPlayer.name} removed. The position’s role is cleared.`); closeMenu(); }} />}>
       {shownFormation?.slots.map((slot) => {
         const [id, abbreviation, x, y] = slot;
         const occupant = shownOccupant(id);
         const role = roles.find((item) => item.id === shown.slots[id]?.roleId);
         const point = projectSlot(x, y);
-        const style = { '--x': point.x, '--y': point.y, '--fx': 6 + x * 0.88, '--fy': 4 + (100 - y) * 0.92 } as React.CSSProperties;
+        const order = waveOrder.get(id) ?? 0;
+        const style = { '--x': point.x, '--y': point.y, '--fx': 6 + x * 0.88, '--fy': 4 + (100 - y) * 0.92, '--i': order, '--d': wave === 'arrive' ? 320 + order * 30 : wave === 'clear' ? 60 + order * 25 : 0 } as React.CSSProperties;
         const selected = selectedSlot === id;
         const common = {
           id: `slot-${id}`, type: 'button' as const, style, 'aria-pressed': selected, 'data-slot': id,
@@ -319,8 +367,8 @@ export default function LineupEditor({ lineup, players, onChange }: { lineup: Li
         const placement = placements.get(id);
         return <button key={id} {...common} data-side={placement?.side ?? 'right'} data-tag={placement?.tag ?? 'below'} className={`sx-marker sx-pill${unavailable ? ' sx-unavailable' : ''}${heldPlayer ? ' sx-target' : ''}`} aria-expanded={menuSlot === id} aria-label={`${abbreviation}: ${occupant.name}${role ? `, ${role.name}` : ''}${unavailable ? ', unavailable' : ''}`}
           onPointerDown={(event) => startDrag(event, 'slot', id)}>
-          <span className="sx-pill-body"><span className="sx-no">{occupant.shirtNumber ?? '–'}</span><span className="sx-name">{short(occupant)}</span></span>
-          {(role || unavailable) && <span className="sx-tags">{role && <span className="sx-role">{role.name}</span>}{unavailable && <span className="sx-role sx-flag">Unavailable</span>}</span>}
+          <span key={occupant.id} data-player={occupant.id} className="sx-pill-body"><span className="sx-no">{occupant.shirtNumber ?? '–'}</span><span className="sx-name">{short(occupant)}</span></span>
+          {(role || unavailable) && <span className="sx-tags">{role && <span key={role.id} className="sx-role">{role.name}</span>}{unavailable && <span className="sx-role sx-flag">Unavailable</span>}</span>}
         </button>;
       })}
     </PitchStage>
@@ -331,14 +379,14 @@ export default function LineupEditor({ lineup, players, onChange }: { lineup: Li
 
     <section ref={squadSection} className="sx-squad" aria-labelledby="squad-title">
       <div className="sx-squad-head">
-        <h2 id="squad-title" ref={squadHeading} tabIndex={-1}>{heading}</h2>
+        <h2 id="squad-title" ref={squadHeading} tabIndex={-1}><span key={heading} className="sx-heading-text">{heading}</span></h2>
         {heldPlayer ? <span className="sx-count">Choose a position on the pitch</span> : <span className="sx-count sx-count-total">{unused.length} players not picked</span>}
-        <button type="button" className="sx-quiet" disabled={!count} onClick={() => { onChange(clearLineup(lineup)); resetSelection(); setNotice('XI cleared. Formation kept.'); }}>Clear XI</button>
+        <button type="button" className="sx-quiet" disabled={!count} onClick={() => { for (const slot of formation?.slots ?? []) leave(slot[0], (waveOrder.get(slot[0]) ?? 0) * 25); setWave('clear'); setTimeout(() => setWave(null), 700); onChange(clearLineup(lineup)); resetSelection(); setNotice('XI cleared. Formation kept.'); }}>Clear XI</button>
         <label className="sx-search"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" /></svg>
           <input type="search" aria-label="Search players" placeholder="Name or number" value={query} onChange={(event) => setQuery(event.target.value)} /></label>
       </div>
       {visible.length > 0 && <div className="sx-cards" role="list" aria-label="Players not picked">
-        {visible.map((player) => <div role="listitem" key={player.id}>
+        {visible.map((player) => <div role="listitem" key={player.id} data-card={player.id}>
           <button type="button" className="sx-card" aria-label={`${player.shirtNumber ?? ''} ${player.name}`.trim()} aria-pressed={selectedPlayer === player.id} data-dragging={dragged?.kind === 'player' && dragged.id === player.id ? 'true' : undefined}
             onPointerDown={(event) => startDrag(event, 'player', player.id)}
             onClick={() => { if (!suppressClick.current) chooseCard(player); }}>

@@ -114,7 +114,7 @@ body.sx-dragging, body.sx-dragging * { cursor: grabbing !important; user-select:
 .sx-search:has(input:focus-visible) { outline: 3px solid #ffffff; outline-offset: 3px; }
 .sx-search input { background: transparent; border: 0; outline: 0; color: var(--text); font: 400 15px var(--body); width: 180px; }
 .sx-search input::placeholder { color: var(--quiet); }
-.sx-cards { max-width: 1376px; margin: 0 auto; display: flex; gap: 10px; overflow-x: auto; padding: 4px 4px 12px; scrollbar-color: #3a3e3a transparent; }
+.sx-cards { position: relative; max-width: 1376px; margin: 0 auto; display: flex; gap: 10px; overflow-x: auto; padding: 4px 4px 12px; scrollbar-color: #3a3e3a transparent; }
 .sx-card { flex: 0 0 112px; width: 112px; height: 104px; background: var(--surface); border: 1px solid var(--edge); color: var(--text); text-align: left; padding: 12px 14px; cursor: grab; display: flex; flex-direction: column; justify-content: space-between; font-family: var(--body); }
 .sx-card:hover { border-color: var(--text); }
 .sx-card[aria-pressed=true] { background: #ffffff; border-color: #ffffff; color: #14160f; }
@@ -167,3 +167,27 @@ body.sx-dragging, body.sx-dragging * { cursor: grabbing !important; user-select:
   .sx-search { margin-left: 0; width: 100%; }
   .sx-search input { width: 100%; }
 }
+
+/* Motion: quick and crisp. A player drops onto the pitch and settles; an emptied position pops back;
+   a role slides out from under its pill; menus grow from where they were opened. Leaving, gliding and the
+   full-XI pulse are scripted in motion.ts. --d delays a marker during the arrival and Clear XI waves.
+   All of it is off under prefers-reduced-motion (globals.css). */
+@keyframes sx-land { from { opacity: 0; translate: 0 -16px; scale: 1.08; } 60% { opacity: 1; translate: 0 2px; scale: .98; } }
+@keyframes sx-pop { from { opacity: 0; scale: .4; } 70% { opacity: 1; scale: 1.08; } }
+@keyframes sx-tag-in { from { opacity: 0; translate: 0 -9px; } }
+@keyframes sx-fade { from { opacity: 0; } }
+@keyframes sx-grow { from { opacity: 0; scale: .96; } }
+@keyframes sx-rise-small { from { opacity: 0; translate: 0 8px; } }
+@keyframes sx-rise { from { opacity: 0; translate: 0 32px; } }
+@keyframes sx-card-in { from { opacity: 0; scale: .85; } }
+.sx-pill-body { animation: sx-land .24s cubic-bezier(.2,.8,.2,1) calc(var(--d, 0) * 1ms) backwards; }
+.sx-empty { animation: sx-pop .22s cubic-bezier(.2,.8,.2,1) calc(var(--d, 0) * 1ms) backwards; }
+.sx-role { animation: sx-tag-in .18s cubic-bezier(.2,.8,.2,1) calc(var(--d, 0) * 1ms + 60ms) backwards; }
+.sx-shadow { animation: sx-fade .3s ease-out backwards; }
+.sx-menu { animation: sx-grow .14s cubic-bezier(.2,.8,.2,1); }
+.sx-picker { animation: sx-rise-small .14s cubic-bezier(.2,.8,.2,1); }
+.sx-pitch { animation: sx-rise .45s cubic-bezier(.2,.8,.2,1) .06s backwards; }
+.sx-squad { animation: sx-fade .4s ease-out .2s backwards; }
+[data-card] { animation: sx-card-in .16s ease-out backwards; }
+.sx-heading-text { display: inline-block; animation: sx-rise-small .2s cubic-bezier(.2,.8,.2,1); }
+.sx-ghost-out { position: fixed; z-index: 30; margin: 0; pointer-events: none; }

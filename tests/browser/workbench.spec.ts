@@ -195,3 +195,48 @@ test('MVP-04/13: the formation picker works from the keyboard and previews befor
   await expect(page.getByRole('button', { name: 'GK: Senne Lammens', exact: true })).toBeVisible();
   expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze()).violations).toEqual([]);
 });
+
+// Counts the inert copies that play a leaving animation, and reads which CSS animations apply.
+async function watchGhosts(page: Page) {
+  await page.evaluate(() => {
+    const state = window as unknown as { ghosts: number };
+    state.ghosts = 0;
+    new MutationObserver((records) => { for (const record of records) for (const node of record.addedNodes) if (node instanceof Element && node.classList.contains('sx-ghost-out')) state.ghosts++; }).observe(document.body, { childList: true, subtree: true });
+  });
+}
+const ghosts = (page: Page) => page.evaluate(() => (window as unknown as { ghosts: number }).ghosts);
+const animationOf = (page: Page, selector: string) => page.locator(selector).first().evaluate((element) => getComputedStyle(element).animationName);
+async function placeAndRemove(page: Page) {
+  await page.goto('/dev/workbench');
+  await watchGhosts(page);
+  await page.getByRole('button', { name: 'GK: Empty', exact: true }).click();
+  await page.getByRole('button', { name: '1 Senne Lammens' }).click();
+  const pill = page.getByRole('button', { name: 'GK: Senne Lammens', exact: true });
+  await expect(pill).toBeFocused();
+  const names = { pill: await animationOf(page, '.sx-pill-body'), empty: await animationOf(page, '.sx-empty'), pitch: await animationOf(page, '.sx-pitch') };
+  await pill.click();
+  await expect(page.getByRole('heading', { name: 'GK · Senne Lammens' })).toBeFocused();
+  const menu = await animationOf(page, '.sx-menu');
+  await page.getByRole('button', { name: 'Remove player', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'GK: Empty', exact: true })).toBeFocused();
+  return { ...names, menu };
+}
+
+test.describe('with motion', () => {
+  test.use({ contextOptions: { reducedMotion: 'no-preference' } });
+  test('MVP-13: players land, leave and menus grow, and the copies that animate out are inert and removed', async ({ page }) => {
+    expect(await placeAndRemove(page)).toEqual({ pill: 'sx-land', empty: 'sx-pop', pitch: 'sx-rise', menu: 'sx-grow' });
+    // One copy for the squad card that was picked, one for the pill that left.
+    expect(await ghosts(page)).toBe(2);
+    await expect(page.locator('.sx-ghost-out')).toHaveCount(0);
+    await expect(page.getByRole('button', { name: '1 Senne Lammens' })).toHaveCount(1);
+  });
+});
+
+test.describe('with reduced motion', () => {
+  test.use({ contextOptions: { reducedMotion: 'reduce' } });
+  test('MVP-13: reduced motion switches every animation off', async ({ page }) => {
+    expect(await placeAndRemove(page)).toEqual({ pill: 'none', empty: 'none', pitch: 'none', menu: 'none' });
+    expect(await ghosts(page)).toBe(0);
+  });
+});
