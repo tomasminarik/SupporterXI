@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Pills with the full role underneath</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800&amp;family=Barlow:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0;background:#0c0e0d}
+a{color:#f3f1ea}a:hover{color:#ffffff}
+.pm{position:absolute;margin:0;padding:0;border:0;background:none;cursor:pointer;pointer-events:auto;display:flex;flex-direction:column;align-items:flex-start;gap:2px;transform:translate(-17px,-16px);font-family:Barlow,sans-serif}
+.pm .p{height:32px;box-sizing:border-box;display:flex;align-items:center;gap:8px;padding:0 13px 0 2px;border-radius:16px;background:#e0372f;border:2px solid #ffffff;color:#ffffff;font-weight:600;font-size:14px;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap;box-shadow:0 8px 14px rgba(0,0,0,.38)}
+.pm:hover .p{background:#ea4a42}
+.pm .n{font:800 17px/24px 'Big Shoulders Display',sans-serif;min-width:24px;height:24px;padding:0 3px;box-sizing:border-box;border-radius:12px;background:#ffffff;color:#b3261e;text-align:center;letter-spacing:0}
+.pm .r{margin-left:8px;height:20px;padding:0 9px;border-radius:10px;background:rgba(12,14,13,.72);color:#eceee6;font-size:12.5px;font-weight:500;line-height:20px;white-space:nowrap}
+.sh{position:absolute;height:24px;border-radius:50%;background:rgba(0,0,0,.5);filter:blur(6px);transform:translate(-24px,-50%)}
+.pl{flex:0 0 112px;height:104px;background:#171a18;border:1px solid #2b2f2c;color:#f3f1ea;text-align:left;padding:12px 14px;cursor:pointer;display:flex;flex-direction:column;justify-content:space-between;font-family:Barlow,sans-serif}
+.pl:hover{border-color:#e0372f}
+</style>
+</helmet>
+<div style="min-height: 1180px; background: #0c0e0d; color: #f3f1ea; font-family: Barlow, sans-serif; overflow: hidden">
+
+<header style="max-width: 1320px; margin: 0 auto; padding: 22px 32px; display: flex; align-items: center; gap: 14px">
+<svg width="0" height="0" style="position: absolute" aria-hidden="true"><symbol id="xi-logo" viewBox="0 0 36 28"><path d="M4 2L18 26M18 2L4 26M31.5 2V26" fill="none" stroke="currentColor" stroke-width="6.5"></path></symbol></svg>
+<span role="img" aria-label="SupporterXI" style="display: inline-flex; align-items: center; box-sizing: border-box; height: 40px; border-radius: 20px; background: #e0372f; border: 2px solid #ffffff; padding: 0 16px 0 3px; gap: 8px; color: #ffffff; font: 800 22px/1 'Big Shoulders Display', sans-serif; text-transform: uppercase; white-space: nowrap"><span style="width: 30px; height: 30px; border-radius: 50%; background: #ffffff; color: #c42a23; display: grid; place-items: center"><svg width="18" height="14"><use href="#xi-logo"></use></svg></span>Supporter</span>
+<div style="margin-left: auto; display: flex; align-items: center; gap: 20px">
+<button type="button" style="height: 44px; padding: 0 20px; background: #f5c518; color: #14160f; border: 1px solid #f5c518; font: 600 15px Barlow, sans-serif; cursor: pointer">Share your XI</button>
+</div>
+</header>
+
+<section style="max-width: 1320px; margin: 0 auto; padding: 18px 32px 0; text-align: center">
+<h1 style="margin: 0; font: 800 132px/0.92 'Big Shoulders Display', sans-serif; text-transform: uppercase; letter-spacing: -1px"><span style="color: #e0372f">Manchester United</span><br><span style="color: #8a8d86">v</span> <span style="color: #ffffff">Tottenham Hotspur</span></h1>
+<p style="margin: 22px 0 0; font-size: 17px; color: #b9bcb2; display: flex; justify-content: center; gap: 14px; flex-wrap: wrap">
+<span>Premier League</span><span style="color: #5a5e58">/</span><span>Matchday 6</span><span style="color: #5a5e58">/</span><span>Home</span><span style="color: #5a5e58">/</span><span>Sat 10 Oct 2026, 18:30</span>
+</p>
+</section>
+
+<section aria-label="Lineup pitch" style="position: relative; height: 560px; margin-top: 8px">
+<button type="button" aria-label="Formation: 4-2-3-1 Wide. Change formation" style="position: absolute; left: 50%; top: 74px; transform: translateX(-50%); z-index: 3; height: 48px; padding: 0 18px; background: #171a18; border: 1px solid #3a3e3a; color: #f3f1ea; cursor: pointer; display: flex; align-items: center; gap: 12px; font: 800 24px 'Big Shoulders Display', sans-serif">4-2-3-1 Wide<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 9l7 7 7-7"></path></svg></button>
+<div style="position: absolute; left: 50%; top: 130px; width: 1000px; height: 130px; transform: translateX(-50%); background: radial-gradient(ellipse, rgba(150,190,150,.13), rgba(150,190,150,0) 70%)"></div>
+<div style="position: absolute; left: 50%; bottom: 8px; width: 1240px; height: 70px; transform: translateX(-50%); background: rgba(0,0,0,.8); filter: blur(26px); border-radius: 50%"></div>
+
+<div style="position: absolute; left: 50%; bottom: 52px; width: 1160px; height: 760px; margin-left: -580px; perspective: 1500px; perspective-origin: 50% 100%">
+<div style="position: absolute; inset: 0; transform-style: preserve-3d; transform-origin: 50% 100%; transform: rotateX(52deg); background: repeating-linear-gradient(90deg, #418f3a 0 61.1px, #357e2f 61.1px 122.2px); background-position: 30px 0">
+<div style="position: absolute; inset: 0; background: repeating-linear-gradient(0deg, rgba(0,0,0,.09) 0 57.6px, rgba(255,255,255,.03) 57.6px 115.3px); background-position: 0 34px"></div>
+<svg aria-hidden="true" style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: .55; mix-blend-mode: multiply"><filter id="grass3"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3"></feTurbulence><feColorMatrix type="saturate" values="0"></feColorMatrix></filter><rect width="100%" height="100%" filter="url(#grass3)"></rect></svg>
+<sc-if value="{{textured}}" hint-placeholder-val="{{true}}">
+<img src="/_blob/9e1e262072fe6babb1dc3997f1c410d8" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover">
+<div style="position: absolute; inset: 0; background: repeating-linear-gradient(90deg, rgba(255,255,255,.07) 0 61.1px, rgba(0,0,0,.16) 61.1px 122.2px); background-position: 30px 0"></div>
+<div style="position: absolute; inset: 0; background: repeating-linear-gradient(0deg, rgba(0,0,0,.1) 0 57.6px, rgba(255,255,255,.04) 57.6px 115.3px); background-position: 0 34px"></div>
+</sc-if>
+<div style="position: absolute; left: 30px; top: 300px; width: 90px; height: 160px; background: radial-gradient(ellipse, rgba(140,120,60,.38), rgba(140,120,60,0) 70%)"></div>
+<div style="position: absolute; right: 30px; top: 300px; width: 90px; height: 160px; background: radial-gradient(ellipse, rgba(140,120,60,.38), rgba(140,120,60,0) 70%)"></div>
+<div style="position: absolute; left: 520px; top: 320px; width: 120px; height: 120px; background: radial-gradient(ellipse, rgba(140,120,60,.22), rgba(140,120,60,0) 70%)"></div>
+<div style="position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 66%, rgba(255,255,215,.2), rgba(0,0,0,.28) 88%)"></div>
+<div style="position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(12,14,13,.58), rgba(12,14,13,0) 52%)"></div>
+<div style="position: absolute; left: 0; top: 100%; width: 100%; height: 36px; transform-origin: 50% 0; transform: rotateX(-52deg); background: linear-gradient(#3c7a33 0 4px, #24451f 4px 7px, #4a3423 7px 15px, #3a281b 15px 24px, #2a1d14 24px 100%)"></div>
+
+<div style="position: absolute; inset: 34px 30px">
+<svg aria-hidden="true" viewBox="0 0 1050 680" preserveAspectRatio="none" style="position: absolute; inset: 0; width: 100%; height: 100%; fill: none; stroke: #f4f6ee; stroke-width: 3.5; opacity: .9">
+<rect x="2" y="2" width="1046" height="676"></rect>
+<path d="M525 2V678M2 138.5H165V541.5H2M2 248.5H55V431.5H2M165 267A91.5 91.5 0 0 1 165 413M1048 138.5H885V541.5H1048M1048 248.5H995V431.5H1048M885 267A91.5 91.5 0 0 0 885 413M2 14A12 12 0 0 0 14 2M1036 2A12 12 0 0 0 1048 14M2 666A12 12 0 0 1 14 678M1036 678A12 12 0 0 1 1048 666"></path>
+<circle cx="525" cy="340" r="91.5"></circle>
+<circle cx="525" cy="340" r="3.5" fill="#f4f6ee"></circle><circle cx="110" cy="340" r="3.5" fill="#f4f6ee"></circle><circle cx="940" cy="340" r="3.5" fill="#f4f6ee"></circle>
+</svg>
+<div class="sh" style="left: 9.6%; top: 58.0%; width: 150px"></div>
+<div class="sh" style="left: 26.5%; top: 24.9%; width: 130px"></div>
+<div class="sh" style="left: 23.7%; top: 47.5%; width: 160px"></div>
+<div class="sh" style="left: 23.7%; top: 68.5%; width: 145px"></div>
+<div class="sh" style="left: 26.5%; top: 91.1%; width: 120px"></div>
+<div class="sh" style="left: 45.3%; top: 47.5%; width: 140px"></div>
+<div class="sh" style="left: 45.3%; top: 68.5%; width: 135px"></div>
+<div class="sh" style="left: 70.7%; top: 24.9%; width: 140px"></div>
+<div class="sh" style="left: 67%; top: 58.0%; width: 165px"></div>
+<div class="sh" style="left: 70.7%; top: 91.1%; width: 110px"></div>
+<div class="sh" style="left: 85.7%; top: 58.0%; width: 125px"></div>
+</div>
+</div>
+</div>
+
+<div style="position: absolute; left: 50%; bottom: 52px; width: 1160px; height: 760px; margin-left: -580px; pointer-events: none; z-index: 2">
+<svg aria-hidden="true" viewBox="0 0 1160 760" style="position: absolute; inset: 0; width: 100%; height: 100%; fill: none; stroke-linejoin: round">
+<path d="M113.9 560.1L128.9 528.9L110.9 549.3L95.3 581.2Z M113.9 560.1L95.3 581.2L113.9 581.2Z" fill="rgba(255,255,255,.16)" stroke="rgba(255,255,255,.45)" stroke-width="1"></path>
+<path d="M113.9 581.2V560.1L128.9 528.9V549.3" stroke="#ffffff" stroke-width="3"></path>
+<path d="M1046.1 560.1L1031.1 528.9L1049.1 549.3L1064.7 581.2Z M1046.1 560.1L1064.7 581.2L1046.1 581.2Z" fill="rgba(255,255,255,.16)" stroke="rgba(255,255,255,.45)" stroke-width="1"></path>
+<path d="M1046.1 581.2V560.1L1031.1 528.9V549.3" stroke="#ffffff" stroke-width="3"></path>
+<path d="M181.9 436.4V418M978.1 436.4V418M39.7 739.4V712M1120.3 739.4V712" stroke="#e9ebe3" stroke-width="1.5"></path>
+<path d="M181.9 418l8 3l-8 3ZM978.1 418l8 3l-8 3ZM39.7 712l12 4.5l-12 4.5ZM1120.3 712l12 4.5l-12 4.5Z" fill="#e0372f"></path>
+</svg>
+<button type="button" class="pm" style="left: 384px; top: 476px"><span class="p"><span class="n">23</span>Shaw</span><span class="r">Overlapping Full-Back</span></button>
+<button type="button" class="pm" style="left: 753px; top: 476px"><span class="p"><span class="n">10</span>Cunha</span><span class="r">Inside Forward</span></button>
+<button type="button" class="pm" style="left: 346px; top: 535px"><span class="p"><span class="n">6</span>Martínez</span><span class="r">Ball-Playing Defender</span></button>
+<button type="button" class="pm" style="left: 538px; top: 535px"><span class="p"><span class="n">37</span>Mainoo</span><span class="r">Deep Playmaker</span></button>
+<button type="button" class="pm" style="left: 210px; top: 565px"><span class="p"><span class="n">1</span>Lammens</span><span class="r">Sweeper-Keeper</span></button>
+<button type="button" class="pm" style="left: 736px; top: 565px"><span class="p"><span class="n">8</span>Fernandes</span><span class="r">Creative No. 10</span></button>
+<button type="button" class="pm" style="left: 907px; top: 565px"><span class="p"><span class="n">30</span>Šeško</span></button>
+<button type="button" class="pm" style="left: 331px; top: 597px"><span class="p"><span class="n">4</span>de Ligt</span><span class="r">Front-Foot Defender</span></button>
+<button type="button" class="pm" style="left: 536px; top: 597px"><span class="p"><span class="n">25</span>Ugarte</span><span class="r">Ball Winner</span></button>
+<button type="button" class="pm" style="left: 341px; top: 674px"><span class="p"><span class="n">2</span>Dalot</span><span class="r">Inverted Full-Back</span></button>
+<button type="button" class="pm" style="left: 791px; top: 674px"><span class="p"><span class="n">16</span>Amad</span><span class="r">Touchline Winger</span></button>
+</div>
+</section>
+
+<section aria-label="Squad" style="padding: 8px 32px 40px">
+<div style="max-width: 1376px; margin: 0 auto; display: flex; align-items: center; gap: 18px; margin-bottom: 14px">
+<h2 style="margin: 0; font: 800 30px 'Big Shoulders Display', sans-serif; text-transform: uppercase">Your XI is complete</h2>
+<span style="color: #9a9d94; font-size: 15px">25 players not picked</span>
+<label style="margin-left: auto; display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 14px; background: #171a18; border: 1px solid #2b2f2c; color: #9a9d94; font-size: 15px">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+<input type="search" placeholder="Name or number" aria-label="Search players" style="background: transparent; border: 0; outline: 0; color: #f3f1ea; font: 400 15px Barlow, sans-serif; width: 180px">
+</label>
+</div>
+<div style="display: flex; gap: 10px; overflow: hidden; margin-right: -32px">
+<sc-for list="{{players}}" as="p" hint-placeholder-count="13">
+<button type="button" class="pl"><span style="font: 800 40px/1 'Big Shoulders Display', sans-serif; color: #e0372f">{{p.no}}</span><span style="font-size: 16px; font-weight: 500; line-height: 1.2">{{p.name}}</span></button>
+</sc-for>
+</div>
+</section>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"turf":{"editor":"enum","options":["Textured","Drawn"],"default":"Textured"},"$preview":{"width":1440,"height":1180}}'>
+class Component extends DCLogic {
+renderVals() {
+return { textured: (this.props.turf ?? 'Textured') === 'Textured', players: [
+{ no: 3, name: 'Mazraoui' }, { no: 5, name: 'Maguire' }, { no: 7, name: 'Mount' },
+{ no: 9, name: 'Rashford' }, { no: 11, name: 'Zirkzee' }, { no: 12, name: 'Darlow' },
+{ no: 13, name: 'Dorgu' }, { no: 15, name: 'Yoro' }, { no: 17, name: 'Santos' },
+{ no: 18, name: 'Tielemans' }, { no: 19, name: 'Mbeumo' }, { no: 20, name: 'Baleba' },
+{ no: 22, name: 'Heaton' }
+] };
+}
+}
+</script>
+</body>
+</html>

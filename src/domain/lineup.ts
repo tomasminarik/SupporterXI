@@ -50,3 +50,7 @@ export function assignRole(state: Lineup, slotId: string, roleId: string | null)
   if (!slot || !assignment || !isRoleCompatible(roleId, slot[4])) return state;
   return { ...state, slots: { ...state.slots, [slotId]: { ...assignment, roleId } } };
 }
+
+// PRD 2.1: a fresh builder starts on 4-2-3-1 Wide with eleven empty slots.
+export const startingFormationId = '4-2-3-1-wide';
+export const startingLineup: Lineup = changeFormation(emptyLineup, formations.find((f) => f.id === startingFormationId)!).state;

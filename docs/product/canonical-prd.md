@@ -1,12 +1,12 @@
-# Next-match starting XI builder — MVP PRD
+# Supporter XI — next-match starting XI builder — MVP PRD
 
-**Version:** 2.0 — 22 September 2026.
-**Status:** Agreed scope, replacing the original MVP now preserved as MVP+.
+**Version:** 2.1 — 9 October 2026 (2.0: 22 September 2026).
+**Status:** Agreed scope, replacing the original MVP now preserved as MVP+. Version 2.1 records the approved product name, the redesigned visual direction, the preselected starting formation and the build order for PNG export; see [the UI redesign handoff](../design/ui-redesign-handoff.md).
 **Authority:** User decisions in the project conversation take precedence. This document separates agreed behaviour from remaining narrow edge decisions.
 
 ## 1. Purpose
 
-Let a Manchester United supporter view the next match, choose a formation, select their starting XI, optionally assign player roles, and export an image. No supporter registration is required.
+Supporter XI lets a Manchester United supporter view the next match, choose a formation, select their starting XI, optionally assign player roles, and export an image. No supporter registration is required.
 
 Core loop: next fixture → formation → eleven players → optional roles → PNG export.
 
@@ -17,7 +17,7 @@ Core loop: next fixture → formation → eleven players → optional roles → 
 - Eleven unique players; any eligible player can occupy any slot regardless of real-world position.
 - Responsive browser experience with mobile, desktop and keyboard support.
 - Best-effort remembering of the current working lineup in the same browser.
-- PNG export only: feed portrait 1080 × 1350 and story 1080 × 1920.
+- PNG export only: feed portrait 1080 × 1350 and story 1080 × 1920, plus a landscape format whose dimensions are still to be decided (see section 6).
 - Administrator backoffice for fixtures, squad and fixture availability.
 - Predefined initial squad and fixture list; future fixtures may be maintained internally but are not supporter destinations.
 - football-data.org for Premier League and Champions League fixture information. Domestic cups and missing fixtures are entered manually.
@@ -36,7 +36,7 @@ Do not offer future-fixture browsing, a public match archive, or results/statist
 
 ## 4. Builder
 
-Start with no selected formation unless restoring a valid local working lineup for the same fixture. Formation selection creates eleven empty slots. No automatic player or role selection.
+Start with 4-2-3-1 Wide preselected and its eleven slots empty, unless restoring a valid local working lineup for the same fixture. The formation is changed from a control at the pitch that opens all 14 formations. Formation selection creates eleven empty slots. No automatic player or role selection.
 
 Selecting a player removes them from the chooser. Replacing or removing a player returns them only if eligible. Moving onto an occupied slot swaps players; moving to an empty slot vacates the origin. Roles stay attached to occupied slots; vacated slots lose their roles.
 
@@ -44,7 +44,7 @@ Formation changes use exact, unique equivalence-key matches only. Preserve valid
 
 Clear XI retains the formation and removes all players and roles. No server save or submission action exists.
 
-Roles remain optional; compatibility depends only on slot role family. The chooser includes No role and canonical names/definitions/order. No duties or tactical-balance scoring.
+Roles remain optional; compatibility depends only on slot role family. The chooser includes No role and canonical names/definitions/order. No duties or tactical-balance scoring. In the builder an assigned role is shown in full beneath the player's marker; role abbreviations are not used.
 
 New selections must be active and Available for the fixture. Active players are Available by default unless manually marked Unavailable. How a later availability change affects an already-selected browser lineup requires the narrow decision in the current register; do not import MVP+ saved-submission grandfathering by assumption.
 
@@ -56,11 +56,15 @@ Do not carry a lineup silently into a different fixture. Recommended detail: ret
 
 ## 6. Sharing
 
-Export one complete, structurally valid XI as PNG. Incomplete lineups cannot produce a final sharing image. Include fixture context, formation, players and pitch. Roles remain in the builder but are excluded from both PNG formats, as in the original approved export requirement.
+Export one complete, structurally valid XI as PNG. Incomplete lineups cannot produce a final sharing image. Include fixture context, formation, players and pitch. Roles remain in the builder but are excluded from every PNG format, as in the original approved export requirement.
+
+The portrait formats (1080 × 1350 and 1080 × 1920) use a bird's-eye portrait pitch. A landscape export uses the landscape pitch of the desktop builder; its exact dimensions are not yet decided and must be confirmed before that format is built. The entry point in the builder is labelled "Share your XI".
+
+PNG export is built only after the UI redesign is finished.
 
 No shareable lineup URLs, URL-encoded lineups, URL shortener, uploaded image storage or personalized link previews. Download is the baseline; native file sharing may be used where supported without being the only delivery method.
 
-Use original visual assets. No club crests, player photographs or licensed kit reproductions. Final branding is deferred; a neutral working title must not be presented as an approved brand.
+Use original visual assets. No club crests, player photographs or licensed kit reproductions. The approved product name is **Supporter XI** (approved 9 October 2026), with the pill logo recorded in the UI redesign handoff. No domain has been approved.
 
 ## 7. Administration and imports
 
@@ -76,7 +80,16 @@ Publishing is asynchronous: saving content is distinct from a successful public 
 
 ## 8. Visual/accessibility direction
 
-Retain the tactical-whiteboard direction, red emphasis, top-down pitch and original player markers. Desktop supports drag and click placement; mobile supports the complete loop through tapping; keyboard supports all core operations. Visible focus, meaningful non-colour states, clear error announcements, reduced motion and WCAG 2.2 AA targets remain.
+The 9 October 2026 redesign replaces the earlier tactical-whiteboard, top-down direction. Details, measurements and reference files are in [the UI redesign handoff](../design/ui-redesign-handoff.md).
+
+- Dark page. The fixture is the dominant element: a large, bold headline with Manchester United in red, "v" in grey and the opponent in white, and smaller fixture details beneath it.
+- Desktop: a realistic grass pitch shown in perspective from the touchline at the halfway line, full pitch, with the team attacking left to right.
+- Empty positions are red markers on the pitch. A filled position is a red pill with the shirt number and surname, the same size everywhere on the pitch, with the role in full beneath it.
+- The squad is a full-width row below the pitch, showing shirt number and surname.
+- One red is used throughout; the share action is yellow.
+- Mobile: a bird's-eye portrait pitch. The mobile layout is not yet designed.
+
+Desktop supports drag and click placement; mobile supports the complete loop through tapping; keyboard supports all core operations. Visible focus, meaningful non-colour states, clear error announcements, reduced motion and WCAG 2.2 AA targets remain.
 
 ## 9. Explicit exclusions / MVP+
 

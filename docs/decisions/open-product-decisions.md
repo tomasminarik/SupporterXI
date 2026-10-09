@@ -33,7 +33,9 @@ The user explicitly approved all 36 supplied players starting Active, with Avail
 ## Non-blocking recommendations
 
 - On a featured-fixture change, keep the open XI's context until the user explicitly starts the next fixture. Do not silently carry selections across fixtures.
-- Use only a neutral working title until branding is approved. Naming research is missing; Eleven Verdict is not an approved name.
+- The product name **Supporter XI** was approved by the user on 9 October 2026, superseding the neutral working title. Eleven Verdict is not an approved name. No domain is approved.
+- UI slice 1 decisions (9 October 2026, user): automatic label placement for collisions, the single red changed to `#da362e` for AA contrast, and the proposed picking, pill-menu and formation-picker interactions. See [UI slice 1 verification](../implementation/ui-slice-1-verification.md).
+- Landscape PNG export dimensions are undecided (PRD section 6); confirm before building that format.
 - Exact responsive composition, copy, list ordering and export frame are design work; present a coherent recommendation during the UI phase.
 
 ## Technical follow-through
