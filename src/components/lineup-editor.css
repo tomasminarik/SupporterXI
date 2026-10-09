@@ -57,20 +57,34 @@
 .sx-unavailable .sx-pill-body { background: #7a2b26; border-style: dashed; }
 .sx-role.sx-flag { background: #f3f1ea; color: #14160f; }
 
-/* Pill menu: a proposal for slice 2, opened beside the pill. */
+/* Pill menu, opened beside the pill: the role as a pickable list with definitions, then remove. */
 .sx-menu-layer { position: absolute; left: 50%; bottom: calc(52px * var(--k)); width: calc(1160px * var(--k)); height: calc(760px * var(--k)); transform: translateX(-50%); z-index: 6; pointer-events: none; }
-.sx-menu { position: absolute; left: var(--mx); top: var(--my); width: 320px; max-height: 420px; overflow: auto; pointer-events: auto; padding: 6px 16px 16px; background: var(--surface); border: 1px solid var(--edge-strong); box-shadow: 0 18px 40px rgba(0,0,0,.55); font-size: 14px; color: var(--text); }
-.sx-menu-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.sx-menu h2 { margin: 0; font: 800 22px var(--display); text-transform: uppercase; letter-spacing: 0; }
+.sx-menu { position: absolute; left: var(--mx); top: var(--my); width: 340px; max-height: 500px; display: flex; flex-direction: column; pointer-events: auto; padding: 0 16px 16px; background: var(--surface); border: 1px solid var(--edge-strong); box-shadow: 0 18px 40px rgba(0,0,0,.55); font-size: 14px; color: var(--text); }
+.sx-menu-head { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 52px; }
+.sx-menu h2 { margin: 0; font: 800 22px/1.1 var(--display); text-transform: uppercase; letter-spacing: 0; }
 .sx-menu h2:focus { outline: none; }
-.sx-menu p { margin: 8px 0 0; line-height: 1.5; font-size: 13px; }
-.sx-field-label { display: block; margin-top: 12px; font-weight: 600; font-size: 13px; color: var(--soft); }
-.sx-field-label select { display: block; width: 100%; margin-top: 6px; min-height: 44px; padding: 0 10px; background: var(--bg); color: var(--text); border: 1px solid #4a4e4a; font: 500 15px var(--body); }
-.sx-guide summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; color: var(--soft); text-decoration: underline; text-underline-offset: 3px; font-size: 13px; }
-.sx-guide p { color: var(--soft); }
-.sx-guide strong { color: var(--text); }
-.sx-wide { width: 100%; margin-top: 14px; }
-.sx-hint { font-size: 12.5px; }
+/* The cross sits on the content's right edge; its 44px target extends past it. */
+.sx-menu .sx-close { display: grid; place-items: center; margin-right: -15px; }
+.sx-menu-note { margin: 0 0 12px; font-size: 13px; line-height: 1.45; color: var(--soft); }
+/* Long role lists scroll between the fixed title and the remove action. */
+.sx-options { margin: 0 -6px; padding: 3px 6px; min-height: 0; overflow-y: auto; display: grid; gap: 2px; scrollbar-color: #3a3e3a transparent;
+  /* Edge shadows appear only where more roles are scrolled out of view. */
+  background: linear-gradient(var(--surface) 40%, transparent) top / 100% 28px no-repeat local, linear-gradient(transparent, var(--surface) 60%) bottom / 100% 28px no-repeat local, linear-gradient(rgba(0,0,0,.55), transparent) top / 100% 12px no-repeat scroll, linear-gradient(transparent, rgba(0,0,0,.55)) bottom / 100% 12px no-repeat scroll; }
+.sx-options-label { flex: none; margin: 0 0 6px; font: 600 12px var(--body); text-transform: uppercase; letter-spacing: .8px; color: var(--quiet); }
+.sx-options-label span { margin-left: 6px; font-weight: 400; text-transform: none; letter-spacing: 0; }
+.sx-option { position: relative; display: flex; align-items: flex-start; gap: 10px; padding: 7px 10px; border: 1px solid transparent; cursor: pointer; }
+.sx-option input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.sx-option:hover { background: #1e2220; }
+.sx-option:has(input:checked) { background: #222623; border-color: var(--edge-strong); }
+.sx-option:has(input:focus-visible) { outline: 3px solid #ffffff; outline-offset: 1px; }
+.sx-option-dot { flex: none; width: 16px; height: 16px; margin-top: 2px; border-radius: 50%; border: 2px solid #6b6e68; }
+.sx-option:has(input:checked) .sx-option-dot { border-color: #ffffff; background: var(--red); }
+.sx-option-text { display: grid; gap: 2px; min-width: 0; }
+.sx-option-name { font-weight: 600; font-size: 15px; line-height: 20px; }
+.sx-option-def { font-size: 13px; line-height: 1.35; color: var(--soft); }
+.sx-menu-foot { flex: none; margin-top: 10px; padding-top: 14px; border-top: 1px solid var(--edge); display: flex; align-items: center; gap: 14px; }
+.sx-menu-foot .sx-secondary { flex: none; min-height: 40px; padding: 0 14px; background: transparent; }
+.sx-menu-foot p { margin: 0; font-size: 12.5px; line-height: 1.4; color: var(--quiet); }
 
 /* Pointer drag: a pill follows the cursor and the nearest position lights up. */
 body.sx-dragging, body.sx-dragging * { cursor: grabbing !important; user-select: none; }
@@ -118,23 +132,26 @@ body.sx-dragging, body.sx-dragging * { cursor: grabbing !important; user-select:
 /* Below 900px: a flat bird's-eye stand-in until the mobile layout (slice 3) is designed. */
 @media (max-width: 899px) {
   .sx-pitch { height: auto; padding: 0 16px; margin: 20px 0 0; }
-  .sx-formation { position: relative; left: auto; top: auto; transform: none; margin: 0 auto 14px; }
+  .sx-formation { position: relative; left: auto; top: auto; transform: none; width: 100%; justify-content: space-between; margin: 0 0 14px; }
+  .sx-count-total { display: none; }
   .sx-picker { position: static; transform: none; width: auto; margin: 0 0 14px; }
   .sx-picker-groups { grid-template-columns: 1fr; }
   .sx-glow, .sx-floor-shadow, .sx-scene, .sx-furniture { display: none; }
-  .sx-overlay { position: relative; left: auto; bottom: auto; transform: none; width: 100%; max-width: 460px; height: auto; margin: 0 auto; aspect-ratio: 68 / 105; }
+  .sx-overlay { position: relative; left: auto; bottom: auto; transform: none; width: 100%; max-width: 460px; height: auto; margin: 0 auto 30px; aspect-ratio: 68 / 105; }
   .sx-overlay .sx-flat { display: block; position: absolute; inset: 0; }
   .sx-flat .sx-lines { inset: 4% 6%; width: 88%; height: 92%; stroke-width: 4; }
-  .sx-marker { left: calc(var(--fx) * 1%); top: calc(var(--fy) * 1%); }
-  .sx-pill, .sx-pill[data-side], .sx-pill[data-tag] { align-items: center; flex-direction: column; transform: translate(-50%, -16px); }
-  .sx-pill[data-side=left] .sx-pill-body { flex-direction: row; padding: 0 9px 0 2px; }
-  .sx-pill[data-side=left] .sx-tags { margin: 0; }
-  .sx-pill-body { max-width: 104px; font-size: 12px; gap: 5px; padding-right: 9px; letter-spacing: .2px; }
-  .sx-pill-body { overflow: hidden; text-overflow: ellipsis; }
-  .sx-tags { margin-left: 0; max-width: 104px; }
-  .sx-role { font-size: 11px; padding: 0 6px; overflow: hidden; text-overflow: ellipsis; }
+  .sx-marker { left: clamp(40px, calc(var(--fx) * 1%), calc(100% - 40px)); top: calc(var(--fy) * 1%); }
+  /* Stand-in marker: the number on the spot, the name under it, the role under that, so neighbours do not overlap. */
+  .sx-pill, .sx-pill[data-side], .sx-pill[data-tag] { align-items: center; flex-direction: column; transform: translate(-50%, -15px); }
+  .sx-pill .sx-pill-body, .sx-pill[data-side=left] .sx-pill-body, .sx-pill:hover .sx-pill-body, .sx-unavailable .sx-pill-body { flex-direction: column; gap: 2px; height: auto; padding: 0; background: none; border: 0; border-radius: 4px; box-shadow: none; }
+  .sx-pill .sx-no { min-width: 30px; height: 30px; line-height: 26px; border-radius: 15px; border: 2px solid var(--red); box-shadow: 0 6px 10px rgba(0,0,0,.4); }
+  .sx-name { max-width: 72px; padding: 0 6px; border-radius: 8px; background: var(--red); font-size: 11px; line-height: 16px; letter-spacing: .2px; overflow: hidden; text-overflow: ellipsis; }
+  .sx-unavailable .sx-name { background: #7a2b26; outline: 1px dashed #ffffff; }
+  .sx-pill .sx-tags, .sx-pill[data-side=left] .sx-tags { margin: 0; max-width: 70px; flex-direction: column; align-items: center; gap: 2px; }
+  .sx-role { height: auto; padding: 2px 6px; border-radius: 8px; font-size: 10px; line-height: 11px; white-space: normal; text-align: center; background: rgba(12,14,13,.8); }
   .sx-menu-layer { position: static; width: auto; height: auto; transform: none; max-width: 460px; margin: 12px auto 0; }
   .sx-menu { position: static; width: auto; max-height: none; visibility: visible !important; }
+  .sx-options { overflow: visible; }
   .sx-squad { padding: 16px; }
   .sx-search { margin-left: 0; width: 100%; }
   .sx-search input { width: 100%; }

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import FixtureBuilder from './fixture-builder';
 import { FixtureMessage } from './fixture-headline';
+import Notice from './notice';
 import { featuredResponseSchema, type FeaturedResponse } from '../domain/featured-fixture';
 
 export default function FeaturedFixture() {
@@ -43,9 +44,9 @@ export default function FeaturedFixture() {
 
   const retry = <button className="sx-secondary" type="button" onClick={() => { setFailed(false); setAttempt((value) => value + 1); }}>Try again</button>;
   if (!data) return <div aria-busy={!failed}>
-    {failed ? <FixtureMessage title="Fixture unavailable"><p className="sx-details">We couldn’t load the next fixture. Please try again.</p><div role="alert" className="sx-notice-row">{retry}</div></FixtureMessage>
-      : <FixtureMessage title="Loading next fixture…"><p className="sx-details">Checking the published match information.</p></FixtureMessage>}
+    {failed ? <><FixtureMessage title="Fixture unavailable" /><Notice tone="problem" role="alert" title="We couldn’t load the next fixture." action={retry}>Check your connection, then try again.</Notice></>
+      : <FixtureMessage loading title="Loading next fixture…"><p className="sx-details">Checking the published match information.</p></FixtureMessage>}
   </div>;
-  const stale = failed && <div role="alert" className="sx-notice sx-notice-row"><span>Showing the last loaded fixture information. It may be out of date.</span>{retry}</div>;
+  const stale = failed && <Notice tone="attention" role="alert" title="Showing the last loaded fixture information." action={retry}>It may be out of date.</Notice>;
   return <FixtureBuilder context={data} alert={stale} />;
 }
