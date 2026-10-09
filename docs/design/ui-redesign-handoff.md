@@ -2,7 +2,7 @@
 
 **Prepared:** 9 October 2026, at the end of the design conversation.
 **Purpose:** Start implementing the agreed redesign in a new chat without depending on that conversation.
-**Status:** Design agreed for the desktop main page and the logo. Slice 1 is implemented; see [UI slice 1 verification](../implementation/ui-slice-1-verification.md). The red is now `#da362e` (contrast). The docs listed under "Documentation already updated" are edited but not committed.
+**Status (updated 9 October 2026, end of the implementation chat):** Slice 1 and its follow-up tweaks are implemented, merged into `main` and live on supporterxi.vercel.app. Most of slice 2 was built along the way. Section 7 records what is done and what is left; section 8 is the starting prompt for the next chat. Where this document and section 7 disagree, section 7 is newer.
 
 ## 1. What was decided
 
@@ -112,7 +112,7 @@ Mobbin references that informed the direction: FotMob, theScore, DAZN and MLS li
 - The squad has no position data, so the squad row cannot be grouped by position.
 - Players' surnames are not stored separately. The mockup shortened names by hand ("de Ligt", "Amad"); the build needs a rule or a field for the short name.
 
-## 5. Documentation already updated (uncommitted)
+## 5. Documentation updated in the design chat (committed since, in 52831b5)
 
 - `docs/product/canonical-prd.md`: version 2.1 with the name, the preselected formation, role display, export notes and the new visual direction.
 - `docs/implementation/verification.md`: MVP-02 now expects the preselected formation.
@@ -130,18 +130,63 @@ Still saying "Starting XI": the app itself (`src/app/layout.tsx`, `page.tsx`, ad
 
 Then Codex builds the share image, followed by release checks.
 
-## 7. Starting prompt for the new chat
+## 7. Progress after the implementation chat (9 October 2026)
+
+### Done and live (pull requests #1, #2, #3)
+
+- **Slice 1, desktop main page,** as specified, renamed to Supporter XI, starting on 4-2-3-1 Wide. Details and test mapping: [UI slice 1 verification](../implementation/ui-slice-1-verification.md).
+- **Decisions the user made:**
+  - Label collisions are solved by automatic placement: the role tag flips above the pill and/or the pill extends left only where needed (`placeLabels` in `src/components/pitch-geometry.ts`).
+  - The single red is now `#da362e`, because `#e0372f` failed AA contrast under white 14px text (4.41:1).
+  - The proposed interactions are approved: picking in either order, plus drag and keyboard; a pill menu beside the pill (role with definitions, move or swap, remove); replacing a player from the squad row.
+  - Formation chooser "option 1": the button opens a panel above it, grouped by back line. Hovering (after a real mouse movement) or arrowing previews the formation on the real pitch, listing players who leave and roles that clear. Click or Enter commits; Escape or moving away reverts; on touch the first tap previews and the second commits. This replaced the modal grid and the confirmation dialog.
+- **Follow-up tweaks:**
+  - Pointer-based drag and drop that works in every desktop browser: a pill follows the cursor, the nearest position within 64px lights up, Escape cancels.
+  - The kickoff is always in English (en-GB), in the visitor's own time zone.
+  - The gap between the pitch and the squad heading is doubled (56px at 1440px).
+- **Short names:** surname with particles ("de Ligt"), single names whole ("Amad"); shared surnames get an initial ("J. Fletcher", "T. Fletcher").
+
+### Left in slice 2 (small)
+
+1. Restyle the notices (browser memory, featured fixture changed, restore failed, loading, no fixture, fetch failed). They currently sit in a plain dark box.
+2. Replace the browser's native `confirm` used by "Start new fixture" with a designed confirmation.
+3. A consistency pass over hover, focus, selected and unavailable states.
+4. Pill menu polish, for example the role as a pickable list with definitions instead of a select plus a separate definitions disclosure.
+
+### Then
+
+- Slice 3, mobile: bird's-eye portrait pitch and the tap flow. Below 900px a flat temporary stand-in exists only so mobile keeps working and its tests pass; it is not the mobile design.
+- Slice 4, admin: the admin screens keep the old light look.
+- Then Codex builds the share image (PNG export), then release checks. "Share your XI" stays visible but disabled until then.
+
+### Still open (do not settle silently)
+
+- Logo order: disc first (used now) or disc last.
+- Whether to add a short-name field to admin instead of the surname rule.
+- Opponent names show as the provider gives them ("Tottenham Hotspur FC").
+- Small remaining worst-case label overlaps (longest names and roles) in 3-5-2, 4-4-2 Diamond and 4-2-3-1 Narrow.
+- Landscape PNG export dimensions (open product decision).
+
+### Practical notes for the next session
+
+- `main` receives content commits from the admin and the daily import. Fetch before branching. A merged pull request is finished: start the next change from the latest `main`.
+- The user tests on supporterxi.vercel.app, which shows only `main`. The user has agreed that verified work is merged there via a pull request once GitHub's checks pass; confirm per round. Vercel posts a preview link on each pull request; `/dev/workbench` exists only on previews and locally.
+- In the cloud container, Playwright 1.63 expects Chromium build 1243 while 1194 is installed. A local symlink from `/opt/pw-browsers/chromium_headless_shell-1243/chrome-headless-shell-linux64` to the 1194 `chrome-linux` folder (plus a `chrome-headless-shell` link to `headless_shell`) makes it run. Change nothing in the repository for this.
+- Stop any `next dev` server (port 3000) before `npm run check`; the workbench tests start their own and fail if one is running. Revert the `next-env.d.ts` change the dev server makes.
+- Browser tests must wait for focus moves that happen one frame later (after placing a player, or opening the pill menu) before the next key press; two CI failures came from this.
+- The browser-memory key stays `starting-xi:working:v1` so remembered lineups survive the rename.
+
+## 8. Starting prompt for the next chat
 
 ```text
-We are implementing the agreed UI redesign of Supporter XI in this repository. The design was done in an earlier chat; nothing in the interface code has been changed yet.
+We are continuing the Supporter XI UI redesign in this repository. Slice 1 (desktop main page) and its follow-ups are merged and live.
 
-Before writing any code, read AGENTS.md, README.md and the documents it marks authoritative, then read docs/design/ui-redesign-handoff.md in full and the reference files in docs/design/reference/. The agreed page is full-xi-pills.dc.html and the agreed logo is logo.dc.html; treat them as the specification. The design canvas is at https://claude.ai/artifact/PoGUDmzspsdyNcwbmh8yJD if you need the live version.
+Before writing any code, read AGENTS.md, README.md and the documents it marks authoritative, then docs/design/ui-redesign-handoff.md in full (section 7 is the latest progress and section 8 is this prompt), docs/implementation/ui-slice-1-verification.md, and the reference files in docs/design/reference/. The design canvas is at https://claude.ai/artifact/PoGUDmzspsdyNcwbmh8yJD if you need it.
 
 Then:
-1. Fetch and check that main is up to date, and create a branch for this work. There are uncommitted documentation changes from the design chat (PRD 2.1, verification, decisions, README, docs/design); keep them and include them in the first commit when I ask you to commit.
-2. Build slice 1 from the handoff: the desktop main page, wired to the existing domain logic in src/domain, starting on 4-2-3-1 Wide, with the app renamed to Supporter XI.
-3. Run the app locally and check your work with screenshots in all 14 formations before showing me. Tell me where pills or role tags collide and what you recommend.
-4. Update the browser tests that the new interface breaks and get npm run check passing.
+1. Fetch main, check it is up to date, and create a branch for this work from it.
+2. Finish slice 2 as listed in section 7 of the handoff ("Left in slice 2"): propose each undesigned item, show it running with screenshots, and wait for my decision before building the next one.
+3. Keep npm run check passing, with tests mapped to docs/implementation/verification.md.
 
-Do not start PNG export; Codex builds that after the UI work. Do not change product scope. Where the handoff lists something as not designed yet, propose it, show it running, and wait for my decision before moving to the next slice. Ask me before committing or pushing.
+Desktop only for now. Do not start mobile, admin or PNG export, and do not change product scope. Ask me before committing, pushing or merging.
 ```
