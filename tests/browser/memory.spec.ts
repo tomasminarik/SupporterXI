@@ -29,9 +29,10 @@ test('MVP-06/07: restore, availability, and explicit fixture transition', async 
   await page.getByRole('button', { name: 'GK: Empty', exact: true }).click();
   await page.getByRole('button', { name: '1 Senne Lammens', exact: true }).click();
   await page.getByRole('button', { name: 'GK: Senne Lammens', exact: true }).click();
-  await page.getByRole('combobox', { name: 'Role', exact: true }).selectOption('traditional-goalkeeper');
+  await page.getByRole('radio', { name: 'Traditional Goalkeeper', exact: true }).check();
   await page.reload();
   await expect(page.getByRole('button', { name: 'GK: Senne Lammens, Traditional Goalkeeper', exact: true })).toBeVisible();
+  await expect(page.locator('.sx-memory')).toContainText('Restored from this browser.');
   context.players[0].selectable = false;
   await page.evaluate(() => window.dispatchEvent(new Event('focus')));
   await expect(page.getByText('Some selected players are now unavailable.', { exact: false })).toBeVisible();
@@ -57,7 +58,7 @@ test('MVP-06: corrupt memory requires explicit reset', async ({ page }) => {
   await page.addInitScript((key) => localStorage.setItem(key, '{broken'), key);
   await page.route('**/api/featured-fixture', (route) => route.fulfill({ json: makeContext() }));
   await page.goto('/');
-  await expect(page.getByText('This browser’s lineup could not be restored.')).toBeVisible();
+  await expect(page.getByRole('status').filter({ hasText: 'This browser’s lineup could not be restored.' })).toHaveAttribute('data-tone', 'problem');
   await expect(formationButton(page)).toHaveCount(0);
   await page.getByRole('button', { name: 'Reset and start this fixture' }).click();
   await expect(formationButton(page)).toHaveText('4-2-3-1 Wide');
@@ -67,7 +68,8 @@ test('MVP-06: storage failure leaves editing usable', async ({ page }) => {
   await page.addInitScript(() => { Storage.prototype.setItem = () => { throw new DOMException('Quota exceeded', 'QuotaExceededError'); }; });
   await page.route('**/api/featured-fixture', (route) => route.fulfill({ json: makeContext() }));
   await page.goto('/');
-  await expect(page.getByText('Browser memory is unavailable.', { exact: false })).toBeVisible();
+  await expect(page.getByRole('status').filter({ hasText: 'Browser memory is unavailable.' })).toHaveAttribute('data-tone', 'attention');
+  await expect(page.locator('.sx-memory')).toHaveCount(0);
   await chooseFormation(page, '4-3-3');
   await page.getByRole('button', { name: 'GK: Empty', exact: true }).click();
   await page.getByRole('button', { name: '1 Senne Lammens', exact: true }).click();

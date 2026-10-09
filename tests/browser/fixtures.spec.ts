@@ -26,9 +26,18 @@ test('MVP-07: initial error offers retry; unknown kickoff stays honest', async (
   await page.route('**/api/featured-fixture', (route) => ++attempts === 1 ? route.fulfill({ status: 503 }) : route.fulfill({ json: response('Synthetic Preview FC', true) }));
   await page.goto('/');
   await expect(page.getByRole('heading', { name: 'Fixture unavailable' })).toBeVisible();
+  await expect(page.getByRole('alert').filter({ hasText: 'We couldn’t load the next fixture.' })).toHaveAttribute('data-tone', 'problem');
   await page.getByRole('button', { name: 'Try again' }).click();
   await expect(page.getByText('Time to be confirmed').first()).toBeVisible();
   await expect(page.locator('time')).toHaveCount(0);
+});
+
+test('MVP-07: loading names the state without inventing an opponent', async ({ page }) => {
+  await page.route('**/api/featured-fixture', () => {});
+  await page.goto('/');
+  await expect(page.getByRole('heading', { level: 1, name: 'Manchester United Loading next fixture…', exact: true })).toBeVisible();
+  await expect(page.locator('main [aria-busy=true]')).toBeVisible();
+  await expect(page.locator('.sx-formation')).toHaveCount(0);
 });
 
 test('MVP-07: focus refresh failure retains last data with stale feedback', async ({ page }) => {
@@ -38,7 +47,7 @@ test('MVP-07: focus refresh failure retains last data with stale feedback', asyn
   await expect(page.locator('time')).toHaveAttribute('datetime', '2026-10-25T12:00:00Z');
   await page.route('**/api/featured-fixture', (route) => route.fulfill({ status: 500 }));
   await page.evaluate(() => window.dispatchEvent(new Event('focus')));
-  await expect(page.getByRole('alert').filter({ hasText: 'may be out of date' })).toBeVisible();
+  await expect(page.getByRole('alert').filter({ hasText: 'may be out of date' })).toHaveAttribute('data-tone', 'attention');
   await expect(page.getByRole('heading', { name: /Synthetic Preview FC/ })).toBeVisible();
 });
 

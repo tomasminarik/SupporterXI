@@ -16,10 +16,13 @@ export function FixtureHeadline({ fixture }: { fixture: Fixture }) {
   </section>;
 }
 
-/** Loading, failure and no-fixture states share the headline position. */
-export function FixtureMessage({ title, children }: { title: string; children?: React.ReactNode }) {
+/** Loading, failure and no-fixture states keep the headline's shape: the club in red, the state in white.
+    While loading, a quiet bar stands where the opponent will be; no opponent is invented. */
+export function FixtureMessage({ title, loading = false, children }: { title: string; loading?: boolean; children?: React.ReactNode }) {
   return <section className="sx-fixture sx-fixture-message" aria-labelledby="fixture-title">
-    <h1 id="fixture-title" className="sx-headline sx-message">{title}</h1>
+    <h1 id="fixture-title" className="sx-headline sx-long"><span className="sx-club">Manchester United</span> {loading
+      ? <><span className="sx-v" aria-hidden="true">v</span> <span className="sx-skeleton" aria-hidden="true" /><span className="sr-only">{title}</span></>
+      : <span className="sx-opponent">{title}</span>}</h1>
     {children}
   </section>;
 }

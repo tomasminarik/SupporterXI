@@ -3,7 +3,7 @@ import AxeBuilder from '@axe-core/playwright';
 
 const formationButton = (page: Page) => page.locator('.sx-formation');
 const picker = (page: Page) => page.getByRole('group', { name: 'Choose a formation' });
-const role = (page: Page) => page.getByRole('combobox', { name: 'Role', exact: true });
+const role = (page: Page, name: string) => page.getByRole('radio', { name, exact: true });
 async function chooseFormation(page: Page, name: string) {
   await formationButton(page).click();
   await picker(page).getByRole('button', { name, exact: true }).click();
@@ -26,7 +26,8 @@ test('MVP-01–05, 13: inspect and edit a real in-memory XI', async ({ page }) =
   await expect(page.getByRole('heading', { name: 'Pick your full-back' })).toBeVisible();
   await page.getByRole('button', { name: '2 Diogo Dalot' }).click();
   await page.getByRole('button', { name: 'LB: Diogo Dalot', exact: true }).click();
-  await role(page).selectOption('stay-back-full-back');
+  await role(page, 'Stay-Back Full-Back').check();
+  await expect(page.getByRole('combobox')).toHaveCount(0);
   await expect(page.getByText('Holds a deeper flank position to protect against transitions.', { exact: true }).first()).toBeVisible();
   await expect(page.getByRole('button', { name: '2 Diogo Dalot' })).toHaveCount(0);
   await page.keyboard.press('Escape');
@@ -46,15 +47,24 @@ test('MVP-01–05, 13: inspect and edit a real in-memory XI', async ({ page }) =
   await expect(formationButton(page)).toHaveText('3-4-3 Wide');
 
   await page.getByRole('button', { name: 'LWB: Diogo Dalot', exact: true }).click();
-  await expect(role(page)).toHaveValue('');
-  await expect(role(page).locator('option')).toHaveText(['No role', 'Overlapping Full-Back', 'Inverted Full-Back']);
-  await role(page).selectOption('inverted-full-back');
-  await page.getByRole('combobox', { name: 'Move or swap to', exact: true }).selectOption('st');
+  await expect(role(page, 'No role')).toBeChecked();
+  await expect(page.locator('.sx-option-name')).toHaveText(['No role', 'Overlapping Full-Back', 'Inverted Full-Back']);
+  await role(page, 'Inverted Full-Back').check();
+  await expect(page.getByRole('button', { name: 'LWB: Diogo Dalot, Inverted Full-Back', exact: true })).toBeVisible();
+  // Moving is by dragging on desktop; elsewhere a player is removed and placed again. Either way the role stays behind.
+  if (test.info().project.name === 'desktop') {
+    await page.keyboard.press('Escape');
+    await page.getByRole('button', { name: 'LWB: Diogo Dalot, Inverted Full-Back', exact: true }).dragTo(page.getByRole('button', { name: 'ST: Empty', exact: true }));
+  } else {
+    await page.getByRole('button', { name: 'Remove player', exact: true }).click();
+    await page.getByRole('button', { name: 'ST: Empty', exact: true }).click();
+    await page.getByRole('button', { name: '2 Diogo Dalot' }).click();
+  }
   await expect(page.getByRole('button', { name: 'LWB: Empty', exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'ST: Diogo Dalot', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'ST: Diogo Dalot', exact: true }).click();
-  await expect(role(page)).toHaveValue('');
-  await role(page).selectOption('false-nine');
+  await expect(role(page, 'No role')).toBeChecked();
+  await role(page, 'False Nine').check();
   await expect(page.getByRole('heading', { name: 'Replace Dalot' })).toBeVisible();
   await page.getByRole('button', { name: '8 Bruno Fernandes' }).click();
   await expect(page.getByRole('button', { name: 'ST: Bruno Fernandes, False Nine', exact: true })).toBeVisible();
@@ -121,9 +131,12 @@ test('MVP-13: keyboard placement, roles and remove', async ({ page }) => {
   await expect(filled).toBeFocused();
   await page.keyboard.press('Enter');
   await expect(page.getByRole('heading', { name: 'GK · Senne Lammens' })).toBeFocused();
-  const roles = role(page);
-  await roles.focus(); await expect(roles).toBeFocused(); await roles.press('t'); await roles.press('Tab');
-  await expect(roles).toHaveValue('traditional-goalkeeper');
+  // Tab passes the close button and lands on the role list; the arrow keys choose.
+  await page.keyboard.press('Tab'); await page.keyboard.press('Tab');
+  await expect(role(page, 'No role')).toBeFocused();
+  await page.keyboard.press('ArrowDown');
+  await expect(role(page, 'Traditional Goalkeeper')).toBeChecked();
+  await expect(role(page, 'Traditional Goalkeeper')).toHaveAccessibleDescription('Holds a deeper position, protects the box, and distributes with lower risk.');
   await page.keyboard.press('Escape');
   await expect(page.getByRole('button', { name: 'GK: Senne Lammens, Traditional Goalkeeper', exact: true })).toBeFocused();
   await page.keyboard.press('Enter');
