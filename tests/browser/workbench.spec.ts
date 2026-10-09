@@ -24,6 +24,8 @@ test('MVP-01–05, 13: inspect and edit a real in-memory XI', async ({ page }) =
 
   await page.getByRole('button', { name: 'LB: Empty', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Pick your full-back' })).toBeVisible();
+  // Selected is shown by inversion, not by an outline that could be mistaken for focus.
+  await expect(page.getByRole('button', { name: 'LB: Empty', exact: true })).toHaveCSS('background-color', 'rgb(255, 255, 255)');
   await page.getByRole('button', { name: '2 Diogo Dalot' }).click();
   await page.getByRole('button', { name: 'LB: Diogo Dalot', exact: true }).click();
   await role(page, 'Stay-Back Full-Back').check();

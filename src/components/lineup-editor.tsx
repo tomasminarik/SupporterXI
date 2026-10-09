@@ -317,7 +317,7 @@ export default function LineupEditor({ lineup, players, onChange }: { lineup: Li
         if (!occupant) return <button key={id} {...common} className={`sx-marker sx-empty${heldPlayer ? ' sx-target' : ''}`} aria-label={`${abbreviation}: Empty`}>{markerLabel(abbreviation)}</button>;
         const unavailable = !occupant.selectable;
         const placement = placements.get(id);
-        return <button key={id} {...common} data-side={placement?.side ?? 'right'} data-tag={placement?.tag ?? 'below'} className={`sx-marker sx-pill${unavailable ? ' sx-unavailable' : ''}`} aria-expanded={menuSlot === id} aria-label={`${abbreviation}: ${occupant.name}${role ? `, ${role.name}` : ''}${unavailable ? ', unavailable' : ''}`}
+        return <button key={id} {...common} data-side={placement?.side ?? 'right'} data-tag={placement?.tag ?? 'below'} className={`sx-marker sx-pill${unavailable ? ' sx-unavailable' : ''}${heldPlayer ? ' sx-target' : ''}`} aria-expanded={menuSlot === id} aria-label={`${abbreviation}: ${occupant.name}${role ? `, ${role.name}` : ''}${unavailable ? ', unavailable' : ''}`}
           onPointerDown={(event) => startDrag(event, 'slot', id)}>
           <span className="sx-pill-body"><span className="sx-no">{occupant.shirtNumber ?? '–'}</span><span className="sx-name">{short(occupant)}</span></span>
           {(role || unavailable) && <span className="sx-tags">{role && <span className="sx-role">{role.name}</span>}{unavailable && <span className="sx-role sx-flag">Unavailable</span>}</span>}
