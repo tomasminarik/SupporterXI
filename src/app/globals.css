@@ -66,7 +66,8 @@ body:has(.sx) { background: #0c0e0d; color-scheme: dark; }
 .sx-notice-text { flex: 1; min-width: 0; }
 .sx-notice-text strong { display: block; font-weight: 600; }
 .sx-notice-text p { margin: 2px 0 0; color: var(--soft); font-size: 14px; }
-.sx-notice > button { flex: none; }
+.sx-notice > button, .sx-notice-actions { flex: none; }
+.sx-notice-actions { display: flex; gap: 8px; }
 .sx-notice-block { max-width: 560px; margin: 48px auto 88px; padding: 36px 32px 32px; flex-direction: column; gap: 18px; text-align: center; }
 .sx-notice-block .sx-notice-mark { width: 44px; height: 44px; font-size: 28px; }
 .sx-notice-block .sx-notice-text strong { font: 800 32px/1.05 var(--display); text-transform: uppercase; text-wrap: balance; }
@@ -101,6 +102,8 @@ body:has(.sx) { background: #0c0e0d; color-scheme: dark; }
 @media (max-width: 792px) {
   .sx-notice { margin-left: 16px; margin-right: 16px; flex-wrap: wrap; }
   .sx-notice-text { flex-basis: calc(100% - 42px); }
-  .sx-notice > button { width: 100%; }
+  .sx-notice > button, .sx-notice-actions { width: 100%; }
+  .sx-notice-actions { flex-wrap: wrap; }
+  .sx-notice-actions button { flex: 1 1 auto; }
   .sx-notice-block { padding: 28px 20px 24px; }
 }

@@ -6,6 +6,7 @@
 
 - **Notices (approved by the user, 9 October 2026).** One notice bar under the fixture details (`src/components/notice.tsx`): a round mark, a bold line, a quieter line and an optional button. Three tones, each with its own glyph so tone never depends on colour: information (white "i"), attention (yellow "!"), problem (red cross). Loading, fetch-failed and no-fixture states keep the headline's shape, with "Manchester United" in red and the state in white; while loading a pulsing bar stands where the opponent will be and no opponent is invented. A lineup that cannot be restored, or that belongs to another fixture, replaces the builder with a larger centred panel. Browser memory is a quiet line under the squad when it works and an attention notice above the pitch when it does not.
 - **Pill menu (approved by the user, 9 October 2026).** The role is a pickable list (radio group) with each definition under its name and "No role" first; the select and the "Role definitions" disclosure are gone. Long lists scroll between the fixed title and the footer. The footer holds "Remove player" and the replace hint.
+- **Start new fixture confirmation (proposal, awaiting the user's decision).** The browser's `confirm` is gone. Pressing "Start new fixture" turns the notice itself into the question, naming the new opponent, with "Keep this XI" (focused first) and "Start with an empty XI". Keeping or pressing Escape changes nothing and returns focus to the button.
 - **Mobile stand-in patches (user request).** Full-width formation button; "N players not picked" hidden below 900px; markers kept inside the pitch; a player is a number disc with the name and the role stacked beneath it. This is still the temporary pitch, not the mobile design (slice 3). Role tags can still touch where three players sit close together.
 
 ## Decision recorded (user, 9 October 2026)
@@ -19,6 +20,7 @@
 | MVP-03 | `tests/browser/workbench.spec.ts`: move by drag on desktop, remove and place again elsewhere; replace, remove, Clear XI unchanged |
 | MVP-05 | `tests/browser/workbench.spec.ts`: role list shows exactly "No role" plus the family's roles in order; no select remains |
 | MVP-06 | `tests/browser/memory.spec.ts`: restored line, restore-failed panel (problem tone), memory-unavailable notice (attention tone) |
+| MVP-06/07 | `tests/browser/memory.spec.ts`: fixture transition confirmed in the page with no browser dialog; keeping and Escape leave the XI and its match unchanged |
 | MVP-07 | `tests/browser/fixtures.spec.ts`: loading headline without an opponent, fetch-failed alert with retry, stale alert |
 | MVP-13 | `tests/browser/workbench.spec.ts`: keyboard reaches the role list, arrow keys choose, each role exposes its definition as its description; axe WCAG 2.2 AA at 320/390/768/1440px |
 
@@ -26,5 +28,4 @@
 
 ## Left in slice 2
 
-- A designed confirmation for "Start new fixture" (still the browser's `confirm`).
 - A consistency pass over hover, focus, selected and unavailable states.

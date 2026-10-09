@@ -43,11 +43,21 @@ test('MVP-06/07: restore, availability, and explicit fixture transition', async 
   await page.evaluate(() => window.dispatchEvent(new Event('focus')));
   await expect(page.getByText('The featured match is now Synthetic B.')).toBeVisible();
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Synthetic A');
-  page.once('dialog', (dialog) => dialog.dismiss());
+  // The confirmation is part of the page: no browser dialog, and keeping or Escape changes nothing.
+  page.on('dialog', () => { throw new Error('unexpected browser dialog'); });
   await page.getByRole('button', { name: 'Start new fixture' }).click();
+  await expect(page.getByText('Start Synthetic B with an empty XI?')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Keep this XI' })).toBeFocused();
+  await page.getByRole('button', { name: 'Keep this XI' }).click();
+  await expect(page.getByRole('button', { name: 'Start new fixture' })).toBeFocused();
   await expect(formationButton(page)).toHaveText('4-3-3');
-  page.once('dialog', (dialog) => dialog.accept());
   await page.getByRole('button', { name: 'Start new fixture' }).click();
+  await expect(page.getByRole('button', { name: 'Keep this XI' })).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(page.getByText('The featured match is now Synthetic B.')).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('Synthetic A');
+  await page.getByRole('button', { name: 'Start new fixture' }).click();
+  await page.getByRole('button', { name: 'Start with an empty XI' }).click();
   await expect(formationButton(page)).toHaveText('4-2-3-1 Wide');
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Synthetic B');
   expect(writes).toEqual([]);
