@@ -84,9 +84,11 @@ body:has(.sx) { background: #0c0e0d; color-scheme: dark; }
 .sx-primary, .sx-secondary { min-height: 44px; padding: 0 18px; font: 600 15px var(--body); cursor: pointer; }
 .sx-primary { background: var(--red); color: #ffffff; border: 2px solid #ffffff; }
 .sx-primary:hover { background: var(--red-hover); }
+.sx-primary, .sx-secondary, .sx-quiet, .sx-close { transition: background-color .12s ease, border-color .12s ease, color .12s ease; }
 .sx-secondary { background: var(--surface); color: var(--text); border: 1px solid #4a4e4a; }
 .sx-secondary:hover { border-color: var(--text); }
 .sx-quiet { min-height: 44px; padding: 0 12px; background: transparent; color: var(--soft); border: 0; font: 500 15px var(--body); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.sx-quiet:not(:disabled):hover { color: var(--text); }
 .sx-quiet:disabled { color: #6b6e68; cursor: default; text-decoration: none; }
 .sx-close { width: 44px; height: 44px; flex: none; background: transparent; border: 0; color: var(--soft); font-size: 26px; line-height: 1; cursor: pointer; }
 .sx-close:hover { color: #ffffff; }
