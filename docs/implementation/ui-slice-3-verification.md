@@ -1,4 +1,4 @@
-# UI redesign slice 3 — mobile (first round, awaiting the user's decision)
+# UI redesign slice 3 — mobile
 
 **Date:** 9 October 2026. **Source:** [UI redesign handoff](../design/ui-redesign-handoff.md): "bird's-eye portrait pitch and the tap flow"; nothing was drawn. Applies below 900px. The desktop layout is unchanged.
 
@@ -15,10 +15,11 @@
 
 With all eleven placed and the longest role on every player: no label overlaps and nothing outside the pitch in any of the 14 formations at 390px. At 320px the only remaining contact is in 5-3-2 (the central defender's role against the goalkeeper's disc).
 
-## Decisions for the user
+## Decisions (user, 9 October 2026)
 
-- Whether Move belongs in the touch sheet (it was removed from the desktop menu on 9 October).
-- Whether the squad row should remain in the page under the pitch on phones, now that the sheet does the picking.
+- The first round is approved and merged (pull request 8).
+- **Move stays in the touch sheet.** Phones have no dragging, so this is how a player is moved or swapped there. The desktop menu still has no move control.
+- **The squad row stays in the page under the pitch on phones,** alongside the sheet.
 
 ## Verification
 
