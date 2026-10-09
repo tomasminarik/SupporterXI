@@ -1,6 +1,6 @@
 /* Pitch, markers and squad row (docs/design/reference/full-xi-pills.dc.html).
    --k scales the 1160 × 760 design to narrower desktop windows; markers keep their size. */
-.sx-pitch { --k: 1; position: relative; height: calc(560px * var(--k)); margin-top: 8px; }
+.sx-pitch { --k: 1; position: relative; height: calc(560px * var(--k)); margin: 8px 0 calc(28px * var(--k)); }
 .sx-formation { position: absolute; left: 50%; top: calc(74px * var(--k)); transform: translateX(-50%); z-index: 1; height: 48px; padding: 0 18px; background: var(--surface); border: 1px solid var(--edge-strong); color: var(--text); cursor: pointer; display: flex; align-items: center; gap: 12px; font: 800 24px var(--display); white-space: nowrap; }
 .sx-formation:hover { border-color: var(--text); }
 .sx-glow { position: absolute; left: 50%; top: calc(130px * var(--k)); width: calc(1000px * var(--k)); height: calc(130px * var(--k)); transform: translateX(-50%); background: radial-gradient(ellipse, rgba(150,190,150,.13), rgba(150,190,150,0) 70%); }
@@ -117,7 +117,7 @@ body.sx-dragging, body.sx-dragging * { cursor: grabbing !important; user-select:
 
 /* Below 900px: a flat bird's-eye stand-in until the mobile layout (slice 3) is designed. */
 @media (max-width: 899px) {
-  .sx-pitch { height: auto; padding: 0 16px; margin-top: 20px; }
+  .sx-pitch { height: auto; padding: 0 16px; margin: 20px 0 0; }
   .sx-formation { position: relative; left: auto; top: auto; transform: none; margin: 0 auto 14px; }
   .sx-picker { position: static; transform: none; width: auto; margin: 0 0 14px; }
   .sx-picker-groups { grid-template-columns: 1fr; }
