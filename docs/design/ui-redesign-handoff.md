@@ -182,11 +182,11 @@ Then Codex builds the share image, followed by release checks.
 - **Motion is live** (pull request 7): seven animations, "quick and crisp", off under reduced motion. Browser suites run with reduced motion by default; `MOTION=1` runs them animated. See [motion verification](../implementation/ui-motion-verification.md).
 - **Slice 3, mobile, first round is live** (pull request 8): tall portrait pitch, bottom sheets for picking, a player's roles and formations, move and swap by tapping. The user kept Move on touch and kept the squad row under the pitch. See [slice 3 verification](../implementation/ui-slice-3-verification.md).
 - **Left in slice 3:** a check on a real iPhone and Android phone (the user's), and any tuning that follows; header and headline sizes on phones were not touched.
-- **Then:** slice 4 (admin restyle), then Codex builds PNG export.
+- **Then (changed by the user, 9 October 2026):** Codex takes slice 4, the admin restyle. Claude designs and builds sharing (PNG export) in a new chat; see the [sharing handoff](sharing-handoff.md), which also holds the starting prompt. Earlier notes in this document that Codex builds the share image are superseded.
 - **Working agreement:** the user reviews on supporterxi.vercel.app only (localhost does not open for them). After `npm run check` passes, commit, push and open a pull request; the user merges it. Explain in plain language, with screenshots or a recording.
 - The questions under "Still open" above are unchanged.
 
-## 8. Starting prompt for the next chat
+## 8. Starting prompt used for slice 2 (kept for history; the current prompt is in the sharing handoff)
 
 ```text
 We are continuing the Supporter XI UI redesign in this repository. Slice 1 (desktop main page) and its follow-ups are merged and live.
