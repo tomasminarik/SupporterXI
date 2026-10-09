@@ -9,7 +9,8 @@ import './admin.css';
 type Source = { revision: string; content: SharedContent; csrf?: string };
 const sourceSchema = z.object({ revision: z.string(), content: contentSchema, csrf: z.string().optional(), publication: z.object({ commit: z.string(), digest: z.string(), state: z.string() }).optional() });
 async function call(url: string, init?: RequestInit) {
-  const response = await fetch(url, { ...init, cache: 'no-store', signal: init?.signal ?? AbortSignal.timeout(20_000) });
+  // Publication may need the live probe (10s) and two GitHub requests (12s each).
+  const response = await fetch(url, { ...init, cache: 'no-store', signal: init?.signal ?? AbortSignal.timeout(60_000) });
   const body = await response.json();
   if (!response.ok) throw new Error(body.error ?? 'Request failed. Your edits are still here.');
   return body;

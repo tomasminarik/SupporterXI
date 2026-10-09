@@ -28,6 +28,8 @@ AR-06's compatibility invariant remains, but supporter server-save/Community ass
 
 ## Release gates
 
+The [9 October operational checkpoint](operations-verification.md) maps publication recovery regression tests to MVP-10/12 and separates read-only production observations from remaining live drills. PNG remains unimplemented and MVP-08 is not passed.
+
 All MVP-01–15 pass, with critical journeys exercised in a production-like deployment. No relevant blocking decision may be treated as passed through an assumed default. Add M-01 number cases and M-02 availability/restore/export cases after their approval.
 
 Check narrow/wide mobile, tablet and desktop; document actual tested widths during UI design. Manually exercise mobile Safari, Android Chrome, desktop keyboard and at least one screen reader. Check loading/empty/error/stale states for public fixture, restore, player chooser, export, admin editing, imports and publishing. Include real long player names and missing kickoff.

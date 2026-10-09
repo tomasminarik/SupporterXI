@@ -68,7 +68,7 @@ See [foundation verification](docs/implementation/foundation-verification.md) fo
 
 Fixture content and rollover verification are documented in [fixture-shell verification](docs/implementation/fixture-shell-verification.md). The initial real fixture import and its publication are documented in [import verification](docs/implementation/import-verification.md).
 
-See [browser-memory verification](docs/implementation/browser-memory-verification.md) for fixture integration, storage recovery and approved availability behavior. The admin backoffice is the next slice; PNG export is deferred until after admin/import work, immediately before release checks.
+See [browser-memory verification](docs/implementation/browser-memory-verification.md) for fixture integration, storage recovery and approved availability behavior. The admin backoffice and fixture import are implemented. [Operational readiness](docs/implementation/operations-verification.md) records the latest production observations, recovery checks and remaining live drills. PNG export remains the last feature, immediately before final release checks.
 
 ## Administration
 

@@ -35,8 +35,11 @@ export async function writeSource(source: { revision: string; content: SharedCon
 }
 export async function publication(commit: string, digest: string, token: string, origin: string, fetcher = fetch) {
   // The public endpoint reports bundled content, so a matching digest proves it is live.
-  const live = await fetcher(`${origin}/api/featured-fixture`, { cache: 'no-store', redirect: 'error', signal: AbortSignal.timeout(10_000) });
-  if (live.ok && (await live.json()).contentRevision === digest) return 'live' as const;
+  try {
+    const live = await fetcher(`${origin}/api/featured-fixture`, { cache: 'no-store', redirect: 'error', signal: AbortSignal.timeout(10_000) });
+    const body: unknown = live.ok ? await live.json() : null;
+    if (z.object({ contentRevision: z.literal(digest) }).safeParse(body).success) return 'live' as const;
+  } catch { /* A failed live probe must not hide a reported deployment failure. */ }
   const deployments = z.array(z.object({ id: z.number(), sha: z.string(), environment: z.string() })).parse(await github(`${repo}/deployments?sha=${commit}&per_page=100`, token, {}, fetcher));
   const production = deployments.find((item) => item.sha === commit && item.environment.toLowerCase() === 'production');
   if (production) {

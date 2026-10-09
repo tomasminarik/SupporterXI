@@ -4,6 +4,10 @@
 **Project directory:** `/Users/tomasminarik/SupporterXI`
 **Purpose:** Start implementation in a new chat without depending on the previous conversation.
 
+For the latest complete checkpoint and next steps, read [the 8 October chat continuation](chat-continuation-2026-10-08.md) first. The dated progress sections below include historical status statements.
+
+The [9 October operational checkpoint](operations-verification.md) adds production/cron observations and publication-recovery regression coverage. PNG remains last; the live operational drills are not yet complete.
+
 ## Current status — 8 October 2026
 
 An authorized Production refresh published 32 real Premier League/Champions League fixtures in commit `13345fb`. The live featured-fixture endpoint returned Tottenham on 10 October and all 36 original players. The native admin confirmation was replaced by an in-page confirmation to make refresh results visible. Read [import verification](import-verification.md) and [admin verification](admin-verification.md). Remaining work includes observing the first scheduled import, an operational rollback drill, PNG export as the last feature before release, and final checks. The dated sections below preserve earlier progress snapshots and may describe already completed work.
