@@ -101,6 +101,8 @@ test('MVP-13: keyboard placement, roles and remove', async ({ page }) => {
   await page.keyboard.press('Escape');
   await expect(page.getByRole('button', { name: 'GK: Senne Lammens, Traditional Goalkeeper', exact: true })).toBeFocused();
   await page.keyboard.press('Enter');
+  // The menu takes focus a frame after opening; wait for it before moving on.
+  await expect(page.getByRole('heading', { name: 'GK · Senne Lammens' })).toBeFocused();
   await page.getByRole('button', { name: 'Remove player', exact: true }).focus();
   await page.keyboard.press('Enter');
   await expect(slot).toBeVisible();
