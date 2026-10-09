@@ -1,5 +1,6 @@
 import { formations } from '../domain/catalogues';
 import { isCompleteLineup, type Draft } from '../domain/draft';
+import { publicHost } from '../domain/site';
 import { shortNames } from '../components/pitch-geometry';
 
 // The share image (PRD 6, MVP-08). Sizes are exact output pixels.
@@ -10,7 +11,7 @@ export const shareFormats = {
 } as const;
 export type ShareFormat = keyof typeof shareFormats;
 /** Printed on every image at the user's direction (9 October 2026). */
-export const shareAddress = 'supporterxi.com';
+export const shareAddress = publicHost;
 
 export type SharePlayer = Readonly<{ slot: string; x: number; y: number; number: number | null; name: string; fullName: string }>;
 /** Everything the image shows, copied out of the working XI. Roles are deliberately absent. */

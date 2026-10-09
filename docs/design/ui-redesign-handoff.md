@@ -185,6 +185,7 @@ Then Codex builds the share image, followed by release checks.
 - **Then (changed by the user, 9 October 2026):** Codex takes slice 4, the admin restyle. Claude designs and builds sharing (PNG export) in a new chat; see the [sharing handoff](sharing-handoff.md), which also holds the starting prompt. Earlier notes in this document that Codex builds the share image are superseded.
 - **Working agreement:** the user reviews on supporterxi.vercel.app only (localhost does not open for them). After `npm run check` passes, commit, push and open a pull request; the user merges it. Explain in plain language, with screenshots or a recording.
 - The questions under "Still open" above are unchanged.
+- **Later on 9 October 2026:** the user settled three of them. The logo is disc last ("Supporter XI"); the label overlaps were fixed by spreading central players and a stronger placement rule; the landscape export is 1920 × 1080. Phone header and headline sizes were tuned. See [polish verification](../implementation/ui-polish-verification.md). Still open: a short-name field in admin.
 
 ## 8. Starting prompt used for slice 2 (kept for history; the current prompt is in the sharing handoff)
 

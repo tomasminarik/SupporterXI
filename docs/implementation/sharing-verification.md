@@ -1,7 +1,7 @@
 # Sharing — "Share your XI" (PNG export)
 
 **Date:** 9 October 2026. **Source:** [sharing handoff](../design/sharing-handoff.md), PRD section 6, MVP-08.
-**Status:** Built with the user's decisions of 9 October 2026 applied. Checks on real phones remain.
+**Status:** Built with the user's decisions of 9 October 2026 applied, and confirmed by the user on their own phones the same day.
 
 ## Decisions (user, 9 October 2026)
 
@@ -48,6 +48,6 @@ The image is drawn on a canvas from a frozen copy of the XI taken when the butto
 - In landscape, pills can still touch in the builder's known tight cases (longest names in 3-5-2, 4-4-2 Diamond and 4-2-3-1 Narrow), exactly as on the desktop pitch.
 - In the square image a back five with the longest surnames fits, but the names are small.
 
-## Not done yet
+## Phone check
 
-- Manual checks on a real iPhone (Safari) and Android Chrome, including "Share…" and saving to Photos. MVP-08 is not marked fully passed in [verification](verification.md) until then.
+The user tried sharing on their own phones on 9 October 2026 and confirmed it works. MVP-08 is passed. The logo on the images now reads "Supporter XI" (disc last); see [polish verification](ui-polish-verification.md).

@@ -118,12 +118,14 @@ function drawPitch(ctx: CanvasRenderingContext2D, pitch: Box, turf: CanvasImageS
   ctx.restore();
 }
 
+/** The Supporter XI pill: the word, then the XI disc. */
 function drawLogo(ctx: CanvasRenderingContext2D, right: number, y: number, height: number) {
   const size = Math.round(height * 0.55);
   ctx.font = `800 ${size}px ${display}`;
   const word = 'SUPPORTER';
   const disc = height / 2 - 5;
-  const width = Math.ceil(5 + disc * 2 + 10 + ctx.measureText(word).width + 22);
+  const wordWidth = ctx.measureText(word).width;
+  const width = Math.ceil(22 + wordWidth + 10 + disc * 2 + 5);
   const box = { x: right - width, y, w: width, h: height };
   pill(ctx, box);
   ctx.fillStyle = colour.red;
@@ -131,7 +133,7 @@ function drawLogo(ctx: CanvasRenderingContext2D, right: number, y: number, heigh
   ctx.lineWidth = 3;
   ctx.strokeStyle = colour.white;
   ctx.stroke();
-  const cx = box.x + 5 + disc;
+  const cx = right - 5 - disc;
   const cy = y + height / 2;
   ctx.beginPath();
   ctx.arc(cx, cy, disc, 0, Math.PI * 2);
@@ -151,7 +153,7 @@ function drawLogo(ctx: CanvasRenderingContext2D, right: number, y: number, heigh
   ctx.textAlign = 'left';
   ctx.textBaseline = 'alphabetic';
   ctx.font = `800 ${size}px ${display}`;
-  ctx.fillText(word, cx + disc + 10, cy + capHeight(ctx) / 2);
+  ctx.fillText(word, box.x + 22, cy + capHeight(ctx) / 2);
 }
 
 const capHeight = (ctx: CanvasRenderingContext2D) => ctx.measureText('H').actualBoundingBoxAscent;
