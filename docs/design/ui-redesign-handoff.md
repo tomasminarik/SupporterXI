@@ -2,7 +2,7 @@
 
 **Prepared:** 9 October 2026, at the end of the design conversation.
 **Purpose:** Start implementing the agreed redesign in a new chat without depending on that conversation.
-**Status:** Design agreed for the desktop main page and the logo. No interface code has been changed. The docs listed under "Documentation already updated" are edited but not committed.
+**Status:** Design agreed for the desktop main page and the logo. Slice 1 is implemented; see [UI slice 1 verification](../implementation/ui-slice-1-verification.md). The red is now `#da362e` (contrast). The docs listed under "Documentation already updated" are edited but not committed.
 
 ## 1. What was decided
 

@@ -1,8 +1,7 @@
 import { expect, test } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
-import { initialSquad } from '../../src/domain/squad';
 
-test('MVP-07 empty state, MVP-10 seed, initial MVP-13/14', async ({ page }) => {
+test('MVP-07 empty state, Supporter XI name, initial MVP-13/14', async ({ page }) => {
   const errors: string[] = [];
   const unexpectedRequests: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
@@ -19,16 +18,11 @@ test('MVP-07 empty state, MVP-10 seed, initial MVP-13/14', async ({ page }) => {
   await expect(page.getByRole('link', { name: 'Skip to content' })).toBeFocused();
   await page.keyboard.press('Enter');
   await expect(page.locator('main')).toBeFocused();
-  await page.keyboard.press('Tab');
-  await expect(page.locator('summary')).toBeFocused();
-  await page.keyboard.press('Enter');
-  await expect(page.getByRole('listitem')).toHaveCount(initialSquad.length);
-  for (const { name } of initialSquad) await expect(page.getByText(name, { exact: true })).toBeVisible();
+  await expect(page.getByRole('img', { name: 'Supporter XI' })).toBeVisible();
+  await expect(page).toHaveTitle(/^Supporter XI/);
+  await expect(page.getByRole('region', { name: 'Lineup pitch' })).toHaveCount(0);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze()).violations).toEqual([]);
-  await page.locator('summary').focus();
-  await page.keyboard.press('Enter');
-  await expect(page.getByText(initialSquad[0].name, { exact: true })).not.toBeVisible();
   expect(await page.evaluate(() => ({ local: localStorage.length, session: sessionStorage.length }))).toEqual({ local: 0, session: 0 });
   expect(unexpectedRequests).toEqual([]);
   expect(errors).toEqual([]);

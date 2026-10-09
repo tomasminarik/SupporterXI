@@ -3,7 +3,7 @@ import raw from '../fixtures/initial-content.json';
 import { contentSchema } from '../../src/domain/content';
 import { featuredResponse } from '../../src/domain/featured-fixture';
 import { formations } from '../../src/domain/catalogues';
-import { changeFormation, emptyLineup, placePlayer, removePlayer, movePlayer } from '../../src/domain/lineup';
+import { changeFormation, emptyLineup, placePlayer, removePlayer, movePlayer, startingLineup } from '../../src/domain/lineup';
 import { draftSchema, readDraft, writeDraft, isCompleteLineup } from '../../src/domain/draft';
 import { freshDraft, initializeSession, sessionReducer } from '../../src/domain/builder-session';
 
@@ -61,12 +61,21 @@ describe('MVP-06 browser memory and M-02 eligibility', () => {
     formation.slots.forEach((slot, i) => { full = placePlayer(full, slot[0], raw.players[i].id, context.players.map((p) => p.id)); });
     expect(isCompleteLineup(full, unavailable.players.map((p) => p.id))).toBe(true);
   });
+  it('MVP-02: a fresh draft starts on 4-2-3-1 Wide with eleven empty slots; a restored draft keeps its formation', () => {
+    const fresh = initializeSession(context, { kind: 'empty' });
+    expect(fresh.draft?.lineup.formationId).toBe('4-2-3-1-wide');
+    expect(Object.values(fresh.draft!.lineup.slots)).toEqual(Array(11).fill(null));
+    expect(Object.keys(fresh.draft!.lineup.slots)).toEqual(formations[0].slots.map((slot) => slot[0]));
+    expect(initializeSession(context, { kind: 'valid', draft }).draft?.lineup.formationId).toBe('4-3-3');
+    const legacy = { ...draft, lineup: emptyLineup };
+    expect(initializeSession(context, { kind: 'valid', draft: legacy }).draft?.lineup).toEqual(emptyLineup);
+  });
   it('keeps an open old fixture snapshot and starts the new fixture only explicitly', () => {
     const next = { ...context, fixture: { ...context.fixture!, id: '10000000-0000-4000-8000-000000000002', opponent: 'Next synthetic FC' } };
     const state = initializeSession(context, { kind: 'valid', draft });
     expect(sessionReducer(state, { type: 'published', context: next })).toBe(state);
     expect(initializeSession(next, { kind: 'valid', draft }).recovery).toBe('different-fixture');
-    expect(sessionReducer(state, { type: 'start', context: next }).draft?.lineup).toEqual(emptyLineup);
+    expect(sessionReducer(state, { type: 'start', context: next }).draft?.lineup).toEqual(startingLineup);
     expect(sessionReducer(state, { type: 'published', context: { ...context, fixture: null, players: [] } })).toBe(state);
   });
   it('updates same-fixture corrections without discarding the XI', () => {

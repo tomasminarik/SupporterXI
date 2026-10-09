@@ -1,7 +1,22 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 import { initialSquad } from '../../src/domain/squad';
 const key = 'starting-xi:working:v1';
 const makeContext = () => ({ schemaVersion: 2, contentRevision: 'a'.repeat(64), serverNow: new Date().toISOString(), nextRefreshAt: null, players: initialSquad.map(({ id, name, shirtNumber }) => ({ id, name, shirtNumber, selectable: true })), fixture: { id: '10000000-0000-4000-8000-000000000001', opponent: 'Synthetic A', venue: 'home', competition: null, round: null, status: 'scheduled', kickoff: { kind: 'unknown' } } });
+const formationButton = (page: Page) => page.locator('.sx-formation');
+async function chooseFormation(page: Page, name: string) {
+  await formationButton(page).click();
+  await page.getByRole('dialog').getByRole('button', { name, exact: true }).click();
+}
+
+test('MVP-02: the live builder starts on 4-2-3-1 Wide with eleven empty positions', async ({ page }) => {
+  await page.route('**/api/featured-fixture', (route) => route.fulfill({ json: makeContext() }));
+  await page.goto('/');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(/Manchester United\s+v\s+Synthetic A/);
+  await expect(formationButton(page)).toHaveText('4-2-3-1 Wide');
+  await expect(page.getByRole('button', { name: /: Empty$/ })).toHaveCount(11);
+  await expect(page.locator('.sx-pill')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Share your XI' })).toBeDisabled();
+});
 
 test('MVP-06/07: restore, availability, and explicit fixture transition', async ({ page }) => {
   let context = makeContext();
@@ -9,29 +24,31 @@ test('MVP-06/07: restore, availability, and explicit fixture transition', async 
   page.on('request', (request) => { if (request.method() !== 'GET') writes.push(request.url()); });
   await page.route('**/api/featured-fixture', (route) => route.fulfill({ json: context }));
   await page.goto('/');
-  const formation = page.getByRole('combobox', { name: 'Formation', exact: true });
-  await formation.selectOption('4-3-3');
+  await chooseFormation(page, '4-3-3');
+  await expect(formationButton(page)).toHaveText('4-3-3');
   await page.getByRole('button', { name: 'GK: Empty', exact: true }).click();
   await page.getByRole('button', { name: '1 Senne Lammens', exact: true }).click();
-  await page.getByRole('combobox', { name: 'Optional role', exact: true }).selectOption('traditional-goalkeeper');
+  await page.getByRole('button', { name: 'GK: Senne Lammens', exact: true }).click();
+  await page.getByRole('combobox', { name: 'Role', exact: true }).selectOption('traditional-goalkeeper');
   await page.reload();
   await expect(page.getByRole('button', { name: 'GK: Senne Lammens, Traditional Goalkeeper', exact: true })).toBeVisible();
   context.players[0].selectable = false;
   await page.evaluate(() => window.dispatchEvent(new Event('focus')));
-  await expect(page.locator('.lab-availability')).toBeVisible();
-  await page.getByRole('button', { name: 'GK: Senne Lammens, Traditional Goalkeeper', exact: true }).click();
+  await expect(page.getByText('Some selected players are now unavailable.', { exact: false })).toBeVisible();
+  await page.getByRole('button', { name: 'GK: Senne Lammens, Traditional Goalkeeper, unavailable', exact: true }).click();
   await page.getByRole('button', { name: 'Remove player', exact: true }).click();
   await expect(page.getByRole('button', { name: '1 Senne Lammens', exact: true })).toHaveCount(0);
   context = { ...context, fixture: { ...context.fixture, id: '10000000-0000-4000-8000-000000000002', opponent: 'Synthetic B' } };
   await page.evaluate(() => window.dispatchEvent(new Event('focus')));
-  await expect(page.locator('.session-context')).toContainText('Synthetic A');
+  await expect(page.getByText('The featured match is now Synthetic B.')).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('Synthetic A');
   page.once('dialog', (dialog) => dialog.dismiss());
   await page.getByRole('button', { name: 'Start new fixture' }).click();
-  await expect(formation).toHaveValue('4-3-3');
+  await expect(formationButton(page)).toHaveText('4-3-3');
   page.once('dialog', (dialog) => dialog.accept());
   await page.getByRole('button', { name: 'Start new fixture' }).click();
-  await expect(formation).toHaveValue('');
-  await expect(page.locator('.session-context')).toContainText('Synthetic B');
+  await expect(formationButton(page)).toHaveText('4-2-3-1 Wide');
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('Synthetic B');
   expect(writes).toEqual([]);
   expect(await page.evaluate(() => Object.keys(localStorage))).toEqual([key]);
 });
@@ -41,9 +58,9 @@ test('MVP-06: corrupt memory requires explicit reset', async ({ page }) => {
   await page.route('**/api/featured-fixture', (route) => route.fulfill({ json: makeContext() }));
   await page.goto('/');
   await expect(page.getByText('This browser’s lineup could not be restored.')).toBeVisible();
-  await expect(page.getByRole('combobox', { name: 'Formation', exact: true })).toHaveCount(0);
+  await expect(formationButton(page)).toHaveCount(0);
   await page.getByRole('button', { name: 'Reset and start this fixture' }).click();
-  await expect(page.getByRole('combobox', { name: 'Formation', exact: true })).toHaveValue('');
+  await expect(formationButton(page)).toHaveText('4-2-3-1 Wide');
 });
 
 test('MVP-06: storage failure leaves editing usable', async ({ page }) => {
@@ -51,7 +68,7 @@ test('MVP-06: storage failure leaves editing usable', async ({ page }) => {
   await page.route('**/api/featured-fixture', (route) => route.fulfill({ json: makeContext() }));
   await page.goto('/');
   await expect(page.getByText('Browser memory is unavailable.', { exact: false })).toBeVisible();
-  await page.getByRole('combobox', { name: 'Formation', exact: true }).selectOption('4-3-3');
+  await chooseFormation(page, '4-3-3');
   await page.getByRole('button', { name: 'GK: Empty', exact: true }).click();
   await page.getByRole('button', { name: '1 Senne Lammens', exact: true }).click();
   await expect(page.getByRole('button', { name: 'GK: Senne Lammens', exact: true })).toBeVisible();

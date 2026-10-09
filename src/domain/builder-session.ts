@@ -1,6 +1,6 @@
 import { catalogueVersion, type Draft, type DraftRead, validForCurrentSquad } from './draft';
 import { type FeaturedResponse } from './featured-fixture';
-import { emptyLineup, type Lineup } from './lineup';
+import { startingLineup, type Lineup } from './lineup';
 
 export type BuilderSession = {
   draft: Draft | null;
@@ -9,7 +9,7 @@ export type BuilderSession = {
   memory: 'available' | 'unavailable';
   restored: boolean;
 };
-export function freshDraft(context: FeaturedResponse, lineup: Lineup = emptyLineup): Draft | null {
+export function freshDraft(context: FeaturedResponse, lineup: Lineup = startingLineup): Draft | null {
   if (!context.fixture) return null;
   return { schemaVersion: 1, catalogueVersion, contentRevision: context.contentRevision, fixture: context.fixture, players: context.players, lineup };
 }

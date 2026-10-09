@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { formations } from '../../src/domain/catalogues';
 import { initialSquad } from '../../src/domain/squad';
-import { assignRole, changeFormation, clearLineup, emptyLineup, movePlayer, placePlayer, removePlayer } from '../../src/domain/lineup';
+import { assignRole, changeFormation, clearLineup, emptyLineup, movePlayer, startingLineup, placePlayer, removePlayer } from '../../src/domain/lineup';
 const four = formations.find((f) => f.id === '4-3-3')!;
 const three = formations.find((f) => f.id === '3-4-3-wide')!;
 const ids = initialSquad.map((p) => p.id);
@@ -10,6 +10,8 @@ const base = () => changeFormation(emptyLineup, four).state;
 describe('MVP-02–05: in-memory whiteboard mechanics, eligibility supplied by caller', () => {
   it('starts without a shape or automatic player/role selections', () => {
     expect(emptyLineup).toEqual({ formationId: null, slots: {} });
+    expect(startingLineup.formationId).toBe('4-2-3-1-wide');
+    expect(Object.values(startingLineup.slots)).toEqual(Array(11).fill(null));
     expect(Object.values(base().slots)).toEqual(Array(11).fill(null));
   });
   it('allows any selectable player in any slot, but rejects duplicates and unknown identities/slots', () => {

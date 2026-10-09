@@ -38,7 +38,7 @@ test('MVP-07: focus refresh failure retains last data with stale feedback', asyn
   await expect(page.locator('time')).toHaveAttribute('datetime', '2026-10-25T12:00:00Z');
   await page.route('**/api/featured-fixture', (route) => route.fulfill({ status: 500 }));
   await page.evaluate(() => window.dispatchEvent(new Event('focus')));
-  await expect(page.locator('.whiteboard').getByRole('alert')).toContainText('may be out of date');
+  await expect(page.getByRole('alert').filter({ hasText: 'may be out of date' })).toBeVisible();
   await expect(page.getByRole('heading', { name: /Synthetic Preview FC/ })).toBeVisible();
 });
 
