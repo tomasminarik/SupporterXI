@@ -825,7 +825,9 @@
           "at": "2027-03-20T15:00:00Z"
         }
       },
-      "overrides": {}
+      "overrides": {
+        "opponent": "Manchester City"
+      }
     }
   ],
   "featuredFixtureId": null,
