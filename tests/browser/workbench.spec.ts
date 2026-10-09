@@ -240,3 +240,108 @@ test.describe('with reduced motion', () => {
     expect(await ghosts(page)).toBe(0);
   });
 });
+
+// Below 900px: a portrait pitch, and sheets fixed to the bottom of the screen for picking, roles and formations.
+test.describe('touch layout', () => {
+  test.use({ hasTouch: true });
+  test.beforeEach(() => { test.skip(test.info().project.name === 'desktop', 'The touch layout applies below 900px'); });
+  const slot = (page: Page, name: string) => page.getByRole('button', { name, exact: true });
+
+  test('MVP-02–05, 13: build, set a role, move, swap, replace and change formation by tapping', async ({ page }) => {
+    await page.goto('/dev/workbench');
+    await slot(page, 'LB: Empty').tap();
+    const sheet = page.locator('.sx-squad.sx-sheet');
+    await expect(sheet).toHaveCSS('position', 'fixed');
+    await expect(sheet.getByRole('heading', { name: 'Pick your full-back' })).toBeVisible();
+    // The chosen position stays visible above the sheet.
+    await expect.poll(async () => (await slot(page, 'LB: Empty').boundingBox())!.y + 44 <= (await sheet.boundingBox())!.y).toBe(true);
+    await sheet.getByRole('button', { name: '2 Diogo Dalot' }).tap();
+    await expect(sheet).toHaveCount(0);
+
+    await slot(page, 'LB: Diogo Dalot').tap();
+    await expect(page.locator('.sx-menu')).toHaveCSS('position', 'fixed');
+    await role(page, 'Stay-Back Full-Back').check();
+    await page.getByRole('button', { name: 'Move', exact: true }).tap();
+    await expect(page.getByText('Move Dalot')).toBeVisible();
+    await slot(page, 'RB: Empty').tap();
+    // Move to empty: the origin's role clears and the destination inherits none.
+    await expect(slot(page, 'RB: Diogo Dalot')).toBeVisible();
+    await expect(slot(page, 'LB: Empty')).toBeVisible();
+
+    await slot(page, 'LB: Empty').tap();
+    await sheet.getByRole('button', { name: '3 Noussair Mazraoui' }).tap();
+    await slot(page, 'LB: Noussair Mazraoui').tap();
+    await role(page, 'Inverted Full-Back').check();
+    await page.getByRole('button', { name: 'Move', exact: true }).tap();
+    await slot(page, 'RB: Diogo Dalot').tap();
+    // Swap: roles stay with the positions.
+    await expect(slot(page, 'LB: Diogo Dalot, Inverted Full-Back')).toBeVisible();
+    await expect(slot(page, 'RB: Noussair Mazraoui')).toBeVisible();
+
+    await slot(page, 'RB: Noussair Mazraoui').tap();
+    await page.getByRole('button', { name: 'Move', exact: true }).tap();
+    await page.getByRole('button', { name: 'Cancel', exact: true }).tap();
+    await expect(slot(page, 'RB: Noussair Mazraoui')).toBeFocused();
+
+    await slot(page, 'RB: Noussair Mazraoui').tap();
+    await page.getByRole('button', { name: 'Replace', exact: true }).tap();
+    await expect(sheet.getByRole('heading', { name: 'Replace Mazraoui' })).toBeVisible();
+    await sheet.getByRole('button', { name: '5 Harry Maguire' }).tap();
+    await expect(slot(page, 'RB: Harry Maguire')).toBeVisible();
+
+    // A formation that costs nothing applies on the first tap.
+    await formationButton(page).tap();
+    await expect(picker(page)).toHaveCSS('position', 'fixed');
+    await picker(page).getByRole('button', { name: '4-3-3', exact: true }).tap();
+    await expect(picker(page)).toBeHidden();
+    await expect(formationButton(page)).toHaveText('4-3-3');
+    await expect(slot(page, 'LB: Diogo Dalot, Inverted Full-Back')).toBeVisible();
+    // One that would clear a role is previewed and must be confirmed; keeping changes nothing.
+    await slot(page, 'LB: Diogo Dalot, Inverted Full-Back').tap();
+    await role(page, 'Stay-Back Full-Back').check();
+    await page.locator('.sx-menu .sx-close').tap();
+    await formationButton(page).tap();
+    await picker(page).getByRole('button', { name: '3-4-3 Wide', exact: true }).tap();
+    await expect(picker(page)).toContainText('Roles cleared: Diogo Dalot (Stay-Back Full-Back)');
+    await picker(page).getByRole('button', { name: 'Keep 4-3-3' }).tap();
+    await expect(picker(page)).not.toContainText('Roles cleared');
+    await expect(formationButton(page)).toHaveText('4-3-3');
+    await picker(page).getByRole('button', { name: '3-4-3 Wide', exact: true }).tap();
+    await picker(page).getByRole('button', { name: 'Use 3-4-3 Wide' }).tap();
+    await expect(formationButton(page)).toHaveText('3-4-3 Wide');
+    await expect(slot(page, 'LWB: Diogo Dalot')).toBeVisible();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze()).violations).toEqual([]);
+  });
+
+  test('MVP-13: with the longest role on every player, no labels overlap in the tightest formations', async ({ page }) => {
+    test.skip(test.info().project.name !== 'mobile', 'Measured at 390px');
+    test.slow();
+    for (const formation of ['5-3-2', '3-5-2', '4-2-3-1 Narrow', '4-4-2 Diamond']) {
+      await page.goto('/dev/workbench');
+      await page.evaluate(() => localStorage.clear());
+      await page.reload();
+      await formationButton(page).tap();
+      await picker(page).getByRole('button', { name: formation, exact: true }).tap();
+      await expect(formationButton(page)).toHaveText(formation);
+      while (await page.locator('.sx-empty').count()) {
+        await page.locator('.sx-empty').first().tap();
+        await page.locator('.sx-sheet .sx-card').first().tap();
+      }
+      for (const pill of await page.locator('.sx-pill').all()) {
+        await pill.tap();
+        const names = await page.locator('.sx-option-name').allTextContents();
+        await page.locator('.sx-option input').nth(names.indexOf([...names].sort((a, b) => b.length - a.length)[0])).check();
+        await page.locator('.sx-menu .sx-close').tap();
+      }
+      const result = await page.evaluate(() => {
+        const parts = [...document.querySelectorAll<HTMLElement>('.sx-marker')].flatMap((marker) => [...marker.querySelectorAll('.sx-no, .sx-name, .sx-role')].map((element) => ({ id: marker.dataset.slot!, box: element.getBoundingClientRect() })));
+        const pitch = document.querySelector('.sx-overlay')!.getBoundingClientRect();
+        const hits: string[] = [];
+        for (const a of parts) for (const b of parts) if (a.id < b.id && Math.min(a.box.right, b.box.right) - Math.max(a.box.left, b.box.left) > 1 && Math.min(a.box.bottom, b.box.bottom) - Math.max(a.box.top, b.box.top) > 1) hits.push(`${a.id}/${b.id}`);
+        return { hits, outside: parts.filter((part) => part.box.left < pitch.left || part.box.right > pitch.right || part.box.bottom > pitch.bottom).map((part) => part.id) };
+      });
+      expect(result, formation).toEqual({ hits: [], outside: [] });
+    }
+  });
+});

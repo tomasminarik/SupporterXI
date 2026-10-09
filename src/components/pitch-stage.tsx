@@ -44,7 +44,8 @@ export default function PitchStage({ shadows, children, toolbar, menu }: { shado
     </div>
     <div className="sx-overlay">
       <div className="sx-flat" aria-hidden="true">
-        <svg viewBox="0 0 680 1050" preserveAspectRatio="none" className="sx-lines"><g transform="translate(0 1050) rotate(-90)"><rect x="2" y="2" width="1046" height="676" /><path d={markings} /><circle cx="525" cy="340" r="91.5" /></g></svg>
+        <svg viewBox="0 0 680 1050" preserveAspectRatio="none" className="sx-lines"><g transform="translate(0 1050) rotate(-90)"><rect x="2" y="2" width="1046" height="676" /><path d={markings} /></g></svg>
+        <span className="sx-flat-circle" />
       </div>
       <svg aria-hidden="true" viewBox="0 0 1160 760" className="sx-furniture">
         <path d="M113.9 560.1L128.9 528.9L110.9 549.3L95.3 581.2Z M113.9 560.1L95.3 581.2L113.9 581.2Z" className="net" />

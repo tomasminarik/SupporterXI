@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { formations } from '../../src/domain/catalogues';
 import { initialSquad } from '../../src/domain/squad';
-import { markerLabel, placeLabels, projectSlot, shortName, shortNames } from '../../src/components/pitch-geometry';
+import { markerLabel, placeLabels, portraitSpot, projectSlot, shortName, shortNames } from '../../src/components/pitch-geometry';
 
 describe('MVP-13 desktop pitch presentation (UI redesign handoff)', () => {
   it('projects catalogue coordinates to the agreed mockup positions', () => {
@@ -35,5 +35,30 @@ describe('MVP-13 desktop pitch presentation (UI redesign handoff)', () => {
     // A tag over a pill just below flips above.
     const stacked = placeLabels([{ id: 'top', x: 500, y: 300, pill: 120, tag: 140 }, { id: 'low', x: 520, y: 340, pill: 120, tag: 0 }]);
     expect(stacked.get('top')?.tag).toBe('above');
+  });
+});
+
+describe('MVP-13 mobile portrait pitch (UI slice 3)', () => {
+  it('keeps every position on the pitch, mirrored, and in the catalogue\'s order from left to right and back to front', () => {
+    for (const formation of formations) {
+      for (const [id, , x, y] of formation.slots) {
+        const spot = portraitSpot(x, y);
+        expect(spot.left, `${formation.name} ${id}`).toBeGreaterThanOrEqual(9);
+        expect(spot.left, `${formation.name} ${id}`).toBeLessThanOrEqual(91);
+        expect(spot.top, `${formation.name} ${id}`).toBeGreaterThan(8);
+        expect(spot.top, `${formation.name} ${id}`).toBeLessThan(92);
+        expect(portraitSpot(100 - x, y).left).toBeCloseTo(100 - spot.left, 1);
+      }
+      for (const a of formation.slots) for (const b of formation.slots) {
+        if (a[2] < b[2]) expect(portraitSpot(a[2], a[3]).left).toBeLessThan(portraitSpot(b[2], b[3]).left);
+        if (a[3] < b[3]) expect(portraitSpot(a[2], a[3]).top).toBeGreaterThan(portraitSpot(b[2], b[3]).top);
+      }
+    }
+  });
+  it('gives players side by side room for a name: at least 16% of the pitch width apart in every formation', () => {
+    for (const formation of formations) for (const a of formation.slots) for (const b of formation.slots) {
+      if (a === b || Math.abs(a[3] - b[3]) > 6) continue;
+      expect(Math.abs(portraitSpot(a[2], a[3]).left - portraitSpot(b[2], b[3]).left), `${formation.name} ${a[0]}/${b[0]}`).toBeGreaterThanOrEqual(16);
+    }
   });
 });
