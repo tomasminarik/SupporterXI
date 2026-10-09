@@ -29,6 +29,20 @@ export async function loadShareAssets(snapshot: ShareSnapshot): Promise<ShareAss
   const [turf] = await Promise.all([loadTurf(), ...faces.map((face) => document.fonts.load(face, sample))]);
   await document.fonts.ready;
   if (!faces.every((face) => document.fonts.check(face, sample))) throw new Error('The fonts did not load');
+  // A browser can report a face as loaded a moment before a canvas will draw with it. Measure with the
+  // face against a plain fallback until the two differ, so the image is never drawn in the wrong typeface.
+  const probe = document.createElement('canvas').getContext('2d');
+  if (!probe) throw new Error('This browser could not start drawing');
+  const applied = (family: string, weight: number) => {
+    probe.font = `${weight} 80px ${family}, monospace`;
+    const width = probe.measureText('MANCHESTER United 0123456789').width;
+    probe.font = `${weight} 80px monospace`;
+    return Math.abs(width - probe.measureText('MANCHESTER United 0123456789').width) > 1;
+  };
+  for (let waited = 0; !(applied(display, 800) && applied(body, 600) && applied(body, 500)); waited += 50) {
+    if (waited >= 3000) throw new Error('The fonts were not ready for drawing');
+    await new Promise((resolve) => setTimeout(resolve, 50));
+  }
   return { turf };
 }
 
