@@ -30,7 +30,9 @@ The active formation and role catalogues retain their original taxonomy. The rol
 
 The [initial squad](docs/product/initial-squad.md) contains 36 numbered players transcribed from the user's screenshots. Its linked JSON is the seed source; it does not change the formation/role catalogue or decide pending admin validation policies.
 
-The working title is neutral. No final brand or domain has been approved. `docs/research/naming.md` was missing at the audit and remains unavailable; do not fabricate it or treat Eleven Verdict as approved.
+The product name is **Supporter XI**, approved by the user on 9 October 2026. No domain has been approved. `docs/research/naming.md` was missing at the audit and remains unavailable; do not fabricate it or treat Eleven Verdict as approved.
+
+A UI redesign was agreed on 9 October 2026 and is not yet implemented. Read the [UI redesign handoff](docs/design/ui-redesign-handoff.md) before changing any interface code. PNG export is built only after that redesign is finished.
 
 The public repository is [tomasminarik/SupporterXI](https://github.com/tomasminarik/SupporterXI), connected to Vercel project `supporterxi` in the existing Tomo team. Production admin sign-in, content publication and the live featured-fixture response are verified. The football-data.org token is configured in Vercel Production, and the importer has published 32 Premier League/Champions League fixtures. The first scheduled run, live stale-write rejection, content rollback and isolated Preview failure/recovery are verified in [operational readiness](docs/implementation/operations-verification.md). Live alternate-account rejection remains pending because no second account is available. Provider credentials must never be committed.
 

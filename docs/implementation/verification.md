@@ -5,7 +5,7 @@
 | ID | Required proof | Cheapest reliable level |
 | --- | --- | --- |
 | MVP-01 | Exactly 14 formations/11 slots each; JSON/table parity, unique IDs/keys, mirrors, coordinate ranges, order; 25 roles with exact labels/definitions/order and compatibility parity | Unit/build validation |
-| MVP-02 | Start empty; any eligible player in any slot; no duplicate for click/tap/drag/keyboard; no automatic selection | Unit + browser |
+| MVP-02 | Start with 4-2-3-1 Wide preselected and eleven empty slots (PRD 2.1); any eligible player in any slot; no duplicate for click/tap/drag/keyboard; no automatic selection | Unit + browser |
 | MVP-03 | Move, swap, replace, remove and Clear XI have prescribed player/role outcomes | Unit + browser |
 | MVP-04 | Formation changes use equivalence keys only; destructive confirmation and cancellation; invalid roles clear with notice | Unit + browser |
 | MVP-05 | Roles optional; No role option; exact family filtering; unknown IDs never guessed; no duty UI | Unit + browser |
