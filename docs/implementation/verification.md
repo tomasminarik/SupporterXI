@@ -28,7 +28,7 @@ AR-06's compatibility invariant remains, but supporter server-save/Community ass
 
 ## Release gates
 
-The [9 October operational checkpoint](operations-verification.md) maps publication recovery regression tests to MVP-10/12 and separates read-only production observations from remaining live drills. PNG remains unimplemented and MVP-08 is not passed.
+The [9 October operational checkpoint](operations-verification.md) maps publication recovery regression tests to MVP-10/12, records completed live cron/stale-write/rollback and isolated deployment-recovery drills (MVP-09/10/12/15), and maps mobile focus polish to MVP-02/06/13. Alternate-account live rejection remains pending because no second account is available. PNG remains unimplemented and MVP-08 is not passed.
 
 All MVP-01–15 pass, with critical journeys exercised in a production-like deployment. No relevant blocking decision may be treated as passed through an assumed default. Add M-01 number cases and M-02 availability/restore/export cases after their approval.
 

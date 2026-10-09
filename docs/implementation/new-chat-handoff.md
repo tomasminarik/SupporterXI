@@ -6,7 +6,7 @@
 
 For the latest complete checkpoint and next steps, read [the 8 October chat continuation](chat-continuation-2026-10-08.md) first. The dated progress sections below include historical status statements.
 
-The [9 October operational checkpoint](operations-verification.md) adds production/cron observations and publication-recovery regression coverage. PNG remains last; the live operational drills are not yet complete.
+The [9 October operational checkpoint](operations-verification.md) records the deployed recovery fix, automatic cron success, live two-tab conflict/content rollback, isolated Preview failure/recovery and mobile focus polish. Alternate-account rejection remains pending because the user has no second account. PNG remains last, followed by final release checks.
 
 ## Current status — 8 October 2026
 

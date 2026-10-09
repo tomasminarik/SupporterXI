@@ -1,6 +1,6 @@
 # Starting XI builder — implementation handoff
 
-**Updated:** 8 October 2026. **Stage:** Builder, administration and fixture import implemented; PNG and final release checks remain.
+**Updated:** 9 October 2026. **Stage:** Builder, administration, fixture import and operational recovery verified; PNG and final release checks remain.
 
 The current MVP is a next-match lineup builder with optional roles, browser-local memory, PNG export, and an administrator backoffice. There are no supporter accounts, Community XI, public lineup links, archives, or T-90 lock.
 
@@ -32,7 +32,7 @@ The [initial squad](docs/product/initial-squad.md) contains 36 numbered players 
 
 The working title is neutral. No final brand or domain has been approved. `docs/research/naming.md` was missing at the audit and remains unavailable; do not fabricate it or treat Eleven Verdict as approved.
 
-The public repository is [tomasminarik/SupporterXI](https://github.com/tomasminarik/SupporterXI), connected to Vercel project `supporterxi` in the existing Tomo team. Production admin sign-in, content publication and the live featured-fixture response are verified. The football-data.org token is configured in Vercel Production, and the importer has published 32 Premier League/Champions League fixtures. A rollback drill and observation of the first scheduled run remain. Provider credentials must never be committed.
+The public repository is [tomasminarik/SupporterXI](https://github.com/tomasminarik/SupporterXI), connected to Vercel project `supporterxi` in the existing Tomo team. Production admin sign-in, content publication and the live featured-fixture response are verified. The football-data.org token is configured in Vercel Production, and the importer has published 32 Premier League/Champions League fixtures. The first scheduled run, live stale-write rejection, content rollback and isolated Preview failure/recovery are verified in [operational readiness](docs/implementation/operations-verification.md). Live alternate-account rejection remains pending because no second account is available. Provider credentials must never be committed.
 
 
 ## Local development

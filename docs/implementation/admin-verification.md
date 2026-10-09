@@ -1,5 +1,7 @@
 # Administration and publishing — 8 October 2026
 
+**9 October update:** The [operational checkpoint](operations-verification.md) records successful live two-tab stale-write rejection, changed-content publication and a content rollback through a new commit, plus an isolated Preview failure/recovery. Alternate-account rejection remains pending by the user's instruction because no second account is available. The dated setup notes below preserve the earlier checkpoint.
+
 ## Implemented scope
 
 `/admin` supports single-admin GitHub OAuth, fixture and squad forms, per-fixture availability, featured override, per-field imported-value/correction display and explicit override clearing. No destructive delete or catalogue CRUD exists. `/dev/admin` is a clearly labelled in-memory form preview enabled only locally and on Vercel Preview; it never writes GitHub.

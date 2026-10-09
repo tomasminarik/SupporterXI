@@ -53,7 +53,7 @@ export default function AdminWorkspace({ demo }: { demo?: SharedContent }) {
   async function checkPublish() {
     if (!publish) return;
     setBusy(true); setError('');
-    try { const result = await call(`/api/admin/publish?commit=${publish.commit}&digest=${publish.digest}`); setPublish({ ...publish, state: result.state }); } catch (e) { setError(e instanceof z.ZodError ? 'Invalid fields. Check required names, shirt numbers and the kickoff timezone.' : (e as Error).message); } finally { setBusy(false); }
+    try { const result = await call(`/api/admin/publish?commit=${publish.commit}&digest=${publish.digest}`); setPublish({ ...publish, state: result.state }); setNotice(''); } catch (e) { setError(e instanceof z.ZodError ? 'Invalid fields. Check required names, shirt numbers and the kickoff timezone.' : (e as Error).message); } finally { setBusy(false); }
   }
   async function importFixtures() {
     if (!source) return;

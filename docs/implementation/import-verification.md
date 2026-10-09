@@ -16,4 +16,4 @@ An authenticated Production refresh on 8 October 2026 created commit `13345fb` w
 - MVP-12: the import uses the existing SHA-guarded GitHub publication path; tests verify a single content-file PUT and no empty commit.
 - MVP-15: tests cover fixed/bounded provider requests, throttling retry, provider failure before any write, anonymous/manual/cron denial, preview isolation, and equivalent manual/scheduler no-change operations.
 
-Observe the first scheduled run and exercise a content rollback before release. Keep `FOOTBALL_DATA_TOKEN` and a strong `CRON_SECRET` as Production-only Vercel Secrets. Do not publish synthetic test fixtures. PNG export remains the last feature before release checks.
+The first scheduled run and a live content rollback were verified on 9 October; see the [operational checkpoint](operations-verification.md) for request/commit/deployment evidence. Keep `FOOTBALL_DATA_TOKEN` and a strong `CRON_SECRET` as Production-only Vercel Secrets. Do not publish synthetic test fixtures. PNG export remains the last feature before release checks.

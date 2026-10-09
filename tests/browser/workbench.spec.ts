@@ -55,6 +55,11 @@ test('MVP-13: keyboard placement, roles and remove', async ({ page }) => {
   await page.getByRole('combobox', { name: 'Formation', exact: true }).selectOption('4-3-3');
   const slot = page.getByRole('button', { name: 'GK: Empty', exact: true });
   await slot.focus(); await page.keyboard.press('Enter');
+  if (test.info().project.name !== 'desktop') {
+    await expect(page.getByRole('heading', { name: 'GK · Choose a player', exact: true })).toBeFocused();
+    await page.keyboard.press('Tab');
+    await expect(page.getByRole('searchbox', { name: /Choose player/ })).toBeFocused();
+  } else await expect(slot).toBeFocused();
   const player = page.getByRole('button', { name: '1 Senne Lammens' });
   await player.focus(); await page.keyboard.press('Enter');
   const roles = page.getByRole('combobox', { name: 'Optional role', exact: true });
@@ -63,4 +68,31 @@ test('MVP-13: keyboard placement, roles and remove', async ({ page }) => {
   await page.getByRole('button', { name: 'Remove player', exact: true }).focus();
   await page.keyboard.press('Enter');
   await expect(slot).toBeVisible();
+  await expect(slot).toBeFocused();
+});
+
+test('MVP-13: selecting a position brings the panel into view and placement returns focus to the pitch', async ({ page }) => {
+  await page.goto('/dev/workbench');
+  await page.getByRole('combobox', { name: 'Formation', exact: true }).selectOption('4-3-3');
+  const slot = page.getByRole('button', { name: 'LB: Empty', exact: true });
+  await slot.click();
+  const heading = page.getByRole('heading', { name: 'LB · Choose a player', exact: true });
+  if (test.info().project.name !== 'desktop') {
+    await expect(heading).toBeFocused();
+    const bounds = await heading.boundingBox();
+    expect(bounds!.y).toBeGreaterThanOrEqual(0);
+    expect(bounds!.y + bounds!.height).toBeLessThanOrEqual(page.viewportSize()!.height);
+    const searchBounds = await page.getByRole('searchbox', { name: /Choose player/ }).boundingBox();
+    expect(searchBounds!.y).toBeGreaterThanOrEqual(0);
+    expect(searchBounds!.y + searchBounds!.height).toBeLessThanOrEqual(page.viewportSize()!.height);
+  } else await expect(slot).toBeFocused();
+  await page.screenshot({ path: `test-results/position-panel-${test.info().project.name}.png` });
+  await page.getByRole('button', { name: '2 Diogo Dalot' }).click();
+  const filled = page.getByRole('button', { name: 'LB: Diogo Dalot', exact: true });
+  await expect(filled).toBeFocused();
+  await filled.click();
+  if (test.info().project.name !== 'desktop') await expect(page.getByRole('heading', { name: 'LB · Diogo Dalot', exact: true })).toBeFocused();
+  await page.getByRole('searchbox', { name: /Replace player/ }).fill('not-a-player');
+  await expect(page.getByText('No unselected players match your search.', { exact: true })).toBeVisible();
+  expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze()).violations).toEqual([]);
 });

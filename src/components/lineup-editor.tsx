@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { formations, roles, rolesForFamily } from '../domain/catalogues';
 import type { PublicPlayer } from '../domain/featured-fixture';
 import type { Lineup } from '../domain/lineup';
@@ -12,7 +12,8 @@ export default function LineupEditor({ lineup, players, onChange }: { lineup: Li
   const setLineup = onChange;
   const [selected, setSelected] = useState<string | null>(null);
   const [query, setQuery] = useState('');
-  const [notice, setNotice] = useState('Choose a formation to start with eleven empty slots.');
+  const [notice, setNotice] = useState(lineup.formationId ? 'Choose a position to continue building your XI.' : 'Choose a formation to start with eleven empty slots.');
+  const panelHeading = useRef<HTMLHeadingElement>(null);
   const formation = formationFor(lineup);
   const slot = formation?.slots.find((item) => item[0] === selected);
   const assignment = selected ? lineup.slots[selected] : null;
@@ -21,10 +22,20 @@ export default function LineupEditor({ lineup, players, onChange }: { lineup: Li
   const unused = players.filter((item) => item.selectable && !Object.values(lineup.slots).some((itemSlot) => itemSlot?.playerId === item.id));
   const visible = unused.filter((item) => `${item.shirtNumber} ${item.name}`.toLocaleLowerCase().includes(query.toLocaleLowerCase()));
 
+  function selectPosition(id: string) {
+    setSelected(id);
+    // The panel follows the full pitch on narrow layouts. Focus it after React
+    // updates its heading so touch and keyboard users reach the next action.
+    if (window.matchMedia('(max-width: 800px)').matches) requestAnimationFrame(() => {
+      panelHeading.current?.focus({ preventScroll: true });
+      panelHeading.current?.parentElement?.scrollIntoView({ block: 'start', behavior: 'instant' });
+    });
+  }
+
   function move(from: string, to: string) {
     setLineup(movePlayer(lineup, from, to));
     setNotice(`Moved or swapped players from ${from.toUpperCase()} to ${to.toUpperCase()}. Roles stay with occupied slots.`);
-    setSelected(to);
+    selectPosition(to);
   }
 
   return <div className="lab">
@@ -55,7 +66,7 @@ export default function LineupEditor({ lineup, players, onChange }: { lineup: Li
               return <button key={id} id={`slot-${id}`} type="button" className={`lab-marker ${occupant ? 'filled' : ''}`} aria-pressed={selected === id} aria-label={`${abbreviation}: ${occupant?.name ?? 'Empty'}${role ? `, ${role.name}` : ''}`} style={{ left: `${8 + x * .84}%`, top: `${8 + (100 - y) * .84}%` }} draggable={!!occupant}
                 onDragStart={(event) => { event.dataTransfer.setData('text/plain', id); event.dataTransfer.effectAllowed = 'move'; }}
                 onDragOver={(event) => event.preventDefault()} onDrop={(event) => { event.preventDefault(); const from = event.dataTransfer.getData('text/plain'); if (lineup.slots[from]) move(from, id); }}
-                onClick={() => { setSelected(id); setQuery(''); setNotice(`${abbreviation} selected. ${occupant ? 'Edit the player or role in the position panel.' : 'Choose a player in the position panel.'}`); }}>
+                onClick={() => { selectPosition(id); setQuery(''); setNotice(`${abbreviation} selected. ${occupant ? 'Edit the player or role in the position panel.' : 'Choose a player in the position panel.'}`); }}>
                 <span className="lab-token">{occupant ? (occupant.shirtNumber ?? '—') : '+'}</span><span className="lab-position">{abbreviation}</span><span className="lab-name">{occupant?.name ?? 'Add player'}</span>{role && <span className="lab-role-indicator" aria-hidden="true">Role assigned</span>}
               </button>;
             })}
@@ -63,7 +74,7 @@ export default function LineupEditor({ lineup, players, onChange }: { lineup: Li
           <p className="lab-help">Select a position, then a player. To move a player, use the position panel or drag their marker to another position.</p>
         </section>
         <section className="lab-panel" aria-labelledby="position-title">
-          <div className="lab-panel-heading"><p className="eyebrow">Position panel</p><h2 id="position-title">{slot ? `${slot[1]} · ${player?.name ?? 'Choose a player'}` : 'Choose a position'}</h2></div>
+          <div className="lab-panel-heading"><p className="eyebrow">Position panel</p><h2 id="position-title" ref={panelHeading} tabIndex={-1}>{slot ? `${slot[1]} · ${player?.name ?? 'Choose a player'}` : 'Choose a position'}</h2></div>
           {!slot && <p className="lab-panel-empty">{formation ? 'Select any position on the pitch to add a player. Any squad player can fill any position.' : 'Choose a formation first. Your starting eleven begins empty.'}</p>}
           {slot && <>
             {assignment && <div className="lab-edit">
@@ -75,7 +86,7 @@ export default function LineupEditor({ lineup, players, onChange }: { lineup: Li
               <button type="button" onClick={() => { setLineup(removePlayer(lineup, slot[0])); setNotice(`${player?.name} removed; slot role cleared.`); document.getElementById(`slot-${slot[0]}`)?.focus(); }}>Remove player</button>
             </div>}
             <div className="lab-chooser"><label htmlFor="player-search">{player ? 'Replace player' : 'Choose player'} <span>({unused.length} unselected)</span></label><input id="player-search" type="search" placeholder="Search name or number" value={query} onChange={(event) => setQuery(event.target.value)} />
-              <div className="lab-player-list">{visible.map((item) => <button type="button" key={item.id} onClick={() => { setLineup(placePlayer(lineup, slot[0], item.id, selectableIds)); setNotice(`${item.name} placed at ${slot[1]}.`); setQuery(''); document.getElementById(`slot-${slot[0]}`)?.focus(); }}><span className="shirt-number">{item.shirtNumber}</span><span>{item.name}</span><span aria-hidden="true">+</span></button>)}{!visible.length && <p>No unselected players match your search.</p>}</div>
+              <div className="lab-player-list">{visible.map((item) => <button type="button" key={item.id} onClick={() => { setLineup(placePlayer(lineup, slot[0], item.id, selectableIds)); setNotice(`${item.name} placed at ${slot[1]}.`); setQuery(''); document.getElementById(`slot-${slot[0]}`)?.focus(); }}><span className="shirt-number">{item.shirtNumber}</span><span>{item.name}</span><span aria-hidden="true">+</span></button>)}{!visible.length && <p>{unused.length ? 'No unselected players match your search.' : 'No eligible unselected players are available.'}</p>}</div>
             </div>
           </>}
         </section>
