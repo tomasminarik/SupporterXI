@@ -2,7 +2,7 @@
 
 **Prepared:** 9 October 2026, at the end of the design conversation.
 **Purpose:** Start implementing the agreed redesign in a new chat without depending on that conversation.
-**Status (updated 9 October 2026, end of the implementation chat):** Slice 1 and its follow-up tweaks are implemented, merged into `main` and live on supporterxi.vercel.app. Most of slice 2 was built along the way. Section 7 records what is done and what is left; section 8 is the starting prompt for the next chat. Where this document and section 7 disagree, section 7 is newer.
+**Status (updated 9 October 2026; see the update at the end of section 7 for the latest):** Slice 1 and its follow-up tweaks are implemented, merged into `main` and live on supporterxi.vercel.app. Most of slice 2 was built along the way. Section 7 records what is done and what is left; section 8 is the starting prompt for the next chat. Where this document and section 7 disagree, section 7 is newer.
 
 ## 1. What was decided
 
@@ -175,6 +175,16 @@ Then Codex builds the share image, followed by release checks.
 - Stop any `next dev` server (port 3000) before `npm run check`; the workbench tests start their own and fail if one is running. Revert the `next-env.d.ts` change the dev server makes.
 - Browser tests must wait for focus moves that happen one frame later (after placing a player, or opening the pill menu) before the next key press; two CI failures came from this.
 - The browser-memory key stays `starting-xi:working:v1` so remembered lineups survive the rename.
+
+### Update, end of 9 October 2026 (newer than the rest of this section)
+
+- **Slice 2 is finished and live** (pull requests 5 and 6): notices, the in-page "Start new fixture" confirmation, the pill menu as a role list, and one grammar for hover, selected, target, focus and unavailable. The user removed the "Move or swap to" dropdown from the desktop menu; dragging moves and swaps there. See [slice 2 verification](../implementation/ui-slice-2-verification.md).
+- **Motion is live** (pull request 7): seven animations, "quick and crisp", off under reduced motion. Browser suites run with reduced motion by default; `MOTION=1` runs them animated. See [motion verification](../implementation/ui-motion-verification.md).
+- **Slice 3, mobile, first round is live** (pull request 8): tall portrait pitch, bottom sheets for picking, a player's roles and formations, move and swap by tapping. The user kept Move on touch and kept the squad row under the pitch. See [slice 3 verification](../implementation/ui-slice-3-verification.md).
+- **Left in slice 3:** a check on a real iPhone and Android phone (the user's), and any tuning that follows; header and headline sizes on phones were not touched.
+- **Then:** slice 4 (admin restyle), then Codex builds PNG export.
+- **Working agreement:** the user reviews on supporterxi.vercel.app only (localhost does not open for them). After `npm run check` passes, commit, push and open a pull request; the user merges it. Explain in plain language, with screenshots or a recording.
+- The questions under "Still open" above are unchanged.
 
 ## 8. Starting prompt for the next chat
 
