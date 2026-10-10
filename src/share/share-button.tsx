@@ -16,6 +16,11 @@ export default function ShareButton() {
     <span id="share-note" className="sr-only">There is no lineup to share yet.</span>
   </>;
   const missing = missingPlayers(source);
+  // A locked XI that was never finished cannot be completed any more, so there is nothing to pick.
+  if (missing > 0 && source.locked) return <>
+    <button type="button" className="sx-share" disabled aria-describedby="share-note">Share your XI</button>
+    <span id="share-note" className="sr-only">This XI was not finished before the match locked, so it cannot be shared.</span>
+  </>;
   if (missing > 0) {
     const nextEmpty = () => {
       const empty = document.querySelector<HTMLElement>('.sx-marker.sx-empty');

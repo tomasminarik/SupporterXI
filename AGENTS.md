@@ -8,7 +8,7 @@ Read README.md and every active document it marks authoritative before implement
 - Retain the admin backoffice; enforce authorization and validation on the server for every shared-data write.
 - Supporter lineups live only in the browser. Do not create server persistence or analytics for them.
 - Keep fixture/player identities stable. Protect manual fixture overrides from imports and reject stale administrative writes.
-- Use published fixture data and server time for automatic featured-fixture selection. Kickoff + three hours changes the featured fixture, not a submission eligibility window.
+- Use published fixture data and server time for automatic featured-fixture selection. A lineup locks 15 minutes after kickoff (view and share only) and the featured fixture changes 120 minutes after kickoff (user decision, 10 October 2026). There is no cutoff before kickoff.
 - Desktop dragging must have click and keyboard alternatives. Mobile drag and drop is optional.
 - PNG exports exclude roles, official crests, licensed kits and player photographs.
 - Squad and availability are managed manually. Only fixture imports use football-data.org.

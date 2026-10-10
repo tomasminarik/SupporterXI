@@ -17,7 +17,7 @@ test('MVP-07: endpoint is fresh, read-only, server-timed and excludes internal c
   expect(Array.isArray(data.players)).toBe(true);
   expect(Date.parse(data.serverNow)).toBeGreaterThanOrEqual(before);
   expect(Date.parse(data.serverNow)).toBeLessThanOrEqual(Date.now());
-  expect(Object.keys(data).sort()).toEqual(['schemaVersion', 'contentRevision', 'serverNow', 'nextRefreshAt', 'fixture', 'players'].sort());
+  expect(Object.keys(data).sort()).toEqual(['schemaVersion', 'contentRevision', 'serverNow', 'nextRefreshAt', 'locked', 'fixture', 'players'].sort());
   expect((await request.post('/api/featured-fixture', { data: {} })).status()).toBe(405);
 });
 

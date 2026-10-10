@@ -5,7 +5,8 @@
 ## Fixture selection and changes
 
 - A read-only server endpoint selects the featured fixture using server time and the current published content revision. Do not cache the response across the next rollover boundary.
-- Without a valid override: Scheduled + confirmed kickoff + current time earlier than kickoff plus three hours; order by kickoff, then stable fixture ID.
+- Without a valid override: Scheduled + confirmed kickoff + current time earlier than kickoff plus 120 minutes; order by kickoff, then stable fixture ID.
+- From kickoff plus 15 minutes the response marks the fixture locked and the builder is read-only (share still works). The response names the next moment the page must ask again: the lock, then the rollover. A manually featured fixture with a known kickoff locks the same way and stays locked until the override is cleared; one without a kickoff never locks.
 - A valid override selects a Scheduled fixture, including unknown kickoff; it persists until cleared. Admin identifies that automatic selection is overridden.
 - Unknown kickoff is never inferred from a placeholder time. Admin supplies an explicit timezone/offset for confirmed timestamps.
 - On browser focus and at the known rollover boundary, refresh featured-fixture context. This is a presentation refresh, not a save cutoff.

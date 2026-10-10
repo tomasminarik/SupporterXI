@@ -239,3 +239,17 @@ body.sx-dragging, body.sx-dragging * { cursor: grabbing !important; user-select:
 [data-card] { animation: sx-card-in .16s ease-out backwards; }
 .sx-heading-text { display: inline-block; animation: sx-rise-small .2s cubic-bezier(.2,.8,.2,1); }
 .sx-ghost-out { position: fixed; z-index: 30; margin: 0; pointer-events: none; }
+
+/* Locked, from 15 minutes after kickoff: the XI is still there to read and share, and nothing invites a
+   click. Empty positions fade; the formation is a label, not a control. */
+.sx-locked .sx-marker, .sx-locked .sx-pill { cursor: default; }
+.sx-locked .sx-pill:hover .sx-pill-body { background: var(--red); }
+.sx-locked .sx-unavailable:hover .sx-pill-body { background: #7a2b26; }
+.sx-locked .sx-empty, .sx-locked .sx-empty:hover { background: #5c2420; border-color: rgba(255,255,255,.55); color: rgba(255,255,255,.8); box-shadow: none; }
+.sx-locked .sx-formation:disabled { cursor: default; color: var(--text); opacity: 1; }
+.sx-locked .sx-formation:hover { border-color: var(--edge-strong); }
+.sx-locked .sx-pitch { margin-bottom: calc(56px * var(--k)); }
+@media (max-width: 899px) {
+  .sx-locked .sx-pill:hover .sx-pill-body { background: none; }
+  .sx-locked .sx-formation { justify-content: center; }
+}

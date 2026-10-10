@@ -15,7 +15,7 @@ type Slot = Formation['slots'][number];
 type Dragged = { kind: 'player' | 'slot'; id: string; x: number; y: number; over: string | null };
 type Change = { target: Formation; state: Lineup; leaving: string[]; clearedRoles: string[] };
 
-export default function LineupEditor({ lineup, players, onChange }: { lineup: Lineup; players: readonly PublicPlayer[]; onChange: (state: Lineup) => void }) {
+export default function LineupEditor({ lineup, players, locked = false, onChange }: { lineup: Lineup; players: readonly PublicPlayer[]; locked?: boolean; onChange: (state: Lineup) => void }) {
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
   const [menuSlot, setMenuSlot] = useState<string | null>(null);
@@ -157,7 +157,15 @@ export default function LineupEditor({ lineup, players, onChange }: { lineup: Li
     focusSlot(to);
   }
 
+  // A locked XI is still read position by position; nothing on it opens or moves.
+  const lockedNotice = 'This XI is locked: the match has kicked off.';
+  const [wasLocked, setWasLocked] = useState(locked);
+  if (wasLocked !== locked) {
+    setWasLocked(locked);
+    if (locked) { setSelectedSlot(null); setSelectedPlayer(null); setMenuSlot(null); setReplacing(false); setMoving(null); setPickerOpen(false); setPreviewId(null); setDragged(null); setNotice(lockedNotice); }
+  }
   function chooseSlot(slot: Slot) {
+    if (locked) { setNotice(''); requestAnimationFrame(() => setNotice(lockedNotice)); return; }
     const occupant = occupantOf(slot[0]);
     if (moving) { if (moving === slot[0]) { resetSelection(); setNotice('Move cancelled.'); } else move(moving, slot[0]); return; }
     if (heldPlayer) return place(slot, heldPlayer);
@@ -200,7 +208,8 @@ export default function LineupEditor({ lineup, players, onChange }: { lineup: Li
   function dropOn(drag: Dragged) {
     const slot = slotOf(drag.over);
     if (!slot) return;
-    if (drag.kind === 'slot') { if (drag.id !== slot[0] && lineup.slots[drag.id]) move(drag.id, slot[0], { x: drag.x, y: drag.y }); return; }
+    if (drag.kind === 'slot') { if (!locked && drag.id !== slot[0] && lineup.slots[drag.id]) move(drag.id, slot[0], { x: drag.x, y: drag.y }); return; }
+    if (locked) return;
     const player = byId(drag.id);
     if (player?.selectable && !pickedIds.has(player.id)) place(slot, player, true);
   }
@@ -226,7 +235,7 @@ export default function LineupEditor({ lineup, players, onChange }: { lineup: Li
     cardSpots.current = spots;
   });
   function startDrag(event: ReactPointerEvent, kind: Dragged['kind'], id: string) {
-    if (event.button !== 0 || event.pointerType === 'touch') return;
+    if (locked || event.button !== 0 || event.pointerType === 'touch') return;
     const startX = event.clientX;
     const startY = event.clientY;
     let current: Dragged | null = null;
@@ -353,8 +362,8 @@ export default function LineupEditor({ lineup, players, onChange }: { lineup: Li
   const waveOrder = new Map([...(shownFormation?.slots ?? [])].sort((a, b) => a[3] - b[3] || a[2] - b[2]).map((slot, index) => [slot[0], index]));
   const groups = [['Back four', '4'], ['Back three', '3'], ['Back five', '5']].map(([label, digit]) => ({ label, items: formations.filter((item) => item.name.startsWith(digit)) }));
   const toolbar = <>
-    <button ref={formationButton} type="button" className="sx-formation" aria-expanded={pickerOpen} aria-controls="formation-picker" aria-label={formation ? `Formation: ${formation.name}. Change formation` : 'Choose a formation'} onClick={(event) => pickerOpen ? closePicker() : openPicker(event.detail ? { x: event.clientX, y: event.clientY } : undefined)}>
-      {(preview?.target ?? formation)?.name ?? 'Choose formation'}<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 9l7 7 7-7" /></svg>
+    <button ref={formationButton} type="button" className="sx-formation" disabled={locked} aria-expanded={pickerOpen} aria-controls="formation-picker" aria-label={locked && formation ? `Formation: ${formation.name}` : formation ? `Formation: ${formation.name}. Change formation` : 'Choose a formation'} onClick={(event) => pickerOpen ? closePicker() : openPicker(event.detail ? { x: event.clientX, y: event.clientY } : undefined)}>
+      {(preview?.target ?? formation)?.name ?? 'Choose formation'}{!locked && <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 9l7 7 7-7" /></svg>}
     </button>
     {pickerOpen && <div ref={pickerRef} id="formation-picker" className="sx-picker" role="group" aria-label="Choose a formation" onKeyDown={onPickerKey} onPointerLeave={(event) => { if (hoverArmed.current) hoverPreview(event, null); }}>
       <div className="sx-picker-groups">
@@ -370,7 +379,7 @@ export default function LineupEditor({ lineup, players, onChange }: { lineup: Li
     </div>}
   </>;
 
-  return <div ref={editorRef} className={`sx-editor${preview ? ' sx-previewing' : ''}${sheetOpen || menu || moving || pickerOpen ? ' sx-has-sheet' : ''}`} onKeyDown={onKeyDown}>
+  return <div ref={editorRef} className={`sx-editor${locked ? ' sx-locked' : ''}${preview ? ' sx-previewing' : ''}${sheetOpen || menu || moving || pickerOpen ? ' sx-has-sheet' : ''}`} onKeyDown={onKeyDown}>
     <p className="sr-only" role="status">{notice}</p>
     <PitchStage toolbar={toolbar} shadows={shadows} menu={menu && menuPlayer && !replacing && <PillMenu ref={menuRef} short={short(menuPlayer)} slot={menu} lineup={lineup} player={menuPlayer} onClose={closeMenu}
         onRole={(roleId) => { if (!roleId) ghostOut(document.getElementById(`slot-${menu[0]}`)?.querySelector('.sx-role:not(.sx-flag)'), editorRef.current, [{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateY(-10px)' }], { duration: 140 }); onChange(assignRole(lineup, menu[0], roleId)); setNotice(roleId ? `Role set: ${roles.find((role) => role.id === roleId)?.name}.` : 'Role removed.'); }}
@@ -387,14 +396,14 @@ export default function LineupEditor({ lineup, players, onChange }: { lineup: Li
         const style = { '--x': point.x, '--y': point.y, '--fx': spot.left, '--fy': spot.top, '--i': order, '--d': wave === 'arrive' ? 320 + order * 30 : wave === 'clear' ? 60 + order * 25 : 0 } as React.CSSProperties;
         const selected = selectedSlot === id || moving === id;
         const common = {
-          id: `slot-${id}`, type: 'button' as const, style, 'aria-pressed': selected, 'data-slot': id,
+          id: `slot-${id}`, type: 'button' as const, style, 'aria-pressed': locked ? undefined : selected, 'aria-disabled': locked || undefined, 'data-slot': id,
           onClick: () => { if (!suppressClick.current) chooseSlot(slot); },
           'data-drop': dragged?.over === id ? 'true' : undefined,
         };
         if (!occupant) return <button key={id} {...common} className={`sx-marker sx-empty${heldPlayer || moving ? ' sx-target' : ''}`} aria-label={`${abbreviation}: Empty`}>{markerLabel(abbreviation)}</button>;
         const unavailable = !occupant.selectable;
         const placement = placements.get(id);
-        return <button key={id} {...common} data-side={placement?.side ?? 'right'} data-tag={placement?.tag ?? 'below'} className={`sx-marker sx-pill${unavailable ? ' sx-unavailable' : ''}${heldPlayer || (moving && moving !== id) ? ' sx-target' : ''}${moving === id ? ' sx-moving' : ''}`} aria-expanded={menuSlot === id} aria-label={`${abbreviation}: ${occupant.name}${role ? `, ${role.name}` : ''}${unavailable ? ', unavailable' : ''}`}
+        return <button key={id} {...common} data-side={placement?.side ?? 'right'} data-tag={placement?.tag ?? 'below'} className={`sx-marker sx-pill${unavailable ? ' sx-unavailable' : ''}${heldPlayer || (moving && moving !== id) ? ' sx-target' : ''}${moving === id ? ' sx-moving' : ''}`} aria-expanded={locked ? undefined : menuSlot === id} aria-label={`${abbreviation}: ${occupant.name}${role ? `, ${role.name}` : ''}${unavailable ? ', unavailable' : ''}`}
           onPointerDown={(event) => startDrag(event, 'slot', id)}>
           <span key={occupant.id} data-player={occupant.id} className="sx-pill-body"><span className="sx-no">{occupant.shirtNumber ?? '–'}</span><span className={short(occupant).length > 7 ? 'sx-name sx-name-long' : 'sx-name'}>{short(occupant)}</span></span>
           {(role || unavailable) && <span className="sx-tags">{role && <span key={role.id} className="sx-role">{role.name}</span>}{unavailable && <span className="sx-role sx-flag">Unavailable</span>}</span>}
@@ -408,7 +417,7 @@ export default function LineupEditor({ lineup, players, onChange }: { lineup: Li
 
     {movingPlayer && <div className="sx-movebar"><p><strong>Move {short(movingPlayer)}</strong>Tap a position. An occupied one swaps.</p><button type="button" className="sx-secondary" onClick={() => { const slotId = moving!; resetSelection(); setNotice('Move cancelled.'); focusSlot(slotId); }}>Cancel</button></div>}
 
-    <section ref={squadSection} className={sheetOpen ? 'sx-squad sx-sheet' : 'sx-squad'} aria-labelledby="squad-title">
+    {!locked && <section ref={squadSection} className={sheetOpen ? 'sx-squad sx-sheet' : 'sx-squad'} aria-labelledby="squad-title">
       <div className="sx-squad-head">
         <h2 id="squad-title" ref={squadHeading} tabIndex={-1}><span key={heading} className="sx-heading-text">{heading}</span></h2>
         {heldPlayer ? <span className="sx-count">Choose a position on the pitch</span> : <span className="sx-count sx-count-total">{unused.length} players not picked</span>}
@@ -428,7 +437,7 @@ export default function LineupEditor({ lineup, players, onChange }: { lineup: Li
       {!visible.length && <p className="sx-empty-list">{unused.length ? 'No players match your search.' : 'No eligible players left to pick.'}</p>}
       {/* Last in the sheet's tab order, after the players; Escape closes it too. */}
       <button type="button" className="sx-close sx-sheet-close" aria-label="Close player list" onClick={() => { const slotId = selectedSlot; resetSelection(); if (slotId) focusSlot(slotId); }}><svg aria-hidden="true" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M2 2l10 10M12 2L2 12" /></svg></button>
-    </section>
+    </section>}
 
   </div>;
 }
