@@ -18,6 +18,7 @@
 | MVP-12 | Commit success distinguished from live deployment; conflicts and build failures do not report live success; last good site remains; content rollback exercised; preview cannot write production | Integration + deployment smoke test |
 | MVP-13 | Keyboard completes build/roles/export; desktop drag has alternatives; mobile requires no drag; focus/dialog/error behaviour, zoom, contrast, reduced motion and screen-reader core journey | Browser automation + manual accessibility |
 | MVP-14 | No accounts, Community, public lineup links, archives, future-fixture browsing or unrequested statistics; no browser upload of lineups; provider not called per visitor | Route/network review + browser |
+| MVP-14, usage tracking | Only the listed events leave the browser, with only their listed properties; no lineup content, cookies or stored identifiers; off without a production key and on `/gaffer`, `/dev`, `/api` | `tests/unit/analytics.test.ts` + live network review in [analytics](analytics.md) |
 | MVP-15 | Manual refresh and scheduled refresh share validation; invalid scheduler credentials rejected; retries bounded; no-change import creates no commit; failed refresh preserves site; deployment attribution verified | Integration + operational smoke test |
 
 ## Role-spec applicability

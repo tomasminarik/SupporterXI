@@ -7,6 +7,8 @@
 
 Use one Next.js + TypeScript application on Vercel, with GitHub as code and content storage. Serve the builder primarily in the browser. Use small server routes for featured-fixture selection, admin authorization/content writes and fixture import. No database, Supabase, supporter authentication, transactional email provider, image storage or analytics service.
 
+**Amended 10 October 2026 (user decision, after launch):** one analytics service is used, PostHog (EU), for cookieless usage tracking only. It stores nothing in the visitor's browser and never receives lineup content. The events and limits are in [analytics](../implementation/analytics.md).
+
 This is mostly static delivery with a small authenticated administrative backend, not a claim that administration can be entirely static.
 
 ## Administration

@@ -3,6 +3,7 @@ import { Button } from '../design/button';
 
 import { useRef, useState } from 'react';
 import ShareDialog from './share-dialog';
+import { track } from '../analytics/analytics';
 import { useShareSource } from './share-context';
 import { missingPlayers, takeSnapshot, type ShareSnapshot } from './snapshot';
 
@@ -35,7 +36,7 @@ export default function ShareButton() {
   }
   // The snapshot is taken at this moment; the dialog only ever sees the copy.
   return <>
-    <Button variant="action" ref={button} onClick={() => setSnapshot(takeSnapshot(source))}>Share your XI</Button>
+    <Button variant="action" ref={button} onClick={() => { const taken = takeSnapshot(source); setSnapshot(taken); if (taken) track('share_opened', { fixture: taken.fixtureId }); }}>Share your XI</Button>
     {snapshot && <ShareDialog snapshot={snapshot} onClose={() => { setSnapshot(null); button.current?.focus(); }} />}
   </>;
 }

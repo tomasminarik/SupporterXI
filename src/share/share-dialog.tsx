@@ -4,6 +4,7 @@ import { useEffect, useId, useRef, useState } from 'react';
 import { Button, CloseButton } from '../design/button';
 import Notice from '../design/notice';
 import { renderSharePng } from './render';
+import { track } from '../analytics/analytics';
 import { describeSnapshot, shareFileName, shareFormats, type ShareFormat, type ShareSnapshot } from './snapshot';
 import './share.css';
 
@@ -38,7 +39,7 @@ export default function ShareDialog({ snapshot, onClose }: { snapshot: ShareSnap
       const url = URL.createObjectURL(blob);
       urls.current.push(url);
       if (current) setResults((previous) => ({ ...previous, [format]: { status: 'ready', blob, url } }));
-    }, () => { if (current) setResults((previous) => ({ ...previous, [format]: { status: 'failed' } })); });
+    }, () => { if (current) { setResults((previous) => ({ ...previous, [format]: { status: 'failed' } })); track('share_failed', { fixture: snapshot.fixtureId, size: format }); } });
     return () => { current = false; };
   }, [snapshot, format, attempt]);
 
@@ -61,10 +62,11 @@ export default function ShareDialog({ snapshot, onClose }: { snapshot: ShareSnap
     link.click();
     link.remove();
     setMessage(`Download started: ${name}`);
+    track('share_image_saved', { fixture: snapshot.fixtureId, size: format, method: 'download' });
   }
   async function share() {
     if (!file) return;
-    try { await navigator.share({ files: [file] }); setMessage(''); }
+    try { await navigator.share({ files: [file] }); setMessage(''); track('share_image_saved', { fixture: snapshot.fixtureId, size: format, method: 'share' }); }
     catch (error) { if ((error as Error).name !== 'AbortError') setMessage('Sharing did not work here. Download the image instead.'); }
   }
 

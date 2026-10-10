@@ -19,7 +19,7 @@ describe('search indexing follows the public domain (user decision, 9 October 20
     vi.stubEnv('VERCEL_PROJECT_PRODUCTION_URL', publicHost);
     try {
       // The backoffice is kept out by a noindex header, not listed here (tests/browser/admin-security.spec.ts).
-      expect(robots().rules).toEqual({ userAgent: '*', allow: '/', disallow: ['/api/', '/dev/'] });
+      expect(robots().rules).toEqual({ userAgent: '*', allow: '/', disallow: ['/api/', '/dev/', '/sxi/'] });
       expect(robots().sitemap).toBe('https://supporterxi.com/sitemap.xml');
       expect(sitemap().map((entry) => entry.url)).toEqual(['https://supporterxi.com']);
     } finally { vi.unstubAllEnvs(); }

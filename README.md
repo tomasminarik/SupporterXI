@@ -39,6 +39,8 @@ A design system was agreed on 10 October 2026: its values are in `src/design/`, 
 The public repository is [tomasminarik/SupporterXI](https://github.com/tomasminarik/SupporterXI), connected to Vercel project `supporterxi` in the existing Tomo team. Production admin sign-in, content publication and the live featured-fixture response are verified. The football-data.org token is configured in Vercel Production, and the importer has published 32 Premier League/Champions League fixtures. The first scheduled run, live stale-write rejection, content rollback and isolated Preview failure/recovery are verified in [operational readiness](docs/implementation/operations-verification.md). The user waived the live alternate-account drill on 10 October 2026; automated identity rejection stays required. Provider credentials must never be committed.
 
 
+Since 10 October 2026 the site has cookieless usage tracking (PostHog, production only), by user decision; what it may and may not send is in [analytics](docs/implementation/analytics.md).
+
 ## Local development
 
 Use Node 24 (`nvm use` if you have nvm), or another version supported by `package.json`.
