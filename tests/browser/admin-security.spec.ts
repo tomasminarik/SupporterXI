@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test';
 test('MVP-09/14: unconfigured administration fails closed', async ({ page, request }) => {
-  await page.goto('/gaffer');
+  const response = await page.goto('/gaffer');
+  expect(response?.headers()).toMatchObject({ 'x-frame-options': 'DENY', 'x-robots-tag': 'noindex, nofollow', 'referrer-policy': 'no-referrer', 'x-content-type-options': 'nosniff' });
+  expect(response?.headers()['content-security-policy']).toContain("frame-ancestors 'none'");
   await expect(page.getByRole('heading', { name: 'Administration is not connected yet.' })).toBeVisible();
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex, nofollow');
   expect((await request.get('/admin')).status()).toBe(404);
@@ -9,6 +11,7 @@ test('MVP-09/14: unconfigured administration fails closed', async ({ page, reque
     expect([401, 503]).toContain(result.status());
     expect(await result.text()).not.toContain('fixtureAvailability');
     expect(result.headers()['cache-control']).toContain('no-store');
+    expect(result.headers()['x-robots-tag']).toBe('noindex, nofollow');
   }
   for (const path of ['/api/admin/content', '/api/admin/auth/logout']) expect([401, 503]).toContain((await request.post(path, { data: {} })).status());
   expect((await request.get('/dev/admin')).status()).toBe(404);
