@@ -25,6 +25,8 @@ describe('search indexing follows the public domain (user decision, 9 October 20
     } finally { vi.unstubAllEnvs(); }
   });
   it('offers no pages outside production', () => {
-    expect(sitemap()).toEqual([]);
+    // Set explicitly: Vercel runs these tests inside the production build, where the real values are present.
+    vi.stubEnv('VERCEL_ENV', 'preview');
+    try { expect(sitemap()).toEqual([]); } finally { vi.unstubAllEnvs(); }
   });
 });
