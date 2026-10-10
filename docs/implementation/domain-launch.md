@@ -1,6 +1,6 @@
 # supporterxi.com launch — 10 October 2026
 
-The user owns supporterxi.com at Websupport.sk and authorized connecting it to the existing Vercel `supporterxi` project in the Tomo team. Domain ownership is verified in Vercel. The root domain is attached; www.supporterxi.com is attached with a permanent 308 redirect to supporterxi.com. DNS and HTTPS are not yet verified live.
+The user owns supporterxi.com at Websupport.sk and authorized connecting it to the existing Vercel `supporterxi` project in the Tomo team. Domain ownership is verified in Vercel. The root domain is attached; www.supporterxi.com is attached with a permanent 308 redirect to supporterxi.com. Website DNS changes are saved in Websupport. Vercel verifies the root configuration; www propagation and HTTPS remain pending.
 
 ## DNS records requested by Vercel
 
@@ -13,6 +13,17 @@ Keep Websupport's nameservers. Change only the website records; preserve unrelat
 | CNAME | www | 2bd5115ef1edd59d.vercel-dns-017.com. |
 
 These are this project's Vercel recommendations observed on 10 October 2026, not generic values to reuse for another project. Remove conflicting root/www parking records and inspect IPv6 before switching. Recheck with `vercel domains verify` for both names.
+
+## DNS changes applied
+
+On 10 October 2026, in the authenticated Websupport interface for supporterxi.com (service 16514364):
+
+- Replaced the root parking A record with 216.198.79.1 and added 64.29.17.1, TTL 600.
+- Removed the www parking A record and the root/www parking AAAA records (2a00:4b40:aaaa:2001::5).
+- Created the www CNAME above, TTL 600. Websupport displays the saved target without the final dot.
+- Preserved wildcard, mail, TXT, admin subdomain, nameserver and other existing records. No other domain was changed.
+
+`vercel domains verify supporterxi.com` returned `configured_correctly`, with both expected root addresses. The first www verification still saw the old parking address, and HTTPS did not yet complete. These checks must be repeated after propagation; saved DNS is not proof of successful HTTPS or complete launch. PR #14 remained open at this check. OAuth settings and Production ADMIN_ORIGIN have not yet been migrated.
 
 ## Cutover verification
 
