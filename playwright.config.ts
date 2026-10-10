@@ -1,6 +1,6 @@
 import { defineConfig } from '@playwright/test';
 export default defineConfig({
-  testDir: './tests/browser', testMatch: ['**/entry.spec.ts', '**/fixtures.spec.ts', '**/memory.spec.ts', '**/share.spec.ts', '**/lock.spec.ts', '**/gameplan.spec.ts', '**/admin-security.spec.ts'], fullyParallel: true, forbidOnly: !!process.env.CI,
+  testDir: './tests/browser', testMatch: ['**/entry.spec.ts', '**/fixtures.spec.ts', '**/memory.spec.ts', '**/share.spec.ts', '**/lock.spec.ts', '**/gameplan.spec.ts', '**/not-found.spec.ts', '**/admin-security.spec.ts'], fullyParallel: true, forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0, reporter: 'list',
   use: { baseURL: 'http://127.0.0.1:3100', trace: 'retain-on-failure', contextOptions: { reducedMotion: process.env.MOTION ? 'no-preference' : 'reduce' } },
   webServer: { command: 'npm run start -- --port 3100', url: 'http://127.0.0.1:3100', reuseExistingServer: false },
