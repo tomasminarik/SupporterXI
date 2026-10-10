@@ -62,10 +62,16 @@ main:focus { outline: none; }
 .sx-dev p { margin: 0; }
 .sx-dev a { color: var(--sx-text); }
 .sx-dev-controls { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
-/* A few plain sentences under the builder, for visitors who arrive from a search and for search engines. */
-.sx-about { max-width: 1376px; margin: 0 auto; padding: var(--sx-space-6) var(--sx-space-8) var(--sx-space-12); }
-.sx-about h2 { margin: 0 0 var(--sx-space-3); font: 800 var(--sx-text-display-s)/1.1 var(--sx-font-display); text-transform: uppercase; color: var(--sx-text); }
-.sx-about p { max-width: 68ch; margin: 0 0 var(--sx-space-2); font-size: var(--sx-text-body-m); line-height: 1.55; color: var(--sx-text-soft); }
+/* A few plain sentences for visitors who arrive from a search and for search engines, folded into one quiet
+   line above the footer until someone opens it. */
+.sx-about { max-width: 1376px; margin: 0 auto; padding: 0 var(--sx-space-8) var(--sx-space-2); font-size: var(--sx-text-caption); color: var(--sx-text-quiet); }
+.sx-about summary { display: inline-flex; align-items: center; gap: var(--sx-space-2); min-height: var(--sx-control-m); cursor: pointer; list-style: none; }
+.sx-about summary::-webkit-details-marker { display: none; }
+.sx-about summary::after { content: '+'; }
+.sx-about[open] summary::after { content: '\2212'; }
+.sx-about summary:hover { color: var(--sx-text); }
+.sx-about p { max-width: 68ch; margin: 0 0 var(--sx-space-2); line-height: 1.55; color: var(--sx-text-soft); }
+.sx-about p:last-child { margin-bottom: var(--sx-space-4); }
 .sx-footer { max-width: 1376px; margin: 0 auto; padding: 24px 32px 32px; display: flex; justify-content: space-between; gap: 16px; font-size: var(--sx-text-caption); color: var(--sx-text-quiet); border-top: 1px solid var(--sx-edge); }
 /* The contact address: a padded box so the link is easy to hit although the type is small. */
 .sx-footer-link { display: inline-block; margin: -6px 0; padding: 6px 0; color: var(--sx-text-soft); text-underline-offset: 3px; }
