@@ -64,7 +64,10 @@ export default function LineupEditor({ lineup, players, locked = false, onChange
   const pickedIds = new Set(Object.values(lineup.slots).flatMap((entry) => entry ? [entry.playerId] : []));
   const unused = players.filter((item) => item.selectable && !pickedIds.has(item.id));
   const needle = query.trim().toLocaleLowerCase();
-  const visible = unused.filter((item) => `${item.shirtNumber ?? ''} ${item.name}`.toLocaleLowerCase().includes(needle));
+  const matches = (item: PublicPlayer) => `${item.shirtNumber ?? ''} ${item.name}`.toLocaleLowerCase().includes(needle);
+  const visible = unused.filter(matches);
+  // Squad players who are out for this match stay in the list, after everyone who can be picked.
+  const out = players.filter((item) => item.unavailable && !item.selectable && !pickedIds.has(item.id) && matches(item));
   const count = pickedIds.size;
   const target = slotOf(selectedSlot);
   const menu = slotOf(menuSlot);
@@ -434,7 +437,7 @@ export default function LineupEditor({ lineup, players, locked = false, onChange
         <label className="sx-search"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" /></svg>
           <input type="search" aria-label="Search players" placeholder="Name or number" value={query} onChange={(event) => setQuery(event.target.value)} /></label>
       </div>
-      {visible.length > 0 && <div className="sx-cards" role="list" aria-label="Players not picked">
+      {visible.length + out.length > 0 && <div className="sx-cards" role="list" aria-label="Players not picked">
         {visible.map((player) => <div role="listitem" key={player.id} data-card={player.id}>
           <Tile className="sx-card" aria-label={`${player.shirtNumber ?? ''} ${player.name}`.trim()} pressed={selectedPlayer === player.id} data-dragging={dragged?.kind === 'player' && dragged.id === player.id ? 'true' : undefined}
             onPointerDown={(event) => startDrag(event, 'player', player.id)}
@@ -442,8 +445,13 @@ export default function LineupEditor({ lineup, players, locked = false, onChange
             <span className="sx-card-no" aria-hidden="true">{player.shirtNumber ?? '–'}</span><span className="sx-card-name" aria-hidden="true">{short(player)}</span>
           </Tile>
         </div>)}
+        {out.map((player) => <div role="listitem" key={player.id} data-card={player.id}>
+          <Tile className="sx-card sx-card-out" disabled aria-label={`${player.shirtNumber ?? ''} ${player.name}, unavailable`.trim()}>
+            <span className="sx-card-no" aria-hidden="true">{player.shirtNumber ?? '–'}</span><span className="sx-card-name" aria-hidden="true">{short(player)}<span className="sx-card-flag">Unavailable</span></span>
+          </Tile>
+        </div>)}
       </div>}
-      {!visible.length && <p className="sx-empty-list">{unused.length ? 'No players match your search.' : 'No eligible players left to pick.'}</p>}
+      {!(visible.length + out.length) && <p className="sx-empty-list">{unused.length ? 'No players match your search.' : 'No eligible players left to pick.'}</p>}
       {/* Last in the sheet's tab order, after the players; Escape closes it too. */}
       <CloseButton className="sx-sheet-close" label="Close player list" onClick={() => { const slotId = selectedSlot; resetSelection(); if (slotId) focusSlot(slotId); }} />
     </section>}

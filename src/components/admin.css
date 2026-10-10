@@ -1,11 +1,24 @@
 body:has(.admin-app) { background: #0c0e0d; color-scheme: dark; }
 .admin-app { min-height: 100vh; color: #f3f1ea; background: #0c0e0d; font-family: Barlow, 'Helvetica Neue', sans-serif; }
 .admin-shell { max-width: 1240px; margin: 0 auto; padding: 28px 32px 80px; }
-.admin-shell > a { color: #b9bcb2; font-size: 15px; text-decoration: none; }
-.admin-shell > a:hover { color: #fff; }
-.admin-shell .eyebrow { color: #b9bcb2; margin: 44px 0 12px; font-family: inherit; letter-spacing: 2px; }
-.admin-shell h1 { font: 800 clamp(44px, 6vw, 72px)/1 'Big Shoulders Display', 'Arial Narrow', sans-serif; text-transform: uppercase; letter-spacing: -.5px; margin: 0 0 16px; }
-.admin-intro { max-width: 640px; color: #b9bcb2; margin-bottom: 32px; }
+.admin-top { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px 24px; flex-wrap: wrap; margin-bottom: 24px; }
+.admin-top a, .admin-signin > a { color: #b9bcb2; font-size: 15px; text-decoration: none; }
+.admin-top a:hover, .admin-signin > a:hover { color: #fff; }
+.admin-top h1, .admin-signin h1 { font: 800 44px/1 'Big Shoulders Display', 'Arial Narrow', sans-serif; text-transform: uppercase; letter-spacing: -.5px; margin: 12px 0 0; color: #f3f1ea; }
+.admin-demo { margin-bottom: 24px; }
+.admin-live { display: flex; align-items: center; gap: 4px; margin: 0; }
+.admin-hint { font-size: 15px; margin: 0; }
+
+/* Signed out: one card in the middle of the page. */
+.admin-signin { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; padding: 24px 16px; }
+.admin-signin-card { width: 100%; max-width: 420px; }
+.admin-signin-card .ant-card-body { display: grid; gap: 16px; padding: 32px; }
+.admin-signin-card p, .admin-signin-card h1, .admin-signin-card h2 { margin: 0; }
+.admin-signin-card p { line-height: 1.6; color: #b9bcb2; }
+.admin-signin-card h2 { font: 600 20px/1.3 Barlow, sans-serif; color: #f3f1ea; }
+.admin-signin-card .ant-btn { margin-top: 8px; }
+.admin-signin-brand { font-size: 14px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: -8px !important; }
+.admin-signin-note { font-size: 14px; text-align: center; }
 .admin-shell p { line-height: 1.6; color: #b9bcb2; }
 .admin-shell h2 { font: 600 24px/1.2 Barlow, sans-serif; letter-spacing: -.4px; margin: 0 0 16px; color: #f3f1ea; }
 .admin-shell h3 { font: 600 20px/1.3 Barlow, sans-serif; }
@@ -13,30 +26,47 @@ body:has(.admin-app) { background: #0c0e0d; color-scheme: dark; }
 .admin-fixtures-layout { display: grid; grid-template-columns: minmax(0, .7fr) minmax(0, 1.3fr); gap: 24px; align-items: start; }
 .admin-fixtures-layout .admin-featured { position: sticky; top: 24px; }
 .admin-fields { min-width: 0; }
-.admin-shell label:not(.ant-checkbox-wrapper) { display: block; font-weight: 500; margin-bottom: 8px; }
+.admin-shell label:not(.ant-checkbox-wrapper, .ant-radio-button-wrapper) { display: block; font-weight: 500; margin-bottom: 8px; }
 .admin-shell .ant-select { width: 100%; }
 .admin-shell .ant-form { margin-top: 24px; }
 .admin-shell .ant-form-item-label > label { margin: 0; }
 .admin-columns { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; }
-.admin-actions { display: flex; gap: 12px; flex-wrap: wrap; margin: 24px 0; }
-.admin-actions .ant-btn:last-child { margin-left: auto; }
+.admin-actions { display: flex; gap: 12px; flex-wrap: wrap; }
 .admin-feedback { display: grid; gap: 12px; margin-bottom: 24px; }
 .admin-feedback:empty { margin-bottom: 0; }
-.admin-publication { margin-bottom: 24px; }
-.admin-publication .ant-tag { white-space: normal; }
-.admin-roster { margin-top: 24px; }
-.admin-roster-row { display: grid; grid-template-columns: minmax(0, 1fr) 240px; gap: 20px; align-items: center; padding: 14px 0; border-top: 1px solid #343b35; }
-.admin-availability-status { display: block; margin-top: 4px; font-size: 14px; color: #b9bcb2; }
-.admin-roster-row > div:first-child { display: flex; gap: 16px; align-items: center; min-width: 0; }
+.admin-availability-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px 32px; flex-wrap: wrap; margin-bottom: 8px; }
+.admin-availability-head > div { flex: 1 1 420px; min-width: 0; }
+.admin-availability-head p { margin: 0; }
+.admin-availability-head strong { color: #f3f1ea; font-weight: 600; }
+.admin-availability-head .ant-input-search { flex: 0 1 280px; }
+.admin-roster { margin: 24px 0 16px; border-bottom: 1px solid #343b35; }
+.admin-roster-row { display: flex; justify-content: space-between; align-items: center; gap: 12px 20px; flex-wrap: wrap; padding: 12px 0; border-top: 1px solid #343b35; }
+.admin-roster-player { display: flex; gap: 16px; align-items: center; min-width: 0; flex: 1 1 240px; }
+.admin-roster-name { display: block; color: #f3f1ea; font-weight: 500; }
+.admin-availability-status { display: block; margin-top: 2px; font-size: 14px; color: #b9bcb2; }
+.admin-roster-row[data-out=true] .admin-availability-status { color: #ff9c94; }
+.admin-roster-controls { display: flex; gap: 8px 12px; flex-wrap: wrap; }
 .admin-number { width: 34px; flex: none; font: 800 28px/1 'Big Shoulders Display', sans-serif; color: #f3f1ea; }
 .admin-roster-row .ant-tag { margin-left: 10px; }
+.admin-savebar { position: sticky; bottom: 16px; z-index: 5; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 20px; padding: 14px 16px; background: #202421; border: 1px solid #da362e; border-radius: 8px; box-shadow: 0 12px 32px rgba(0, 0, 0, .6); }
+.admin-savebar p { flex: 1 1 240px; margin: 0; font-size: 14px; }
+.admin-savebar strong { display: block; color: #f3f1ea; font-size: 16px; }
+.admin-match-list { display: grid; gap: 4px; max-height: 50vh; overflow-y: auto; }
 .admin-override { padding: 20px 0; border-top: 1px solid #343b35; overflow-wrap: anywhere; }
 .admin-corrections { margin-top: 32px; }
-.admin-button { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 20px; background: #da362e; color: #fff; border: 1px solid #da362e; border-radius: 8px; font-weight: 600; text-decoration: none; }
-.admin-button:hover { background: #c22e27; }
 .admin-app :focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
 @media (max-width: 800px) { .admin-fixtures-layout { grid-template-columns: minmax(0, 1fr); gap: 0; } .admin-fixtures-layout .admin-featured { position: static; } }
-@media (max-width: 560px) { .admin-shell { padding: 24px 16px 56px; } .admin-shell .eyebrow { margin-top: 32px; } .admin-columns { grid-template-columns: minmax(0, 1fr); gap: 0; } .admin-roster-row { grid-template-columns: minmax(0, 1fr); gap: 12px; } .admin-actions .ant-btn { width: 100%; white-space: normal; height: auto; min-height: 44px; } .admin-actions .ant-btn:last-child { margin-left: 0; } .admin-box .ant-card-body { padding: 20px 16px; } }
+@media (max-width: 560px) { .admin-shell { padding: 24px 16px 56px; } .admin-columns { grid-template-columns: minmax(0, 1fr); gap: 0; } .admin-box .ant-card-body { padding: 20px 16px; }
+  .admin-roster-controls, .admin-roster-controls .ant-radio-group, .admin-roster-controls > .ant-btn { width: 100%; }
+  .admin-roster-controls .ant-radio-group { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .admin-roster-controls .ant-radio-button-wrapper { display: flex; align-items: center; justify-content: center; height: auto; min-height: 44px; padding: 4px 6px; font-size: 14px; line-height: 1.2; text-align: center; }
+  .admin-top h1 { font-size: 36px; } }
 
 /* Ant dims the current selection to 25% when open; retain readable contrast. */
 .admin-app .ant-select-single.ant-select-open .ant-select-content-has-value { opacity: 1 !important; }
+
+/* Available is the quiet, usual state; only an absence is red. */
+.admin-app .admin-roster-row[data-out=false] .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) { background: #2c322d; border-color: #6d766e; color: #f3f1ea; }
+.admin-app .admin-roster-row[data-out=false] .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled)::before { background: #6d766e; }
+/* Ant's hover colour for an unchosen option is the brand red, which is too dark to read on this surface. */
+.admin-app .ant-radio-button-wrapper:not(.ant-radio-button-wrapper-checked, .ant-radio-button-wrapper-disabled):hover { color: #fff; }

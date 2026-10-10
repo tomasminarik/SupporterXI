@@ -2,9 +2,11 @@
 import { useCallback, useEffect, useState } from 'react';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
-import { Alert, Button, Card, Checkbox, ConfigProvider, Form, Input, Modal, Select as AntSelect, Tabs, Tag, type SelectProps } from 'antd';
-import { contentSchema, effectiveFixture, playerAvailability, type SharedContent, type Fixture } from '../domain/content';
+import Link from 'next/link';
+import { Alert, Button, Card, Checkbox, ConfigProvider, Form, Input, Modal, Select as AntSelect, Spin, Tabs, Tag, type SelectProps } from 'antd';
+import { contentSchema, effectiveFixture, type SharedContent, type Fixture } from '../domain/content';
 import { type AdminCommand, applyAdminCommand } from '../domain/admin';
+import AdminAvailability from './admin-availability';
 import './admin.css';
 
 // Ant's option list needs its own name in addition to the labelled combobox.
@@ -23,6 +25,9 @@ async function call(url: string, init?: RequestInit) {
   if (!response.ok) throw new Error(body.error ?? 'Request failed. Your edits are still here.');
   return body;
 }
+type Publication = { commit: string; digest: string; state: string };
+const failure = (e: unknown) => e instanceof z.ZodError ? 'Invalid fields. Check required names, shirt numbers and the kickoff timezone.' : (e as Error).message;
+
 export default function AdminWorkspace({ demo }: { demo?: SharedContent }) {
   const router = useRouter();
   const [source, setSource] = useState<Source | null>(demo ? { content: demo, revision: 'preview' } : null);
@@ -30,22 +35,35 @@ export default function AdminWorkspace({ demo }: { demo?: SharedContent }) {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(!demo);
   const [notice, setNotice] = useState('');
-  const [publish, setPublish] = useState<{ commit: string; digest: string; state: string } | null>(null);
+  const [publish, setPublish] = useState<Publication | null>(null);
   const [importReport, setImportReport] = useState('');
   const [confirmImport, setConfirmImport] = useState(false);
   const [confirmReload, setConfirmReload] = useState(false);
   const load = useCallback(async () => {
     setBusy(true); setError('');
-    try { const result = sourceSchema.parse(await call('/api/admin/content')); setSource(result); setPublish(result.publication ?? null); setReload((value) => value + 1); } catch (e) { setError(e instanceof z.ZodError ? 'Invalid fields. Check required names, shirt numbers and the kickoff timezone.' : (e as Error).message); } finally { setBusy(false); }
+    try { const result = sourceSchema.parse(await call('/api/admin/content')); setSource(result); setPublish(result.publication ?? null); setReload((value) => value + 1); } catch (e) { setError(failure(e)); } finally { setBusy(false); }
   }, []);
   useEffect(() => {
     if (demo) return;
     let cancelled = false;
-    void call('/api/admin/content').then((body) => { if (!cancelled) { const result = sourceSchema.parse(body); setSource(result); setPublish(result.publication ?? null); } }).catch((e) => { if (!cancelled) setError(e instanceof z.ZodError ? 'Invalid fields. Check required names, shirt numbers and the kickoff timezone.' : (e as Error).message); }).finally(() => { if (!cancelled) setBusy(false); });
+    void call('/api/admin/content').then((body) => { if (!cancelled) { const result = sourceSchema.parse(body); setSource(result); setPublish(result.publication ?? null); } }).catch((e) => { if (!cancelled) setError(failure(e)); }).finally(() => { if (!cancelled) setBusy(false); });
     return () => { cancelled = true; };
   }, [demo]);
-  async function save(command: AdminCommand) {
-    if (!source) return;
+  // A saved change goes live by itself a couple of minutes later; watch for it instead of asking for a click.
+  const watching = publish?.state === 'pending' ? `${publish.commit}/${publish.digest}` : null;
+  useEffect(() => {
+    if (!watching) return;
+    const [commit, digest] = watching.split('/');
+    let checks = 0;
+    const timer = setInterval(() => {
+      if (++checks > 40) return clearInterval(timer);
+      void call(`/api/admin/publish?commit=${commit}&digest=${digest}`).then((result) => setPublish((current) => current?.commit === commit ? { ...current, state: result.state } : current)).catch(() => { /* The next check retries. */ });
+    }, 12_000);
+    return () => clearInterval(timer);
+  }, [watching]);
+  /** Resolves true when the change was accepted, so a form can clear its unsaved state. */
+  async function save(command: AdminCommand): Promise<boolean> {
+    if (!source) return false;
     setBusy(true); setError(''); setNotice('');
     try {
       if (demo) {
@@ -54,15 +72,16 @@ export default function AdminWorkspace({ demo }: { demo?: SharedContent }) {
       } else {
         const result = await call('/api/admin/content', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-csrf-token': source.csrf! }, body: JSON.stringify({ revision: source.revision, command }) });
         setSource({ ...sourceSchema.parse(result), csrf: source.csrf });
-        if (result.commit) { setPublish({ commit: result.commit, digest: result.digest, state: 'pending' }); setNotice('Saved to GitHub. Publication is pending; the previous content stays live until deployment succeeds.'); }
-        else setNotice('No content changes to publish.');
+        if (result.commit) { setPublish({ commit: result.commit, digest: result.digest, state: 'pending' }); setNotice('Saved.'); }
+        else setNotice('Nothing changed, so there is nothing to publish.');
       }
-    } catch (e) { setError(e instanceof z.ZodError ? 'Invalid fields. Check required names, shirt numbers and the kickoff timezone.' : (e as Error).message); } finally { setBusy(false); }
+      return true;
+    } catch (e) { setError(failure(e)); return false; } finally { setBusy(false); }
   }
   async function checkPublish() {
     if (!publish) return;
     setBusy(true); setError('');
-    try { const result = await call(`/api/admin/publish?commit=${publish.commit}&digest=${publish.digest}`); setPublish({ ...publish, state: result.state }); setNotice(''); } catch (e) { setError(e instanceof z.ZodError ? 'Invalid fields. Check required names, shirt numbers and the kickoff timezone.' : (e as Error).message); } finally { setBusy(false); }
+    try { const result = await call(`/api/admin/publish?commit=${publish.commit}&digest=${publish.digest}`); setPublish({ ...publish, state: result.state }); setNotice(''); } catch (e) { setError(failure(e)); } finally { setBusy(false); }
   }
   async function importFixtures() {
     if (!source) return;
@@ -73,34 +92,48 @@ export default function AdminWorkspace({ demo }: { demo?: SharedContent }) {
       setReload((value) => value + 1);
       const report = result.report as { added: number; updated: number; unchanged: number; ambiguous: string[]; skipped: number };
       setImportReport(`${report.added} added, ${report.updated} updated, ${report.unchanged} unchanged, ${report.skipped} outside scope.${report.ambiguous.length ? ` Potential manual duplicates (provider IDs): ${report.ambiguous.join(', ')}. Review these manually; none were merged.` : ''}`);
-      if (result.commit) { setPublish({ commit: result.commit, digest: result.digest, state: 'pending' }); setNotice('Fixture import saved to GitHub. Publication is pending.'); }
+      if (result.commit) { setPublish({ commit: result.commit, digest: result.digest, state: 'pending' }); setNotice('Fixtures imported.'); }
       else setNotice('Import made no content changes.');
     } catch (e) { setError((e as Error).message); } finally { setBusy(false); }
   }
+  async function signOut() {
+    try { await call('/api/admin/auth/logout', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-csrf-token': source!.csrf! }, body: '{}' }); router.replace('/gaffer'); router.refresh(); } catch (e) { setError((e as Error).message); }
+  }
   return <ConfigProvider componentDisabled={busy}>
-    <div className="admin-actions">{!demo && <><Button onClick={() => { if (source) setConfirmReload(true); else void load(); }}>Reload latest content</Button><Button disabled={busy || !source} onClick={() => setConfirmImport(true)}>Refresh PL / Champions League fixtures</Button><Button disabled={busy || !source} onClick={async () => { try { await call('/api/admin/auth/logout', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-csrf-token': source!.csrf! }, body: '{}' }); router.replace('/gaffer'); router.refresh(); } catch (e) { setError((e as Error).message); } }}>Sign out</Button></>}</div>
+    <header className="admin-top">
+      <div><Link href={demo ? '/dev/workbench' : '/'}>← {demo ? 'Builder preview' : 'Supporter XI'}</Link><h1>Gaffer</h1></div>
+      {!demo && <div className="admin-actions"><Button disabled={busy || !source} onClick={() => setConfirmImport(true)}>Import fixtures</Button><Button onClick={() => { if (source) setConfirmReload(true); else void load(); }}>Reload</Button><Button type="text" disabled={busy || !source} onClick={() => void signOut()}>Sign out</Button></div>}
+    </header>
+    {demo && <Alert className="admin-demo" type="warning" showIcon title="Preview only" description="Changes stay in this page’s memory and reset on reload. Nothing is published or written to GitHub. Use synthetic fixture names." />}
     <Modal title="Reload current content?" open={confirmReload} onCancel={() => setConfirmReload(false)} onOk={() => { setConfirmReload(false); void load(); }} okText="Reload and discard edits" cancelText="Keep editing"><p>Unsaved form edits will be discarded. The latest accepted content will replace this editor.</p></Modal>
-    <Modal title="Refresh covered fixtures?" open={confirmImport} onCancel={() => setConfirmImport(false)} onOk={() => { setConfirmImport(false); void importFixtures(); }} okText="Refresh fixtures now"><p>This reads Manchester United Premier League and Champions League matches from football-data.org. Any unsaved form edits will be discarded if the refresh succeeds.</p></Modal>
+    <Modal title="Import fixtures?" open={confirmImport} onCancel={() => setConfirmImport(false)} onOk={() => { setConfirmImport(false); void importFixtures(); }} okText="Import fixtures now"><p>This reads Manchester United Premier League and Champions League matches from football-data.org. Any unsaved form edits will be discarded if the import succeeds.</p></Modal>
     <div className="admin-feedback" aria-live="polite">
       {busy && <p role="status">Working…</p>}
       {error && <Alert className="admin-error" type="error" showIcon title={error} role="alert"/>}
       {notice && <Alert type="success" showIcon title={notice} role="status"/>}
       {importReport && <Alert type="info" showIcon title={`Import: ${importReport}`} role="status"/>}
+      {publish && <PublicationStatus publish={publish} check={checkPublish} />}
     </div>
-    {publish && <Card className="admin-publication" title="Publication status"><Tag color={publish.state === 'live' ? 'success' : publish.state === 'failed' ? 'error' : 'warning'}>{publish.state === 'live' ? 'Live content verified' : publish.state === 'failed' ? 'Deployment failed — previous site retained' : 'Publication pending / not yet verified live'}</Tag><p>Commit {publish.commit.slice(0, 7)}. A successful save alone does not mean the public site has updated.</p><Button onClick={checkPublish}>Check publication</Button></Card>}
     {source && <AdminForms key={reload} revision={source.revision} content={source.content} save={save} busy={busy}/>}
   </ConfigProvider>;
+}
+
+/** Where the last saved change is on its way to the public site. A pending change is re-checked automatically. */
+function PublicationStatus({ publish, check }: { publish: Publication; check: () => void }) {
+  const commit = `Change ${publish.commit.slice(0, 7)}`;
+  if (publish.state === 'live') return <p className="admin-live"><Tag color="success">Live</Tag>The site shows your latest saved changes.</p>;
+  if (publish.state === 'failed') return <Alert type="error" showIcon title="Publishing failed. The site still shows the previous version." description={`${commit} did not deploy. Nothing was lost: save again, or check the deployment in Vercel.`} action={<Button onClick={check}>Check again</Button>} />;
+  if (publish.state === 'pending') return <Alert type="warning" showIcon icon={<Spin size="small" />} title="Publishing to the site…" description={`${commit} usually goes live in about two minutes. This updates by itself, and you can keep working.`} action={<Button onClick={check}>Check now</Button>} />;
+  return <Alert type="info" showIcon title="Could not confirm what is live." description={`${commit} is the latest saved change.`} action={<Button onClick={check}>Check now</Button>} />;
 }
 
 function fixtureOptions(content: SharedContent) {
   return content.fixtures.map((f) => ({ value: f.id, label: `${effectiveFixture(f).opponent} · ${effectiveFixture(f).status}` }));
 }
-function AdminForms({ content, save, busy, revision }: { revision: string; content: SharedContent; save: (command: AdminCommand) => Promise<void>; busy: boolean }) {
-  const [tab, setTab] = useState('fixtures');
+function AdminForms({ content, save, busy, revision }: { revision: string; content: SharedContent; save: (command: AdminCommand) => Promise<boolean>; busy: boolean }) {
+  const [tab, setTab] = useState('availability');
   const [fixtureId, setFixtureId] = useState('');
   const [playerId, setPlayerId] = useState('');
-  const [availableFixture, setAvailableFixture] = useState(content.fixtures[0]?.id ?? '');
-  const selectedAvailabilityFixture = content.fixtures.some((f) => f.id === availableFixture) ? availableFixture : (content.fixtures[0]?.id ?? '');
   const fixture = content.fixtures.find((f) => f.id === fixtureId);
   const player = content.players.find((p) => p.id === playerId);
   const options = fixtureOptions(content);
@@ -117,16 +150,11 @@ function AdminForms({ content, save, busy, revision }: { revision: string; conte
         <div className="admin-columns"><Form.Item label="Name" name="name" rules={[{ required: true, whitespace: true, message: 'Enter the player name.' }]}><Input maxLength={200}/></Form.Item><Form.Item label="Shirt number" name="number"><Input type="number" min={1} max={99} step={1}/></Form.Item></div>
         <Form.Item name="active" valuePropName="checked"><Checkbox>Active</Checkbox></Form.Item><Button type="primary" htmlType="submit">{player ? 'Save player' : 'Create player'}</Button>
       </Form></Card>}
-    {tab === 'availability' && <>
-      <Card className="admin-box"><h2>Ongoing availability</h2><p>Mark long-term injuries here. Unavailable until cleared applies to every match, including new fixtures. A match-specific setting can override it.</p>
-        <div className="admin-roster">{content.players.map((p) => <div className="admin-roster-row" key={p.id}><div><span className="admin-number">{p.shirtNumber ?? '—'}</span><span>{p.name}{!p.active && <Tag>Inactive</Tag>}</span></div><Select aria-label={`Ongoing availability: ${p.name}`} value={p.unavailableUntilCleared ? 'unavailable' : 'available'} onChange={(status: 'available' | 'unavailable') => void save({ kind: 'ongoing-availability', playerId: p.id, unavailableUntilCleared: status === 'unavailable' })} options={[{ value: 'available', label: 'Available by default' }, { value: 'unavailable', label: 'Unavailable until cleared' }]}/></div>)}</div>
-      </Card>
-      <Card className="admin-box"><h2>Fixture availability</h2><p>Use default follows ongoing availability. Choose Available or Unavailable to override it for this match only. Inactive players cannot be added regardless of availability.</p>{!content.fixtures.length ? <p>Create a fixture first.</p> : <><label htmlFor="availability-fixture">Availability for</label><Select id="availability-fixture" value={selectedAvailabilityFixture} onChange={setAvailableFixture} options={options}/><div className="admin-roster">{content.players.map((p) => <div className="admin-roster-row" key={p.id}><div><span className="admin-number">{p.shirtNumber ?? '—'}</span><span>{p.name}{!p.active && <Tag>Inactive</Tag>}<span className="admin-availability-status">{playerAvailability(content, p.id, selectedAvailabilityFixture) === 'available' ? 'Available' : 'Unavailable'} for this match</span></span></div><Select aria-label={`Availability: ${p.name}`} value={content.fixtureAvailability.find((a) => a.fixtureId === selectedAvailabilityFixture && a.playerId === p.id)?.status ?? 'default'} onChange={(status: 'default' | 'available' | 'unavailable') => void save({ kind: 'availability', fixtureId: selectedAvailabilityFixture, playerId: p.id, status })} options={[{ value: 'default', label: `Use default (${p.unavailableUntilCleared ? 'Unavailable' : 'Available'})` }, { value: 'available', label: 'Available' }, { value: 'unavailable', label: 'Unavailable' }]}/></div>)}</div></>}</Card>
-    </>}
+    {tab === 'availability' && <AdminAvailability content={content} busy={busy} save={save} />}
     </div>;
-  return <Tabs activeKey={tab} onChange={setTab} items={['fixtures', 'squad', 'availability'].map((name) => ({ key: name, label: name[0].toUpperCase() + name.slice(1), disabled: busy, children: name === tab ? editor : null }))}/>;
+  return <Tabs activeKey={tab} onChange={setTab} items={['availability', 'fixtures', 'squad'].map((name) => ({ key: name, label: name[0].toUpperCase() + name.slice(1), disabled: busy, children: name === tab ? editor : null }))}/>;
 }
-function FixtureForm({ fixture, save }: { fixture?: Fixture; save: (command: AdminCommand) => Promise<void> }) {
+function FixtureForm({ fixture, save }: { fixture?: Fixture; save: (command: AdminCommand) => Promise<boolean> }) {
   const value = fixture ? effectiveFixture(fixture) : null;
   const [clearField, setClearField] = useState<keyof Fixture['values'] | null>(null);
   return <><Form layout="vertical" initialValues={{ opponent: value?.opponent ?? '', venue: value?.venue ?? 'home', status: value?.status ?? 'scheduled', competition: value?.competition ?? '', round: value?.round ?? '', kickoff: value?.kickoff.kind === 'confirmed' ? value.kickoff.at : '' }} onFinish={(data) => {

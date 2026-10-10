@@ -8,6 +8,7 @@ import { adminConfig, authorizedWrite, nonce, readSession, seal, unseal, type Ad
 import { readSource, saveSource, publication } from '../../src/server/admin/github';
 import { GET, POST } from '../../src/app/api/admin/content/route';
 import { featuredResponse } from '../../src/domain/featured-fixture';
+import { planMode, samePlan, savedPlan, upcomingFixtures } from '../../src/domain/availability-plan';
 const data = contentSchema.parse(raw);
 const id = '10000000-0000-4000-8000-000000000001';
 const fixtureValues = { opponent: 'Synthetic FC', venue: 'home' as const, competition: null, round: null, status: 'scheduled' as const, kickoff: { kind: 'unknown' as const } };
@@ -67,6 +68,52 @@ describe('MVP-10 admin mutations and approved M-01', () => {
     expect(inactive.players[0].unavailableUntilCleared).toBe(true);
     expect(() => applyAdminCommand(later, { kind: 'ongoing-availability', playerId: secondId, unavailableUntilCleared: true }, () => 'unused')).toThrow('Player no longer exists');
     expect(() => applyAdminCommand(later, { kind: 'availability', fixtureId: secondId, playerId: secondId, status: 'default' }, () => 'unused')).toThrow();
+  });
+  it('saves several players in one availability plan and lists unavailable players as not pickable', () => {
+    const [first, second, third] = data.players.map((p) => p.id);
+    const secondId = '10000000-0000-4000-8000-000000000002';
+    const create = (source: typeof data, fixtureId: string) => applyAdminCommand(source, { kind: 'fixture', id: null, values: fixtureValues }, () => fixtureId);
+    const base = applyAdminCommand(create(create(data, id), secondId), { kind: 'availability', fixtureId: id, playerId: first, status: 'available' }, () => 'unused');
+    const plan = applyAdminCommand(base, { kind: 'availability-plan', players: [
+      { playerId: first, unavailableUntilCleared: true, unavailableFixtureIds: [] },
+      { playerId: second, unavailableUntilCleared: false, unavailableFixtureIds: [id] },
+    ] }, () => 'unused');
+    // One write replaces each listed player's match settings and leaves everyone else alone.
+    expect(plan.players[0].unavailableUntilCleared).toBe(true);
+    expect(plan.fixtureAvailability).toEqual([{ fixtureId: id, playerId: second, status: 'unavailable' }]);
+    const published = (fixtureId: string) => featuredResponse({ ...plan, featuredFixtureId: fixtureId }, 'a'.repeat(64), Date.now()).players;
+    expect(published(id).slice(0, 3).map((p) => [p.selectable, p.unavailable])).toEqual([[false, true], [false, true], [true, false]]);
+    expect(published(secondId).slice(0, 3).map((p) => [p.selectable, p.unavailable])).toEqual([[false, true], [true, false], [true, false]]);
+    // A player who has left the squad is not pickable and is not listed as unavailable either.
+    const left = applyAdminCommand(plan, { kind: 'player', id: first, values: { name: 'Senne Lammens', active: false, shirtNumber: null } }, () => 'unused');
+    expect(featuredResponse({ ...left, featuredFixtureId: id }, 'a'.repeat(64), Date.now()).players[0]).toMatchObject({ selectable: false, unavailable: false });
+    const back = applyAdminCommand(plan, { kind: 'availability-plan', players: [{ playerId: second, unavailableUntilCleared: false, unavailableFixtureIds: [] }] }, () => 'unused');
+    expect(back.fixtureAvailability).toEqual([]);
+    for (const players of [[], [{ playerId: third, unavailableUntilCleared: false, unavailableFixtureIds: [id, id] }], [{ playerId: third, unavailableUntilCleared: false, unavailableFixtureIds: ['10000000-0000-4000-8000-000000000009'] }], [{ playerId: id, unavailableUntilCleared: true, unavailableFixtureIds: [] }]]) {
+      expect(() => applyAdminCommand(plan, { kind: 'availability-plan', players }, () => 'unused')).toThrow();
+    }
+  });
+  it('describes the matches still to come and each saved plan', () => {
+    const now = Date.parse('2026-10-11T12:00:00Z');
+    const at = (iso: string) => ({ kind: 'confirmed' as const, at: iso });
+    const ids = ['10000000-0000-4000-8000-00000000000a', '10000000-0000-4000-8000-00000000000b', '10000000-0000-4000-8000-00000000000c', '10000000-0000-4000-8000-00000000000d'];
+    const kickoffs = [at('2026-10-24T14:00:00Z'), at('2026-10-17T14:00:00Z'), at('2026-10-03T14:00:00Z'), { kind: 'unknown' as const }];
+    let content = data;
+    kickoffs.forEach((kickoff, index) => { content = applyAdminCommand(content, { kind: 'fixture', id: null, values: { ...fixtureValues, kickoff } }, () => ids[index]); });
+    const upcoming = upcomingFixtures(content, now);
+    // Soonest first, a finished match dropped, an unconfirmed kickoff last.
+    expect(upcoming.map((f) => f.id)).toEqual([ids[1], ids[0], ids[3]]);
+    expect(upcomingFixtures({ ...content, featuredFixtureId: ids[3] }, now).map((f) => f.id)).toEqual([ids[3], ids[1], ids[0]]);
+    const playerId = data.players[0].id;
+    const planned = applyAdminCommand(content, { kind: 'availability-plan', players: [{ playerId, unavailableUntilCleared: false, unavailableFixtureIds: [ids[1], ids[2]] }] }, () => 'unused');
+    const saved = savedPlan(planned, playerId, upcoming);
+    expect(saved).toEqual({ untilCleared: false, out: [ids[1]] });
+    expect(planMode(saved, ids[1])).toBe('next');
+    expect(planMode({ untilCleared: false, out: [ids[0]] }, ids[1])).toBe('matches');
+    expect(planMode({ untilCleared: true, out: [ids[0]] }, ids[1])).toBe('long');
+    expect(planMode(savedPlan(planned, data.players[1].id, upcoming), ids[1])).toBe('available');
+    expect(samePlan({ untilCleared: false, out: [ids[0], ids[1]] }, { untilCleared: false, out: [ids[1], ids[0]] })).toBe(true);
+    expect(samePlan(saved, { untilCleared: true, out: [ids[1]] })).toBe(false);
   });
   it('reads legacy content as available by default and rejects malformed injury settings', () => {
     expect(contentSchema.parse(raw).players.every((p) => !p.unavailableUntilCleared)).toBe(true);

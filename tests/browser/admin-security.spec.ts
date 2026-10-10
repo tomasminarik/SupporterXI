@@ -3,7 +3,7 @@ test('MVP-09/14: unconfigured administration fails closed', async ({ page, reque
   const response = await page.goto('/gaffer');
   expect(response?.headers()).toMatchObject({ 'x-frame-options': 'DENY', 'x-robots-tag': 'noindex, nofollow', 'referrer-policy': 'no-referrer', 'x-content-type-options': 'nosniff' });
   expect(response?.headers()['content-security-policy']).toContain("frame-ancestors 'none'");
-  await expect(page.getByRole('heading', { name: 'Administration is not connected yet.' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Not connected on this deployment' })).toBeVisible();
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex, nofollow');
   expect((await request.get('/admin')).status()).toBe(404);
   for (const path of ['/api/admin/content', '/api/admin/publish', '/api/admin/auth/login', '/api/admin/auth/callback']) {

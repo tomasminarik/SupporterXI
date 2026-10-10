@@ -384,3 +384,26 @@ test('MVP-13: desktop labels stay apart in all 14 formations with the longest na
     }), { message: formation.name }).toEqual([]);
   }
 });
+
+test('MVP-07/13: a player who is out for the match stays listed last and cannot be picked', async ({ page }) => {
+  await page.goto('/dev/workbench');
+  const cards = page.locator('.sx-cards [data-card] button');
+  await expect(cards).toHaveCount(36);
+  await expect(cards.first()).toHaveAttribute('aria-label', '1 Senne Lammens');
+  await page.getByRole('button', { name: 'Toggle Senne Lammens availability', exact: true }).click();
+  await expect(cards).toHaveCount(36);
+  await expect(cards.first()).toHaveAttribute('aria-label', '2 Diogo Dalot');
+  await expect(cards.last()).toHaveAttribute('aria-label', '1 Senne Lammens, unavailable');
+  await expect(cards.last()).toBeDisabled();
+  await expect(cards.last()).toContainText('Unavailable');
+  await expect(page.locator('.sx-count-total')).toHaveText('35 players not picked');
+  // Opening a position (the sheet on a phone) still offers only the players who can be picked.
+  await page.getByRole('button', { name: 'GK: Empty', exact: true }).click();
+  await expect(cards.last()).toBeVisible();
+  await cards.last().click({ force: true });
+  await expect(page.getByRole('button', { name: 'GK: Empty', exact: true })).toBeVisible();
+  expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze()).violations).toEqual([]);
+  await page.getByRole('button', { name: 'Toggle Senne Lammens availability', exact: true }).click();
+  await expect(cards.first()).toHaveAttribute('aria-label', '1 Senne Lammens');
+  await expect(cards.first()).toBeEnabled();
+});

@@ -6,7 +6,7 @@ import { assignRole, changeFormation, emptyLineup, placePlayer, removePlayer } f
 import { fitHeadline, frame, landscapeNearEdge, markerBoxes, markerFor, placePills, placePlayers, type Box, type Measure } from '../../src/share/layout';
 import { describeSnapshot, missingPlayers, shareAddress, shareFileName, shareFormats, takeSnapshot } from '../../src/share/snapshot';
 
-const players = initialSquad.map((player) => ({ ...player, selectable: true }));
+const players = initialSquad.map((player) => ({ ...player, selectable: true, unavailable: false }));
 const ids = players.map((player) => player.id);
 const fixture: Draft['fixture'] = { id: '20000000-0000-4000-8000-000000000001', opponent: 'Tottenham Hotspur FC', venue: 'home', competition: 'Premier League', round: 'Matchday 6', status: 'scheduled', kickoff: { kind: 'confirmed', at: '2026-10-10T16:30:00Z' } };
 function fullXi(formationId = '4-2-3-1-wide', picked = ids) {
