@@ -45,3 +45,7 @@ Below the full design width the pitch shrinks while labels keep their size, so t
 - One 2 × 6px touch between two labels remains in 3-5-2 at 1440px in the worst case above.
 - On phones, a very long competition and round can still wrap with a separator at the start of the second line.
 - The mockup positions of players away from the middle line no longer apply on desktop; they moved by up to about 20px across the pitch.
+
+## Being found (11 October 2026)
+
+After launch the builder's page gained what a search result and a shared link need: a title that leads with what people search for, a fuller description, Open Graph and Twitter tags, a preview image and home-screen icon (`src/app/opengraph-image.png`, `src/app/apple-icon.png`, both drawn by `node scripts/generate-social-images.mjs` from the site's fonts and colours, with no crest, kit or photograph), a web manifest, a `WebApplication` description for search engines, and three plain sentences under the builder ("What is Supporter XI?"). `tests/browser/entry.spec.ts` checks each of them. Registering the site with Google Search Console and Bing is done by the user, outside the code.
