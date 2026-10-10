@@ -136,7 +136,7 @@ export default function LineupEditor({ lineup, players, locked = false, onChange
   function cheer() {
     if (reducedMotion()) return;
     for (const marker of editorRef.current?.querySelectorAll<HTMLElement>('.sx-pill') ?? []) {
-      marker.querySelector('.sx-pill-body')?.animate([{ scale: 1 }, { scale: 1.14, boxShadow: '0 0 0 6px rgba(255,255,255,.35), 0 8px 14px rgba(0,0,0,.38)' }, { scale: 1 }], { duration: 420, delay: Number(marker.style.getPropertyValue('--i')) * 35, easing: crisp });
+      marker.querySelector('.sx-pill-body')?.animate([{ scale: 1 }, { scale: 1.14, boxShadow: '0 0 0 6px rgba(255,255,255,.35), 0 8px 14px rgba(0,0,0,.4)' }, { scale: 1 }], { duration: 420, delay: Number(marker.style.getPropertyValue('--i')) * 35, easing: crisp });
     }
   }
   function move(from: string, to: string, droppedAt?: { x: number; y: number }) {

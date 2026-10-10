@@ -57,3 +57,25 @@ describe('/gameplan stays out of search engines (user decision, 10 October 2026)
     expect(page).not.toContain('isIndexable');
   });
 });
+
+describe('the public stylesheets take their values from the tokens', () => {
+  // The pitch is one illustration with its own paint (grass, soil, lines, goal frames); it is outside the system.
+  const pitch = ['.sx-plane', '.sx-lines', '.sx-furniture', '.sx-flat-circle'];
+  const sheets = ['src/app/globals.css', 'src/components/lineup-editor.css', 'src/share/share.css', 'src/app/gameplan/gameplan.css', 'src/app/not-found.css'];
+  const rules = sheets.flatMap((path) => read(path).replace(/\/\*[\s\S]*?\*\//g, '').split('\n').filter((line) => !line.startsWith('@font-face')).map((line) => ({ path, line: line.trim() })));
+
+  it('names no colour by hand outside the pitch', () => {
+    const offenders = rules.filter(({ line }) => /#[0-9a-f]{3,8}\b/i.test(line) && !pitch.some((selector) => line.startsWith(selector)));
+    expect(offenders).toEqual([]);
+  });
+  it('uses only the three speeds and the one curve', () => {
+    // Delays, the loading pulse and the spinner are not transitions between states and keep their own timing.
+    const timed = rules.flatMap(({ path, line }) => [...line.matchAll(/(?:animation|transition): ([^;]+);/g)].map(([, value]) => ({ path, value })));
+    const offenders = timed.filter(({ value }) => !/sx-pulse|sx-spin|nf-/.test(value) && !/var\(--sx-duration-|var\(--gp-speed\)|none/.test(value));
+    expect(offenders).toEqual([]);
+    expect(rules.filter(({ line }) => line.includes('cubic-bezier'))).toEqual([]);
+  });
+  it('has no private names for token values', () => {
+    expect(rules.filter(({ line }) => /var\(--(bg|surface|edge|edge-strong|text|soft|quiet|red|red-hover|red-deep|yellow|on-yellow|display|body|paper|ink)\)/.test(line))).toEqual([]);
+  });
+});
