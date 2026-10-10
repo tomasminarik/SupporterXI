@@ -2,7 +2,7 @@
    ends on the page's resting state, so visitors who ask for reduced motion simply see that state. */
 .nf-main { max-width: 1040px; margin: 0 auto; padding: var(--sx-space-2) var(--sx-space-8) var(--sx-space-12); text-align: center; }
 .nf-main:focus { outline: none; }
-.nf-label { margin: 0; font: 600 var(--sx-text-label)/1.4 var(--sx-font-body); text-transform: uppercase; letter-spacing: .8px; color: var(--sx-text-quiet); }
+.nf-label { margin: 0; line-height: 1.4; }
 .nf h1 { margin: 0 0 var(--sx-space-6); font: 800 min(108px, 30vw)/.92 var(--sx-font-display); letter-spacing: -1px; color: var(--sx-white); }
 
 /* The pitch never grows taller than the window allows, so the way back stays on screen. */

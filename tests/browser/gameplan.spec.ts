@@ -14,7 +14,7 @@ test('the design system page is live, readable and kept out of search engines (M
   await expect(page).toHaveTitle(/^Gameplan/);
   // Never indexed, whatever the rest of the site asks for (tests/unit/design-tokens.test.ts covers the source).
   await expect(page.locator('meta[name=robots]')).toHaveAttribute('content', 'noindex, nofollow');
-  for (const title of ['Brand', 'Colour', 'Type', 'Spacing', 'Motion', 'Depth', 'States', 'Parts in use', 'Rules']) await expect(page.getByRole('heading', { level: 2, name: title, exact: true })).toBeVisible();
+  for (const title of ['Brand', 'Colour', 'Type', 'Spacing', 'Motion', 'Depth', 'States', 'Components', 'Rules']) await expect(page.getByRole('heading', { level: 2, name: title, exact: true })).toBeVisible();
 
   // The page shows the values the site really uses. The build shortens values (#ffffff becomes #fff), so every
   // token is checked to exist and each colour is compared as the browser paints it.
@@ -30,6 +30,19 @@ test('the design system page is live, readable and kept out of search engines (M
   await expect(page.getByRole('link', { name: 'Skip to content' })).toBeFocused();
   await page.keyboard.press('Enter');
   await expect(page.locator('main')).toBeFocused();
+  // The components are the real ones and work: a tile is pressed, an option is chosen with the keyboard.
+  const tiles = page.getByRole('group', { name: 'Example tiles' });
+  await expect(tiles.getByRole('button', { name: '4-3-3' })).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+  await tiles.getByRole('button', { name: '3-5-2' }).click();
+  await expect(tiles.getByRole('button', { name: '3-5-2' })).toHaveAttribute('aria-pressed', 'true');
+  await expect(tiles.getByRole('button', { name: '4-3-3' })).toHaveAttribute('aria-pressed', 'false');
+  const choice = page.getByRole('radiogroup', { name: /^Choice/ });
+  await expect(choice.getByRole('radio', { name: 'First choice' })).toBeChecked();
+  await choice.getByRole('radio', { name: 'First choice' }).focus();
+  await page.keyboard.press('ArrowDown');
+  await expect(choice.getByRole('radio', { name: 'Second choice' })).toBeChecked();
+  await expect(page.getByRole('button', { name: 'Close (example)', exact: true })).toBeVisible();
+  await expect(page.locator('.sx-pill-body')).toHaveCount(3);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze()).violations).toEqual([]);
   expect(errors).toEqual([]);

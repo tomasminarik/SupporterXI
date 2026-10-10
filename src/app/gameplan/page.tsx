@@ -1,7 +1,10 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Logo, XiMark } from '../../components/brand';
-import Notice from '../../components/notice';
+import { Logo, XiMark } from '../../design/brand';
+import { Button, CloseButton } from '../../design/button';
+import { PillBody, RoleTag } from '../../design/player-pill';
+import { PanelDemo, TileDemo } from './demos';
+import Notice from '../../design/notice';
 import SiteHeader from '../../components/site-header';
 import { breakpoints, groups, type Token, type TokenGroup } from '../../design/tokens';
 import './gameplan.css';
@@ -63,11 +66,11 @@ export default function Gameplan() {
     <SiteHeader share={false} />
     <main id="main" tabIndex={-1} className="gp-main">
       <header className="gp-intro">
-        <p className="gp-label">Design system</p>
+        <p className="sx-label">Design system</p>
         <h1>Gameplan</h1>
         <p>What Supporter XI is built from: the colours, type, spacing and motion, and the rules for using them. This page is drawn from the same values the site uses, so it always shows what is live.</p>
         <p><Link href="/">Open the lineup builder</Link></p>
-        <nav aria-label="On this page"><ul className="gp-nav">{['Brand', 'Colour', 'Type', 'Spacing', 'Motion', 'Depth', 'States', 'Parts in use', 'Rules'].map((title) => <li key={title}><a href={`#${title.toLowerCase().replaceAll(' ', '-')}`}>{title}</a></li>)}</ul></nav>
+        <nav aria-label="On this page"><ul className="gp-nav">{['Brand', 'Colour', 'Type', 'Spacing', 'Motion', 'Depth', 'States', 'Components', 'Rules'].map((title) => <li key={title}><a href={`#${title.toLowerCase().replaceAll(' ', '-')}`}>{title}</a></li>)}</ul></nav>
       </header>
 
       <section aria-labelledby="brand">
@@ -95,7 +98,7 @@ export default function Gameplan() {
         <div className="gp-group"><h3>Sizes</h3>
           <Rows tokens={only('text')} sample={(token) => token.name.startsWith('text-display')
             ? <span className="gp-display" style={{ fontSize: `var(${name(token)})` }}>{token.name === 'text-display-l' ? '10' : 'Matchday'}</span>
-            : <span className={token.name === 'text-label' ? 'gp-label' : undefined} style={{ fontSize: `var(${name(token)})` }}>{token.name === 'text-label' ? 'Formation' : 'Premier League / Matchday 8 / Home'}</span>} />
+            : <span className={token.name === 'text-label' ? 'sx-label' : undefined} style={{ fontSize: `var(${name(token)})` }}>{token.name === 'text-label' ? 'Formation' : 'Premier League / Matchday 8 / Home'}</span>} />
         </div>
       </section>
 
@@ -138,18 +141,38 @@ export default function Gameplan() {
         </div>
       </section>
 
-      <section aria-labelledby="parts-in-use">
-        <h2 id="parts-in-use">Parts in use</h2>
-        <p className="gp-lead">The shared parts the builder already uses. Panels, sheets, dialogs, choices and the player pill join this page as they are made reusable.</p>
+      <section aria-labelledby="components">
+        <h2 id="components">Components</h2>
+        <p className="gp-lead">The shared parts. The builder, the share dialog and this page all use these same ones, so what you see here is what is live.</p>
         <div className="gp-group"><h3>Buttons</h3>
           <div className="gp-buttons">
-            <button type="button" className="sx-primary">Primary</button>
-            <button type="button" className="sx-secondary">Secondary</button>
-            <button type="button" className="sx-quiet">Quiet</button>
-            <button type="button" className="sx-share">Share your XI</button>
-            <button type="button" className="sx-close" aria-label="Close (example)">×</button>
+            <Button variant="primary">Primary</Button>
+            <Button>Secondary</Button>
+            <Button variant="quiet">Quiet</Button>
+            <Button variant="action">Share your XI</Button>
+            <CloseButton label="Close (example button)" />
           </div>
-          <p className="gp-note">Primary confirms; secondary is the other choice; quiet is for small actions inside a heading; yellow is sharing only.</p>
+          <p className="gp-note">Primary confirms; secondary is the other choice; quiet is for small actions inside a heading; yellow is sharing only. The cross closes a panel, sheet or dialog.</p>
+        </div>
+        <div className="gp-group"><h3>Label</h3>
+          <p className="sx-label">Image size</p>
+          <p className="gp-note">The small uppercase line above a group of choices.</p>
+        </div>
+        <div className="gp-group"><h3>Tile</h3>
+          <TileDemo />
+          <p className="gp-note">A choice you can press: squad cards, formations, image sizes. The chosen one turns white. Try them.</p>
+        </div>
+        <div className="gp-group"><h3>Player pill</h3>
+          <div className="gp-pills">
+            <span className="gp-pill"><PillBody number={9} name="Striker" /></span>
+            <span className="gp-pill"><PillBody number={6} name="Midfielder" /><span className="gp-tags"><RoleTag>Holding Midfielder</RoleTag></span></span>
+            <span className="gp-pill sx-unavailable"><PillBody number={4} name="Defender" /><span className="gp-tags"><RoleTag flag>Unavailable</RoleTag></span></span>
+          </div>
+          <p className="gp-note">Shirt number in a white disc, then the short name. A role is written in full underneath. An unavailable player gets a darker pill, a dashed ring and a written tag. These names are placeholders.</p>
+        </div>
+        <div className="gp-group"><h3>Panel and option list</h3>
+          <PanelDemo />
+          <p className="gp-note">A panel is anything that floats above the page: the player menu, the formation picker. On phones a panel becomes a sheet fixed to the bottom of the screen, and over a dimmed page it is a dialog. Inside this one is an option list: one choice from a few, each with a line of explanation.</p>
         </div>
         <div className="gp-group"><h3>Notices</h3>
           <div className="gp-notices">
@@ -164,7 +187,7 @@ export default function Gameplan() {
       <section aria-labelledby="rules">
         <h2 id="rules">Rules</h2>
         <dl className="gp-rules">{rules.map(([title, text]) => <div key={title}><dt>{title}</dt><dd>{text}</dd></div>)}</dl>
-        <p className="gp-note">Outside the system: the pitch, which is a single illustration, and the administration pages, which use their own kit.</p>
+        <p className="gp-note">Outside the system: the pitch, which is a single illustration, and the administration pages, which use their own kit. The club&apos;s colour and name are kept apart from everything else, so they could be swapped for another club.</p>
       </section>
     </main>
     <footer className="sx-footer"><span>Supporter XI</span><span>Independent supporter project</span></footer>

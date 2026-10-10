@@ -2,6 +2,7 @@ import { plane } from '../components/pitch-geometry';
 import { tokenValue } from '../design/tokens';
 import { fitHeadline, frame, landscape, landscapeNearEdge, markerFor, placePills, placePlayers, type Box, type Measure } from './layout';
 import { shareAddress, shareFormats, type ShareFormat, type ShareSnapshot } from './snapshot';
+import { club as clubWords } from '../design/club';
 
 // Draws the share image on a canvas from a snapshot (architecture record: browser canvas, bundled
 // fonts, original local assets). Nothing is captured from the page and nothing leaves the browser.
@@ -25,7 +26,7 @@ function loadTurf(): Promise<HTMLImageElement> {
 
 /** Waits for the faces and the texture the image uses. A missing face is a failure, never a fallback font. */
 export async function loadShareAssets(snapshot: ShareSnapshot): Promise<ShareAssets> {
-  const text = `MANCHESTER UNITED V ${snapshot.opponent} ${snapshot.formation} ${snapshot.players.map((player) => `${player.name} ${player.number ?? ''}`).join(' ')} SUPPORTER FORMATION Build your own XI at ${shareAddress} …`;
+  const text = `${clubWords.name.toUpperCase()} V ${snapshot.opponent} ${snapshot.formation} ${snapshot.players.map((player) => `${player.name} ${player.number ?? ''}`).join(' ')} SUPPORTER FORMATION Build your own XI at ${shareAddress} …`;
   const faces = [`800 40px ${display}`, `500 30px ${body}`, `600 30px ${body}`];
   const sample = `${text} ${text.toLocaleUpperCase('en')}`;
   const [turf] = await Promise.all([loadTurf(), ...faces.map((face) => document.fonts.load(face, sample))]);
@@ -283,7 +284,7 @@ export function drawShareImage(ctx: CanvasRenderingContext2D, format: ShareForma
   ctx.textBaseline = 'alphabetic';
 
   // Headline: the club in red, "v" in grey, the opponent in white. No other match details are printed.
-  const club = 'MANCHESTER UNITED';
+  const club = clubWords.name.toUpperCase();
   const runs = (parts: [string, string][], y: number) => {
     let x = f.width / 2 - ctx.measureText(parts.map(([text]) => text).join('')).width / 2;
     ctx.textAlign = 'left';

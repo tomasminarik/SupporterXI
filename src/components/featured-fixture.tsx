@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react';
 import FixtureBuilder from './fixture-builder';
 import { FixtureMessage } from './fixture-headline';
-import Notice from './notice';
+import Notice from '../design/notice';
+import { Button } from '../design/button';
 import { featuredResponseSchema, type FeaturedResponse } from '../domain/featured-fixture';
 
 export default function FeaturedFixture() {
@@ -42,7 +43,7 @@ export default function FeaturedFixture() {
     return () => { disposed = true; clearTimeout(timer); controller?.abort(); window.removeEventListener('focus', onFocus); document.removeEventListener('visibilitychange', onVisibility); };
   }, [attempt]);
 
-  const retry = <button className="sx-secondary" type="button" onClick={() => { setFailed(false); setAttempt((value) => value + 1); }}>Try again</button>;
+  const retry = <Button onClick={() => { setFailed(false); setAttempt((value) => value + 1); }}>Try again</Button>;
   if (!data) return <div aria-busy={!failed}>
     {failed ? <><FixtureMessage title="Fixture unavailable" /><Notice tone="problem" role="alert" title="We couldn’t load the next fixture." action={retry}>Check your connection, then try again.</Notice></>
       : <FixtureMessage loading title="Loading next fixture…"><p className="sx-details">Checking the published match information.</p></FixtureMessage>}

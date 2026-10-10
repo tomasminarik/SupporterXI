@@ -61,7 +61,7 @@ describe('/gameplan stays out of search engines (user decision, 10 October 2026)
 describe('the public stylesheets take their values from the tokens', () => {
   // The pitch is one illustration with its own paint (grass, soil, lines, goal frames); it is outside the system.
   const pitch = ['.sx-plane', '.sx-lines', '.sx-furniture', '.sx-flat-circle'];
-  const sheets = ['src/app/globals.css', 'src/components/lineup-editor.css', 'src/share/share.css', 'src/app/gameplan/gameplan.css', 'src/app/not-found.css'];
+  const sheets = ['src/design/components.css', 'src/app/globals.css', 'src/components/lineup-editor.css', 'src/share/share.css', 'src/app/gameplan/gameplan.css', 'src/app/not-found.css'];
   const rules = sheets.flatMap((path) => read(path).replace(/\/\*[\s\S]*?\*\//g, '').split('\n').filter((line) => !line.startsWith('@font-face')).map((line) => ({ path, line: line.trim() })));
 
   it('names no colour by hand outside the pitch', () => {

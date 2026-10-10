@@ -51,8 +51,26 @@ Colour roles, two typefaces and a size scale, a spacing scale and control height
    - Durations written in code (`motion.ts`, `lineup-editor.tsx`), which move with step 3.
 
    A unit test now fails if a hand-typed colour, an off-scale speed or a private variable name returns to these stylesheets.
-3. Lift repeated patterns into components (button, option list, selectable tile, panel, bottom sheet, dialog, player pill) and add them to `/gameplan`. Move the club's name into the club layer.
-4. Finish `/gameplan` and the rules.
+3. **Done (10 October 2026).** The shared parts live in `src/design/` and the builder, the share dialog and `/gameplan` all use the same ones:
+   - `button.tsx`: `Button` (primary, secondary, quiet, action) and `CloseButton`.
+   - `option-list.tsx`: `OptionList`, used for a player's role.
+   - `tile.tsx`: `Tile`, used for squad cards and formations; the image sizes in the share dialog use its class on a radio label. One rule now says what "chosen" looks like.
+   - `player-pill.tsx`: `PillBody` and `RoleTag`.
+   - `notice.tsx`, `brand.tsx`, `motion.ts`: moved here unchanged.
+   - `components.css`: the styles of all of the above, plus two classes without a component: `.sx-label` and `.sx-panel` (the player menu, the formation picker and the share dialog). It loads before every other stylesheet so a screen can adjust a part for its own layout.
+   - `club.ts`: the club's name, beside its colours. The headline, the page title and the share image read it. The 404 joke stays club-specific copy.
+   - `tokens.ts` exports the three speeds in milliseconds; animations scripted in code use them (were 140, 160, 180, 200 and 420 ms).
+
+   The components render the same markup and class names as before, so nothing was restyled. Checked on the same 44 screenshots: all identical except the share dialog's close button, which now draws the same cross as the player menu instead of a "×" character.
+
+   Not made into components, on purpose: sheets and dialogs. Each has its own focus handling and positioning (`<dialog>` for sharing, a positioned group for the player menu); they share the panel's look through `.sx-panel` and the phone sheet rule in `lineup-editor.css`. A shared component is worth making when a third one is needed.
+4. **Done with step 3.** `/gameplan` shows every component with live examples (tiles can be pressed, the option list chosen) and the rules of use.
+
+## Still open
+
+- A named stacking order (the stylesheets use seven raw `z-index` values).
+- Spacing in the existing screens is still written by hand (see step 2).
+- Whether `/gameplan` should be linked from the builder.
 
 ## Verification (step 1)
 
@@ -63,6 +81,7 @@ Colour roles, two typefaces and a size scale, a spacing scale and control height
 | MVP-13 keyboard, zoom, axe | `tests/browser/gameplan.spec.ts` at 320, 390, 768 and 1440px: skip link, no horizontal scroll, axe WCAG 2.2 AA |
 | MVP-14 no tracking, indexing | `tests/browser/gameplan.spec.ts`: the page makes no API or third-party request and asks not to be indexed; the builder does not link to it. `tests/unit/design-tokens.test.ts`: the page's `noindex` does not depend on the site-wide setting. `tests/unit/site.test.ts` (unchanged): the rest of the site's indexing |
 | Builder and share image unchanged | Existing unit and browser suites pass unchanged |
+| Step 3: one set of parts | `tests/browser/gameplan.spec.ts`: the components on the page are pressed and chosen by mouse and keyboard; every existing builder, share, lock and memory test passes unchanged against the same components (MVP-03, 05, 08, 13) |
 | Step 2: values come from tokens | `tests/unit/design-tokens.test.ts` "the public stylesheets take their values from the tokens"; existing browser suites (including label overlap in all 14 formations and axe at four widths) pass unchanged, with and without motion |
 
 ## Pages built from it

@@ -30,7 +30,7 @@ export default function NotFound() {
     <a className="sx-skip" href="#main">Skip to content</a>
     <SiteHeader share={false} />
     <main id="main" tabIndex={-1} className="nf-main">
-      <p className="nf-label">Formation</p>
+      <p className="sx-label nf-label">Formation</p>
       <h1><span aria-hidden="true">4-0-4</span><span className="sr-only">404: page not found</span></h1>
       <div className="nf-pitch">
         <div className="nf-art" role="img" aria-label="A pitch set up in a 4-0-4: a goalkeeper, four defenders, four forwards and nobody in midfield.">

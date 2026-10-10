@@ -1,4 +1,4 @@
-import { tokenValue } from '../design/tokens';
+import { durations, tokenValue } from './tokens';
 
 /** Small motion helpers for the builder. Each does nothing when the visitor asks for reduced motion;
     the CSS animations are switched off for those visitors in globals.css. */
@@ -28,12 +28,12 @@ export function ghostOut(source: Element | null | undefined, host: HTMLElement |
   }
   holder.append(copy);
   host.append(ghost);
-  const animation = ghost.animate(keyframes, { duration: options.duration ?? 180, delay: options.delay ?? 0, easing: crisp, fill: 'both' });
+  const animation = ghost.animate(keyframes, { duration: options.duration ?? durations.standard, delay: options.delay ?? 0, easing: crisp, fill: 'both' });
   animation.onfinish = animation.oncancel = () => ghost.remove();
 }
 
 /** Plays an element from where it used to be to where it now is. */
-export function glideFrom(element: Element | null | undefined, before: { x: number; y: number }, duration = 220) {
+export function glideFrom(element: Element | null | undefined, before: { x: number; y: number }, duration = durations.standard) {
   if (!element || reducedMotion()) return;
   const now = element.getBoundingClientRect();
   const dx = before.x - now.left;

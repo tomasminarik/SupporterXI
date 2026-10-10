@@ -5,8 +5,13 @@ import { formations, roles, rolesForFamily, type Formation } from '../domain/cat
 import type { PublicPlayer } from '../domain/featured-fixture';
 import type { Lineup } from '../domain/lineup';
 import { assignRole, changeFormation, clearLineup, formationFor, movePlayer, placePlayer, removePlayer } from '../domain/lineup';
-import { crisp, ghostOut, glideFrom, reducedMotion } from './motion';
-import Notice from './notice';
+import { Button, CloseButton } from '../design/button';
+import { crisp, ghostOut, glideFrom, reducedMotion } from '../design/motion';
+import { OptionList } from '../design/option-list';
+import { PillBody, RoleTag } from '../design/player-pill';
+import { Tile } from '../design/tile';
+import { durations } from '../design/tokens';
+import Notice from '../design/notice';
 import PitchStage from './pitch-stage';
 import { fieldPercent, markerLabel, placeLabels, portraitSpot, positionNoun, projectSlot, shortNames, type LabelBox, type Placement } from './pitch-geometry';
 import './lineup-editor.css';
@@ -124,7 +129,7 @@ export default function LineupEditor({ lineup, players, locked = false, onChange
 
   function place(slot: Slot, player: PublicPlayer, dropped = false) {
     const replaced = occupantOf(slot[0]);
-    if (!dropped) ghostOut(editorRef.current?.querySelector(`[data-card="${player.id}"] .sx-card`), editorRef.current, [{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'scale(.6)' }], { duration: 160 });
+    if (!dropped) ghostOut(editorRef.current?.querySelector(`[data-card="${player.id}"] .sx-card`), editorRef.current, [{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'scale(.6)' }], { duration: durations.quick });
     if (replaced) leave(slot[0]);
     if (!replaced && pickedIds.size === 10) setTimeout(cheer, 260);
     onChange(placePlayer(lineup, slot[0], player.id, selectableIds));
@@ -136,7 +141,7 @@ export default function LineupEditor({ lineup, players, locked = false, onChange
   function cheer() {
     if (reducedMotion()) return;
     for (const marker of editorRef.current?.querySelectorAll<HTMLElement>('.sx-pill') ?? []) {
-      marker.querySelector('.sx-pill-body')?.animate([{ scale: 1 }, { scale: 1.14, boxShadow: '0 0 0 6px rgba(255,255,255,.35), 0 8px 14px rgba(0,0,0,.4)' }, { scale: 1 }], { duration: 420, delay: Number(marker.style.getPropertyValue('--i')) * 35, easing: crisp });
+      marker.querySelector('.sx-pill-body')?.animate([{ scale: 1 }, { scale: 1.14, boxShadow: '0 0 0 6px rgba(255,255,255,.35), 0 8px 14px rgba(0,0,0,.4)' }, { scale: 1 }], { duration: durations.entrance, delay: Number(marker.style.getPropertyValue('--i')) * 35, easing: crisp });
     }
   }
   function move(from: string, to: string, droppedAt?: { x: number; y: number }) {
@@ -229,7 +234,7 @@ export default function LineupEditor({ lineup, players, locked = false, onChange
       const before = cardSpots.current.get(item.dataset.card!);
       const dx = before ? before.x - spot.x : 0;
       const dy = before ? before.y - spot.y : 0;
-      if (!still && (dx || dy) && Math.abs(dx) < 800) item.animate([{ transform: `translate(${dx}px, ${dy}px)` }, { transform: 'none' }], { duration: 200, easing: crisp });
+      if (!still && (dx || dy) && Math.abs(dx) < 800) item.animate([{ transform: `translate(${dx}px, ${dy}px)` }, { transform: 'none' }], { duration: durations.standard, easing: crisp });
       spots.set(item.dataset.card!, spot);
     }
     cardSpots.current = spots;
@@ -365,24 +370,24 @@ export default function LineupEditor({ lineup, players, locked = false, onChange
     <button ref={formationButton} type="button" className="sx-formation" disabled={locked} aria-expanded={pickerOpen} aria-controls="formation-picker" aria-label={locked && formation ? `Formation: ${formation.name}` : formation ? `Formation: ${formation.name}. Change formation` : 'Choose a formation'} onClick={(event) => pickerOpen ? closePicker() : openPicker(event.detail ? { x: event.clientX, y: event.clientY } : undefined)}>
       {(preview?.target ?? formation)?.name ?? 'Choose formation'}{!locked && <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 9l7 7 7-7" /></svg>}
     </button>
-    {pickerOpen && <div ref={pickerRef} id="formation-picker" className="sx-picker" role="group" aria-label="Choose a formation" onKeyDown={onPickerKey} onPointerLeave={(event) => { if (hoverArmed.current) hoverPreview(event, null); }}>
+    {pickerOpen && <div ref={pickerRef} id="formation-picker" className="sx-panel sx-picker" role="group" aria-label="Choose a formation" onKeyDown={onPickerKey} onPointerLeave={(event) => { if (hoverArmed.current) hoverPreview(event, null); }}>
       <div className="sx-picker-groups">
-        {groups.map((group) => <div key={group.label} className="sx-picker-group"><h3>{group.label}</h3><div className="sx-chips">
-          {group.items.map((item) => <button key={item.id} type="button" className="sx-chip" aria-pressed={item.id === lineup.formationId} data-preview={item.id === previewId && item.id !== lineup.formationId ? 'true' : undefined}
-            onPointerDown={(event) => { lastPointer.current = event.pointerType; }} onPointerMove={(event) => { if (previewId !== item.id) hoverPreview(event, item.id); }} onFocus={() => { if (lastPointer.current !== 'touch') setPreviewId(item.id); }} onClick={() => chooseFormation(item)}>{item.name}</button>)}
+        {groups.map((group) => <div key={group.label} className="sx-picker-group"><h3 className="sx-label">{group.label}</h3><div className="sx-chips">
+          {group.items.map((item) => <Tile key={item.id} className="sx-chip" pressed={item.id === lineup.formationId} data-preview={item.id === previewId && item.id !== lineup.formationId ? 'true' : undefined}
+            onPointerDown={(event) => { lastPointer.current = event.pointerType; }} onPointerMove={(event) => { if (previewId !== item.id) hoverPreview(event, item.id); }} onFocus={() => { if (lastPointer.current !== 'touch') setPreviewId(item.id); }} onClick={() => chooseFormation(item)}>{item.name}</Tile>)}
         </div></div>)}
       </div>
       <p className="sx-picker-note" aria-live="polite">{!preview ? <><span className="sx-pointer-only">Current: {formation?.name ?? 'none'}. Hover or use the arrow keys to preview a formation on the pitch.</span><span className="sx-touch-only">Tap a formation. You will be asked first if it would drop players or roles.</span></>
         : <>{preview.leaving.length ? <><strong>Leaves your XI:</strong> {preview.leaving.join(', ')}. </> : null}{preview.clearedRoles.length ? <><strong>Roles cleared:</strong> {preview.clearedRoles.join(', ')}. </> : null}{!preview.leaving.length && !preview.clearedRoles.length ? 'Everyone keeps their place. ' : ''}<span className="sx-pointer-only">Click or press Enter to use {preview.target.name}; Escape keeps {formation?.name ?? 'the current formation'}.</span></>}</p>
       {/* Always laid out in the touch sheet, so the chips never move under a finger when a preview starts. */}
-      <div className="sx-picker-confirm sx-touch-only" data-idle={preview ? undefined : 'true'}><button type="button" className="sx-secondary" disabled={!preview} onClick={() => setPreviewId(null)}>Keep {formation?.name}</button><button type="button" className="sx-primary" disabled={!preview} onClick={() => { if (preview) chooseFormation(preview.target); }}>Use {preview?.target.name ?? 'formation'}</button></div>
+      <div className="sx-picker-confirm sx-touch-only" data-idle={preview ? undefined : 'true'}><Button disabled={!preview} onClick={() => setPreviewId(null)}>Keep {formation?.name}</Button><Button variant="primary" disabled={!preview} onClick={() => { if (preview) chooseFormation(preview.target); }}>Use {preview?.target.name ?? 'formation'}</Button></div>
     </div>}
   </>;
 
   return <div ref={editorRef} className={`sx-editor${locked ? ' sx-locked' : ''}${preview ? ' sx-previewing' : ''}${sheetOpen || menu || moving || pickerOpen ? ' sx-has-sheet' : ''}`} onKeyDown={onKeyDown}>
     <p className="sr-only" role="status">{notice}</p>
     <PitchStage toolbar={toolbar} shadows={shadows} menu={menu && menuPlayer && !replacing && <PillMenu ref={menuRef} short={short(menuPlayer)} slot={menu} lineup={lineup} player={menuPlayer} onClose={closeMenu}
-        onRole={(roleId) => { if (!roleId) ghostOut(document.getElementById(`slot-${menu[0]}`)?.querySelector('.sx-role:not(.sx-flag)'), editorRef.current, [{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateY(-10px)' }], { duration: 140 }); onChange(assignRole(lineup, menu[0], roleId)); setNotice(roleId ? `Role set: ${roles.find((role) => role.id === roleId)?.name}.` : 'Role removed.'); }}
+        onRole={(roleId) => { if (!roleId) ghostOut(document.getElementById(`slot-${menu[0]}`)?.querySelector('.sx-role:not(.sx-flag)'), editorRef.current, [{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateY(-10px)' }], { duration: durations.quick }); onChange(assignRole(lineup, menu[0], roleId)); setNotice(roleId ? `Role set: ${roles.find((role) => role.id === roleId)?.name}.` : 'Role removed.'); }}
         onReplace={() => { setReplacing(true); requestAnimationFrame(() => squadHeading.current?.focus({ preventScroll: true })); }}
         onMove={() => { setMoving(menu[0]); setMenuSlot(null); setSelectedSlot(null); setNotice(`Choose a position for ${menuPlayer.name}. An occupied position swaps.`); focusSlot(menu[0]); }}
         onRemove={() => { leave(menu[0]); onChange(removePlayer(lineup, menu[0])); setNotice(`${menuPlayer.name} removed. The position’s role is cleared.`); closeMenu(); }} />}>
@@ -405,38 +410,38 @@ export default function LineupEditor({ lineup, players, locked = false, onChange
         const placement = placements.get(id);
         return <button key={id} {...common} data-side={placement?.side ?? 'right'} data-tag={placement?.tag ?? 'below'} className={`sx-marker sx-pill${unavailable ? ' sx-unavailable' : ''}${heldPlayer || (moving && moving !== id) ? ' sx-target' : ''}${moving === id ? ' sx-moving' : ''}`} aria-expanded={locked ? undefined : menuSlot === id} aria-label={`${abbreviation}: ${occupant.name}${role ? `, ${role.name}` : ''}${unavailable ? ', unavailable' : ''}`}
           onPointerDown={(event) => startDrag(event, 'slot', id)}>
-          <span key={occupant.id} data-player={occupant.id} className="sx-pill-body"><span className="sx-no">{occupant.shirtNumber ?? '–'}</span><span className={short(occupant).length > 7 ? 'sx-name sx-name-long' : 'sx-name'}>{short(occupant)}</span></span>
-          {(role || unavailable) && <span className="sx-tags">{role && <span key={role.id} className="sx-role">{role.name}</span>}{unavailable && <span className="sx-role sx-flag">Unavailable</span>}</span>}
+          <PillBody key={occupant.id} data-player={occupant.id} number={occupant.shirtNumber} name={short(occupant)} long={short(occupant).length > 7} />
+          {(role || unavailable) && <span className="sx-tags">{role && <RoleTag key={role.id}>{role.name}</RoleTag>}{unavailable && <RoleTag flag>Unavailable</RoleTag>}</span>}
         </button>;
       })}
     </PitchStage>
 
-    {dragged && draggedPlayer && <div className="sx-ghost" aria-hidden="true" style={{ left: dragged.x, top: dragged.y }}><span className="sx-pill-body"><span className="sx-no">{draggedPlayer.shirtNumber ?? '–'}</span><span className="sx-name">{short(draggedPlayer)}</span></span></div>}
+    {dragged && draggedPlayer && <div className="sx-ghost" aria-hidden="true" style={{ left: dragged.x, top: dragged.y }}><PillBody number={draggedPlayer.shirtNumber} name={short(draggedPlayer)} /></div>}
 
     {unavailablePicked && <Notice title="Some selected players are now unavailable.">They can stay in this XI, but cannot be added again after removal.</Notice>}
 
-    {movingPlayer && <div className="sx-movebar"><p><strong>Move {short(movingPlayer)}</strong>Tap a position. An occupied one swaps.</p><button type="button" className="sx-secondary" onClick={() => { const slotId = moving!; resetSelection(); setNotice('Move cancelled.'); focusSlot(slotId); }}>Cancel</button></div>}
+    {movingPlayer && <div className="sx-movebar"><p><strong>Move {short(movingPlayer)}</strong>Tap a position. An occupied one swaps.</p><Button onClick={() => { const slotId = moving!; resetSelection(); setNotice('Move cancelled.'); focusSlot(slotId); }}>Cancel</Button></div>}
 
     {!locked && <section ref={squadSection} className={sheetOpen ? 'sx-squad sx-sheet' : 'sx-squad'} aria-labelledby="squad-title">
       <div className="sx-squad-head">
         <h2 id="squad-title" ref={squadHeading} tabIndex={-1}><span key={heading} className="sx-heading-text">{heading}</span></h2>
         {heldPlayer ? <span className="sx-count">Choose a position on the pitch</span> : <span className="sx-count sx-count-total">{unused.length} players not picked</span>}
-        <button type="button" className="sx-quiet" disabled={!count} onClick={() => { for (const slot of formation?.slots ?? []) leave(slot[0], (waveOrder.get(slot[0]) ?? 0) * 25); setWave('clear'); setTimeout(() => setWave(null), 700); onChange(clearLineup(lineup)); resetSelection(); setNotice('XI cleared. Formation kept.'); }}>Clear XI</button>
+        <Button variant="quiet" disabled={!count} onClick={() => { for (const slot of formation?.slots ?? []) leave(slot[0], (waveOrder.get(slot[0]) ?? 0) * 25); setWave('clear'); setTimeout(() => setWave(null), 700); onChange(clearLineup(lineup)); resetSelection(); setNotice('XI cleared. Formation kept.'); }}>Clear XI</Button>
         <label className="sx-search"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" /></svg>
           <input type="search" aria-label="Search players" placeholder="Name or number" value={query} onChange={(event) => setQuery(event.target.value)} /></label>
       </div>
       {visible.length > 0 && <div className="sx-cards" role="list" aria-label="Players not picked">
         {visible.map((player) => <div role="listitem" key={player.id} data-card={player.id}>
-          <button type="button" className="sx-card" aria-label={`${player.shirtNumber ?? ''} ${player.name}`.trim()} aria-pressed={selectedPlayer === player.id} data-dragging={dragged?.kind === 'player' && dragged.id === player.id ? 'true' : undefined}
+          <Tile className="sx-card" aria-label={`${player.shirtNumber ?? ''} ${player.name}`.trim()} pressed={selectedPlayer === player.id} data-dragging={dragged?.kind === 'player' && dragged.id === player.id ? 'true' : undefined}
             onPointerDown={(event) => startDrag(event, 'player', player.id)}
             onClick={() => { if (!suppressClick.current) chooseCard(player); }}>
             <span className="sx-card-no" aria-hidden="true">{player.shirtNumber ?? '–'}</span><span className="sx-card-name" aria-hidden="true">{short(player)}</span>
-          </button>
+          </Tile>
         </div>)}
       </div>}
       {!visible.length && <p className="sx-empty-list">{unused.length ? 'No players match your search.' : 'No eligible players left to pick.'}</p>}
       {/* Last in the sheet's tab order, after the players; Escape closes it too. */}
-      <button type="button" className="sx-close sx-sheet-close" aria-label="Close player list" onClick={() => { const slotId = selectedSlot; resetSelection(); if (slotId) focusSlot(slotId); }}><svg aria-hidden="true" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M2 2l10 10M12 2L2 12" /></svg></button>
+      <CloseButton className="sx-sheet-close" label="Close player list" onClick={() => { const slotId = selectedSlot; resetSelection(); if (slotId) focusSlot(slotId); }} />
     </section>}
 
   </div>;
@@ -451,7 +456,7 @@ function PillMenu({ slot, lineup, player, short, ref, onClose, onRole, onRemove,
   const roleId = lineup.slots[id]?.roleId ?? null;
   const available = rolesForFamily(family);
   const titleId = useId();
-  const options = [{ id: '', name: 'No role', shortDefinition: '' }, ...available];
+  const options = [{ value: '', label: 'No role' }, ...available.map((role) => ({ value: role.id, label: role.name, description: role.shortDefinition }))];
   const [position, setPosition] = useState<{ left: number; top: number } | null>(null);
   // Open beside the pill, inside the pitch area, so the squad row stays reachable.
   useLayoutEffect(() => {
@@ -475,21 +480,14 @@ function PillMenu({ slot, lineup, player, short, ref, onClose, onRole, onRemove,
     observer.observe(layer);
     return () => observer.disconnect();
   }, [id, ref]);
-  return <div ref={ref} className="sx-menu" role="group" aria-labelledby={titleId}
+  return <div ref={ref} className="sx-panel sx-menu" role="group" aria-labelledby={titleId}
     style={{ '--mx': `${position?.left ?? 0}px`, '--my': `${position?.top ?? 0}px`, visibility: position ? undefined : 'hidden' } as React.CSSProperties}>
     <div className="sx-menu-head"><h2 id={titleId} tabIndex={-1}>{abbreviation} · {player.name}</h2>
-      <button type="button" className="sx-close" aria-label="Close" onClick={onClose}><svg aria-hidden="true" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M2 2l10 10M12 2L2 12" /></svg></button></div>
+      <CloseButton onClick={onClose} /></div>
     {!player.selectable && <p className="sx-menu-note">Unavailable for new selections. Kept in your existing XI.</p>}
     {/* Roles are optional; each one carries its definition so the choice needs no second step. */}
-    <p id={`${titleId}-roles`} className="sx-options-label">Role <span>optional</span></p>
-    <div className="sx-options" role="radiogroup" aria-labelledby={`${titleId}-roles`}>
-      {options.map((role) => <label key={role.id} className="sx-option">
-        <input type="radio" name={`${titleId}-role`} value={role.id} checked={(roleId ?? '') === role.id} onChange={() => onRole(role.id || null)} aria-labelledby={`${titleId}-${role.id}`} aria-describedby={role.shortDefinition ? `${titleId}-${role.id}-d` : undefined} />
-        <span className="sx-option-dot" aria-hidden="true" />
-        <span className="sx-option-text"><span id={`${titleId}-${role.id}`} className="sx-option-name">{role.name}</span>{role.shortDefinition && <span id={`${titleId}-${role.id}-d`} className="sx-option-def">{role.shortDefinition}</span>}</span>
-      </label>)}
-    </div>
+    <OptionList name={`${titleId}-role`} label={<>Role <span>optional</span></>} options={options} value={roleId ?? ''} onChange={(value) => onRole(value || null)} />
     {/* Replace and Move are for the touch layout, where there is no squad row beside the menu and no dragging. */}
-    <div className="sx-menu-foot"><button type="button" className="sx-secondary sx-touch-only" onClick={onReplace}>Replace</button><button type="button" className="sx-secondary sx-touch-only" onClick={onMove}>Move</button><button type="button" className="sx-secondary" onClick={onRemove}>Remove player</button><p>To replace {short}, pick a player from the squad.</p></div>
+    <div className="sx-menu-foot"><Button className="sx-touch-only" onClick={onReplace}>Replace</Button><Button className="sx-touch-only" onClick={onMove}>Move</Button><Button onClick={onRemove}>Remove player</Button><p>To replace {short}, pick a player from the squad.</p></div>
   </div>;
 }

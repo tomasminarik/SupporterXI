@@ -2,6 +2,7 @@ import { formations } from '../domain/catalogues';
 import { isCompleteLineup, type Draft } from '../domain/draft';
 import { publicHost } from '../domain/site';
 import { shortNames } from '../components/pitch-geometry';
+import { club } from '../design/club';
 
 // The share image (PRD 6, MVP-08). Sizes are exact output pixels.
 export const shareFormats = {
@@ -51,5 +52,5 @@ export function shareFileName(snapshot: ShareSnapshot, format: ShareFormat): str
 
 /** What the image shows, in words, for people who cannot see the preview. */
 export function describeSnapshot(snapshot: ShareSnapshot): string {
-  return `Manchester United v ${snapshot.opponent}, ${snapshot.formation}: ${snapshot.players.map((player) => player.fullName).join(', ')}.`;
+  return `${club.name} v ${snapshot.opponent}, ${snapshot.formation}: ${snapshot.players.map((player) => player.fullName).join(', ')}.`;
 }

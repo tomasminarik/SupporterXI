@@ -1,5 +1,6 @@
 import { placeLabels, plane, portraitSpot, projectSlot } from '../components/pitch-geometry';
 import { shareFormats, type ShareFormat, type SharePlayer } from './snapshot';
+import { club as clubWords } from '../design/club';
 
 // Pure layout for the share image: no canvas here, so it can be checked in unit tests.
 export type Measure = (text: string, size: number) => number;
@@ -37,7 +38,7 @@ export function landscapeNearEdge(headlineBottom: number, footerTop: number): nu
 
 /** Breaks the opponent over as few lines as possible at one type size shared with the club's line. */
 export function fitHeadline(opponent: string, width: number, sizes: { max: number; min: number }, measure: Measure): { size: number; lines: string[] } {
-  const club = 'MANCHESTER UNITED';
+  const club = clubWords.name.toUpperCase();
   const words = opponent.toLocaleUpperCase('en').trim().split(/\s+/);
   const wrap = (size: number) => {
     const lines: string[] = [];
