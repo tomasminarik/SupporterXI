@@ -7,6 +7,8 @@ import { initialSquad } from '../../src/domain/squad';
 const formationButton = (page: Page) => page.locator('.sx-formation');
 const picker = (page: Page) => page.getByRole('group', { name: 'Choose a formation' });
 const role = (page: Page, name: string) => page.getByRole('radio', { name, exact: true });
+// With motion on, wait for entrance animations to end before measuring positions or contrast.
+const settled = (page: Page) => expect.poll(() => page.evaluate(() => document.getAnimations().filter((animation) => animation.playState === 'running').length)).toBe(0);
 async function chooseFormation(page: Page, name: string) {
   await formationButton(page).click();
   await picker(page).getByRole('button', { name, exact: true }).click();
@@ -164,6 +166,7 @@ test('MVP-13: selecting a position leads to the squad and placement returns focu
   await slot.click();
   const heading = page.getByRole('heading', { name: 'Pick your full-back', exact: true });
   await expect(heading).toBeFocused();
+  await settled(page);
   const bounds = await page.getByRole('button', { name: '2 Diogo Dalot' }).boundingBox();
   expect(bounds!.y).toBeGreaterThanOrEqual(0);
   expect(bounds!.y + bounds!.height).toBeLessThanOrEqual(page.viewportSize()!.height);
@@ -175,6 +178,7 @@ test('MVP-13: selecting a position leads to the squad and placement returns focu
   await expect(page.getByRole('heading', { name: 'LB · Diogo Dalot', exact: true })).toBeFocused();
   await page.getByRole('searchbox', { name: 'Search players' }).fill('not-a-player');
   await expect(page.getByText('No players match your search.', { exact: true })).toBeVisible();
+  await settled(page);
   expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze()).violations).toEqual([]);
 });
 
@@ -196,6 +200,7 @@ test('MVP-04/13: the formation picker works from the keyboard and previews befor
   await expect(formationButton(page)).toBeFocused();
   await expect(formationButton(page)).toHaveText('4-3-3');
   await expect(page.getByRole('button', { name: 'GK: Senne Lammens', exact: true })).toBeVisible();
+  await settled(page);
   expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze()).violations).toEqual([]);
 });
 
