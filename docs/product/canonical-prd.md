@@ -26,7 +26,7 @@ Core loop: next fixture → formation → eleven players → optional roles → 
 
 ## 3. Fixture experience
 
-Automatically feature the earliest Scheduled fixture with a confirmed kickoff whose kickoff + three-hour boundary has not passed. At exactly that boundary, move to the next eligible fixture. This is a homepage selection rule, not a lock or archive system. A match remains buildable through kickoff and the following three hours.
+Automatically feature the earliest Scheduled fixture with a confirmed kickoff whose kickoff + 120-minute boundary has not passed. At exactly that boundary, move to the next eligible fixture. A lineup can be built and changed until 15 minutes after kickoff; from then until the next fixture takes over it is locked: it can be viewed and shared as an image, not changed. (User decision, 10 October 2026, replacing kickoff + three hours with no lock.) This is not an archive system, and there is still no cutoff before kickoff.
 
 Provide an explicit admin override to select the featured fixture, including a fixture whose kickoff is not yet known. An override is clearly visible in admin and remains until cleared. A Postponed or Cancelled fixture is not a buildable featured fixture; a stale override to one falls back to automatic selection and is flagged in admin.
 

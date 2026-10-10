@@ -5,7 +5,7 @@ import type { Draft } from '../domain/draft';
 
 // The share button lives in the page header, outside the builder. The builder publishes its
 // working XI here; nothing is stored and nothing leaves the page.
-type ShareSource = Pick<Draft, 'fixture' | 'players' | 'lineup'>;
+type ShareSource = Pick<Draft, 'fixture' | 'players' | 'lineup'> & { locked: boolean };
 const Context = createContext<{ source: ShareSource | null; publish: (source: ShareSource | null) => void } | null>(null);
 
 export function ShareProvider({ children }: { children: ReactNode }) {

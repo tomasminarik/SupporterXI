@@ -19,7 +19,7 @@ A Git-backed CMS such as Decap was explored, not selected. It can supply generic
 
 ## Fixtures and import
 
-The featured-fixture read route uses current server time and published content. This avoids needing a rebuild at exactly kickoff plus three hours. Use a non-stale response and refresh the browser at the boundary/on focus. No per-visitor calls to the provider.
+The featured-fixture read route uses current server time and published content. This avoids needing a rebuild at the lock (kickoff plus 15 minutes) or the rollover (kickoff plus 120 minutes; three hours before 10 October 2026). The response says whether the match is locked. Use a non-stale response and refresh the browser at the boundary/on focus. No per-visitor calls to the provider.
 
 Provide an admin Refresh fixtures action first. Add one approximately daily protected Vercel Cron refresh through the same import operation. The scheduler credential authorizes only the import route; it never substitutes for general admin access. Use a narrowly scoped GitHub integration credential for automated content writes. Verify commit attribution/deployment permission on the selected Vercel plan during setup; do not assume any bot-authored commit deploys.
 
