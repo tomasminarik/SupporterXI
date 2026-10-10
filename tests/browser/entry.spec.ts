@@ -19,10 +19,17 @@ test('MVP-07 empty state, Supporter XI name, initial MVP-13/14', async ({ page }
   await page.keyboard.press('Enter');
   await expect(page.locator('main')).toBeFocused();
   await expect(page.getByRole('img', { name: 'Supporter XI' })).toBeVisible();
-  await expect(page).toHaveTitle(/^Supporter XI/);
+  await expect(page).toHaveTitle(/Supporter XI$/);
   // Search engines are kept out until supporterxi.com is the production domain (tests/unit/site.test.ts).
   await expect(page.locator('meta[name=robots]')).toHaveAttribute('content', /noindex/);
   await expect(page.locator('link[rel=canonical]')).toHaveAttribute('href', 'https://supporterxi.com');
+  // What a search result or a shared link shows: words, a preview image and a description of the site.
+  await expect(page.locator('meta[name=description]')).toHaveAttribute('content', /starting XI for the next match/);
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', /opengraph-image/);
+  await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute('content', 'summary_large_image');
+  await expect(page.getByRole('heading', { level: 2, name: 'What is Supporter XI?' })).toBeVisible();
+  expect(JSON.parse(await page.locator('script[type="application/ld+json"]').textContent() ?? '')).toMatchObject({ '@type': 'WebApplication', url: 'https://supporterxi.com' });
+  expect((await page.request.get('/manifest.webmanifest')).ok()).toBe(true);
   expect(await (await page.request.get('/robots.txt')).text()).toMatch(/Disallow: \/\s*$/m);
   await expect(page.getByRole('region', { name: 'Lineup pitch' })).toHaveCount(0);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);

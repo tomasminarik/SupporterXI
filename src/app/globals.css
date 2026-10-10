@@ -62,6 +62,10 @@ main:focus { outline: none; }
 .sx-dev p { margin: 0; }
 .sx-dev a { color: var(--sx-text); }
 .sx-dev-controls { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+/* A few plain sentences under the builder, for visitors who arrive from a search and for search engines. */
+.sx-about { max-width: 1376px; margin: 0 auto; padding: var(--sx-space-6) var(--sx-space-8) var(--sx-space-12); }
+.sx-about h2 { margin: 0 0 var(--sx-space-3); font: 800 var(--sx-text-display-s)/1.1 var(--sx-font-display); text-transform: uppercase; color: var(--sx-text); }
+.sx-about p { max-width: 68ch; margin: 0 0 var(--sx-space-2); font-size: var(--sx-text-body-m); line-height: 1.55; color: var(--sx-text-soft); }
 .sx-footer { max-width: 1376px; margin: 0 auto; padding: 24px 32px 32px; display: flex; justify-content: space-between; gap: 16px; font-size: var(--sx-text-caption); color: var(--sx-text-quiet); border-top: 1px solid var(--sx-edge); }
 /* The contact address: a padded box so the link is easy to hit although the type is small. */
 .sx-footer-link { display: inline-block; margin: -6px 0; padding: 6px 0; color: var(--sx-text-soft); text-underline-offset: 3px; }
@@ -80,7 +84,7 @@ main:focus { outline: none; }
   .sx-logo-disc { width: 26px; height: 26px; }
   .sx-share { height: var(--sx-control-s); padding: 0 14px; font-size: var(--sx-text-body-s); white-space: nowrap; }
   .sx-dev { margin-left: 16px; margin-right: 16px; }
-  .sx-memory, .sx-footer { padding-left: 16px; padding-right: 16px; }
+  .sx-memory, .sx-footer, .sx-about { padding-left: 16px; padding-right: 16px; }
   .sx-footer { flex-direction: column; gap: 4px; }
 }
 /* The narrowest phones: the logo collapses to its disc (red with a white XI), leaving room for the button. */
