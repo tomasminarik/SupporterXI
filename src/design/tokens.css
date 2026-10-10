@@ -1,0 +1,75 @@
+/* The Supporter XI design system's values (docs/design/design-system.md; shown live at /gameplan).
+   tokens.ts mirrors this file for the share image's canvas; a unit test fails if the two disagree.
+   The admin does not use these (user decision, 10 October 2026). */
+
+/* Club layer: everything that would change for another club. Nothing outside this block names a red.
+   Each club shade must keep white text readable: #e0372f measured 4.41:1 under white 14px text, so
+   #da362e, the nearest red that passes AA, replaced it. */
+:root {
+  --sx-club: #da362e;
+  --sx-club-hover: #c22e27;
+  --sx-club-pressed: #b3261e;
+  --sx-club-unavailable: #7a2b26;
+  --sx-club-mark: #c42a23;
+  --sx-on-club: #ffffff;
+}
+
+/* Product layer: the same for every club. */
+:root {
+  --sx-page: #0c0e0d;
+  --sx-surface: #171a18;
+  --sx-surface-hover: #1e2220;
+  --sx-surface-active: #222623;
+  --sx-edge: #2b2f2c;
+  --sx-edge-strong: #3a3e3a;
+  --sx-edge-control: #4a4e4a;
+
+  --sx-text: #f3f1ea;
+  --sx-text-soft: #b9bcb2;
+  --sx-text-quiet: #9a9d94;
+  --sx-text-disabled: #6b6e68;
+  --sx-text-versus: #8a8d86;
+  --sx-white: #ffffff;
+
+  /* Yellow means sharing and nothing else. */
+  --sx-action: #f5c518;
+  --sx-action-hover: #ffd43b;
+  --sx-on-action: #14160f;
+
+  --sx-font-display: 'Big Shoulders Display', 'Arial Narrow', sans-serif;
+  --sx-font-body: Barlow, 'Helvetica Neue', sans-serif;
+
+  --sx-text-display-xl: min(132px, max(9.2vw, min(56px, 13vw)));
+  --sx-text-display-l: 40px;
+  --sx-text-display-m: 30px;
+  --sx-text-display-s: 22px;
+  --sx-text-body-l: 17px;
+  --sx-text-body-m: 15px;
+  --sx-text-body-s: 14px;
+  --sx-text-caption: 13px;
+  --sx-text-label: 12px;
+
+  --sx-space-1: 4px;
+  --sx-space-2: 8px;
+  --sx-space-3: 12px;
+  --sx-space-4: 16px;
+  --sx-space-6: 24px;
+  --sx-space-8: 32px;
+  --sx-space-12: 48px;
+
+  --sx-control-s: 40px;
+  --sx-control-m: 44px;
+  --sx-control-l: 52px;
+
+  --sx-ease-crisp: cubic-bezier(.2, .8, .2, 1);
+  --sx-duration-quick: .12s;
+  --sx-duration-standard: .22s;
+  --sx-duration-entrance: .36s;
+
+  --sx-shadow-marker: 0 8px 14px rgba(0, 0, 0, .4);
+  --sx-shadow-panel: 0 18px 40px rgba(0, 0, 0, .6);
+  --sx-shadow-dialog: 0 24px 60px rgba(0, 0, 0, .7);
+
+  --sx-focus-ring: 3px solid #ffffff;
+  --sx-focus-offset: 3px;
+}

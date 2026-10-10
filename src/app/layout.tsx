@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { isIndexable, publicOrigin } from '../domain/site';
+import '../design/tokens.css';
 import './globals.css';
 
 export const metadata: Metadata = {
