@@ -1,6 +1,6 @@
 # supporterxi.com launch — 10 October 2026
 
-The user owns supporterxi.com at Websupport.sk and authorized connecting it to the existing Vercel `supporterxi` project in the Tomo team. Domain ownership is verified in Vercel. The root domain is attached; www.supporterxi.com is attached with a permanent 308 redirect to supporterxi.com. Website DNS changes are saved in Websupport. Vercel verifies the root configuration; www propagation and HTTPS remain pending.
+The user owns supporterxi.com at Websupport.sk and authorized connecting it to the existing Vercel `supporterxi` project in the Tomo team. Domain ownership is verified in Vercel. Website DNS changes are saved in Websupport. Vercel verifies both domain configurations. The root serves the application over HTTPS; www serves a permanent HTTPS 308 redirect to supporterxi.com.
 
 ## DNS records requested by Vercel
 
@@ -23,7 +23,7 @@ On 10 October 2026, in the authenticated Websupport interface for supporterxi.co
 - Created the www CNAME above, TTL 600. Websupport displays the saved target without the final dot.
 - Preserved wildcard, mail, TXT, admin subdomain, nameserver and other existing records. No other domain was changed.
 
-`vercel domains verify supporterxi.com` returned `configured_correctly`, with both expected root addresses. The first www verification still saw the old parking address, and HTTPS did not yet complete. These checks must be repeated after propagation; saved DNS is not proof of successful HTTPS or complete launch. PR #14 remained open at this check. OAuth settings and Production ADMIN_ORIGIN have not yet been migrated.
+`vercel domains verify` returned `configured_correctly` for both domains, with both expected root addresses and the www CNAME. Root HTTPS returned HTTP 200 and the browser loaded the fixture, pitch and squad. Anonymous admin content requests returned the sign-in rejection. `/robots.txt` still disallows indexing until a new production deployment. www initially returned a certificate name mismatch; `vercel certs issue www.supporterxi.com` succeeded, and a direct HTTPS check at 216.198.79.1 then returned HTTP 308 with Location https://supporterxi.com/. PR #14 remained open at this check. OAuth settings and Production ADMIN_ORIGIN have not yet been migrated.
 
 ## Cutover verification
 
