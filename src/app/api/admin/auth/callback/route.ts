@@ -7,7 +7,7 @@ export const runtime = 'nodejs';
 export async function GET(request: NextRequest) {
   const config = adminConfig();
   if (!config) return adminJson({ error: 'Admin integration is not configured.' }, 503);
-  const response = NextResponse.redirect(`${config.origin}/admin?auth=failed`);
+  const response = NextResponse.redirect(`${config.origin}/gaffer?auth=failed`);
   response.headers.set('Cache-Control', 'no-store'); response.headers.set('Referrer-Policy', 'no-referrer');
   response.cookies.set(flowCookie, '', { ...cookieOptions, maxAge: 0 });
   response.cookies.set(sessionCookie, '', { ...cookieOptions, maxAge: 0 });
@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
     const user = z.object({ id: z.number().int().positive() }).parse(await github('https://api.github.com/user', token.access_token));
     if (String(user.id) !== config.userId) return response;
     // The OAuth access token is discarded after identity verification, not stored in the browser.
-    response.headers.set('Location', `${config.origin}/admin`);
+    response.headers.set('Location', `${config.origin}/gaffer`);
     response.cookies.set(sessionCookie, seal({ kind: 'session', userId: String(user.id), csrf: nonce(), exp: Date.now() + 2 * 3600_000 }, config), { ...cookieOptions, maxAge: 7200 });
   } catch { /* Generic failure; never expose provider bodies or credentials. */ }
   return response;

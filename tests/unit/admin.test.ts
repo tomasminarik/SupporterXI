@@ -131,13 +131,13 @@ describe('MVP-09 OAuth state, PKCE and identity allowlist', () => {
       expect(location.searchParams.get('code_challenge')).toBe(pkceChallenge(flow.verifier));
       expect(start.cookies.get(flowCookie)).toMatchObject({ httpOnly: true, secure: true, sameSite: 'lax' });
       const request = (state: string) => new NextRequest(`${config.origin}/api/admin/auth/callback?code=example&state=${state}`, { headers: { cookie: `${flowCookie}=${start.cookies.get(flowCookie)!.value}` } });
-      expect((await callback(request('bad'))).headers.get('location')).toContain('auth=failed');
+      expect((await callback(request('bad'))).headers.get('location')).toBe(`${config.origin}/gaffer?auth=failed`);
       expect(fetcher).not.toHaveBeenCalled();
       fetcher.mockResolvedValueOnce(Response.json({ access_token: 'fake-user-token', token_type: 'bearer' })).mockResolvedValueOnce(Response.json({ id: 1 }));
-      expect((await callback(request(flow.state))).headers.get('location')).toContain('auth=failed');
+      expect((await callback(request(flow.state))).headers.get('location')).toBe(`${config.origin}/gaffer?auth=failed`);
       fetcher.mockResolvedValueOnce(Response.json({ access_token: 'fake-user-token', token_type: 'bearer' })).mockResolvedValueOnce(Response.json({ id: Number(config.userId) }));
       const success = await callback(request(flow.state));
-      expect(success.headers.get('location')).toBe(`${config.origin}/admin`);
+      expect(success.headers.get('location')).toBe(`${config.origin}/gaffer`);
       const cookie = success.cookies.get('__Host-xi-admin')!;
       expect(readSession(cookie.value, config)?.userId).toBe(config.userId);
       expect(JSON.stringify(unseal(cookie.value, config))).not.toContain('fake-user-token');

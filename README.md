@@ -74,6 +74,6 @@ See [browser-memory verification](docs/implementation/browser-memory-verificatio
 
 ## Administration
 
-Try the [admin form preview](http://localhost:3000/dev/admin) locally or on a Vercel Preview deployment. Its edits stay in page memory. Production [`/admin`](https://supporterxi.vercel.app/admin) now uses the configured GitHub administrator account. See [admin setup and verification](docs/implementation/admin-verification.md) for secure configuration, limitations and checks.
+Try the [admin form preview](http://localhost:3000/dev/admin) locally or on a Vercel Preview deployment. Its edits stay in page memory. Production [`/gaffer`](https://supporterxi.com/gaffer) now uses the configured GitHub administrator account. See [admin setup and verification](docs/implementation/admin-verification.md) for secure configuration, limitations and checks.
 
 The fixture import route and admin refresh action are described in [import verification](docs/implementation/import-verification.md). Production has the provider token; an authorized refresh reports its import counts and checks publication. The public entry uses the published fixtures, with an honest no-fixture state if no future fixture qualifies.

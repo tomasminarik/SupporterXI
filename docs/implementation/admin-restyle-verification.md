@@ -22,3 +22,9 @@ Run `npm run check`. Desktop/mobile fixture and availability screenshots are wri
 The existing all-formations desktop test had a hydration race: it injected localStorage after navigation while the builder's initialization could still overwrite it. Its staged test draft now enters localStorage before hydration, preserving the original assertions and product behaviour. The final full run passed that check.
 
 The admin sign-in link uses the configured origin, allowing the existing authorized login address to work during domain cutover. The domain launch record describes the pending DNS/callback/environment verification.
+
+## Backoffice address — 10 October 2026
+
+At the user's request, the production page and its Ant Design layout now live at `/gaffer`. Successful and failed OAuth flows return there, as does sign-out. `/admin` no longer serves a page. The secured API endpoints and registered OAuth callback remain under `/api/admin/`; moving the page does not require changing the OAuth callback path. `/gaffer` keeps noindex metadata and is excluded by production robots rules. Tests are mapped in the current verification contract (MVP-09/14).
+
+Route-change validation passed: lint, typecheck, catalogue/content checks, 125 unit/integration tests, production build, 80 production browser checks and 37 workbench/admin checks (7 viewport-inapplicable skips). Browser suites required local-server permissions. Stale generated development route types were removed after renaming the route; no source workaround was needed.

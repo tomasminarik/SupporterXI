@@ -37,3 +37,5 @@ Check narrow/wide mobile, tablet and desktop; document actual tested widths duri
 Each implementation PR identifies its current PRD requirement, MVP verification IDs, decision dependencies, and any content/local-storage migration. Old AC/AR release gates do not automatically apply. Do not defer all tests to the final phase.
 
 The [Ant Design admin verification](admin-restyle-verification.md) maps the administration restyle to MVP-09/10/12/13/14/15.
+
+The user moved the production backoffice to `/gaffer` on 10 October 2026. MVP-09/14 coverage in `tests/browser/admin-security.spec.ts` checks its closed unconfigured state, noindex metadata, and removal of `/admin`; `tests/unit/admin.test.ts` checks successful and failed OAuth returns to `/gaffer`. `tests/unit/site.test.ts` checks the backoffice is excluded from production crawling. The secured `/api/admin/` endpoints and OAuth callback address are unchanged.
