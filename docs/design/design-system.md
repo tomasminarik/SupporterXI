@@ -46,3 +46,7 @@ Colour roles, two typefaces and a size scale, a spacing scale and control height
 | MVP-13 keyboard, zoom, axe | `tests/browser/gameplan.spec.ts` at 320, 390, 768 and 1440px: skip link, no horizontal scroll, axe WCAG 2.2 AA |
 | MVP-14 no tracking, indexing | `tests/browser/gameplan.spec.ts`: the page makes no API or third-party request and asks not to be indexed; the builder does not link to it. `tests/unit/design-tokens.test.ts`: the page's `noindex` does not depend on the site-wide setting. `tests/unit/site.test.ts` (unchanged): the rest of the site's indexing |
 | Builder and share image unchanged | Existing unit and browser suites pass unchanged |
+
+## Pages built from it
+
+- **The 404 page** (`src/app/not-found.tsx`, 10 October 2026, user direction): an outline pitch set up in a "4-0-4", built only from tokens. The midfield three appear, drift off, and the line "Like our midfield, this page has gone missing." takes their place. The animation plays once (about 2.5 seconds) and is off under reduced motion, where the page simply shows its resting state. The line is a joke at the club's expense, chosen by the user; it is club-specific copy and would be rewritten for another club. Evidence: `tests/browser/not-found.spec.ts` at 320, 390, 768 and 1440px, with and without motion: 404 status, `noindex`, the way back, no overlap, no horizontal scroll, no API or third-party request, axe WCAG 2.2 AA (MVP-13, MVP-14).
