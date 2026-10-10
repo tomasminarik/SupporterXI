@@ -25,12 +25,13 @@ export default function Home() {
         <main id="main" tabIndex={-1}>
           {(process.env.NODE_ENV === 'development' || process.env.VERCEL_ENV === 'preview') && <p className="sx-dev"><a href="/dev/workbench">Development preview: open the workbench with synthetic fixtures →</a></p>}
           <FeaturedFixture />
-          <section className="sx-about" aria-labelledby="about">
-            <h2 id="about">What is Supporter XI?</h2>
+          {/* Closed until asked for (user request, 11 October 2026); the words are still in the page for search engines. */}
+          <details className="sx-about">
+            <summary>What is Supporter XI?</summary>
             <p>Supporter XI is a free {club.name} lineup builder. Pick your starting XI for the next match from the current squad, choose one of 14 formations, and give each player a role if you like.</p>
             <p>When your team is ready, share it as an image. There is no account and nothing to sign up for: your lineup stays in your browser.</p>
             <p>This is an independent supporter project. It is not connected to {club.name}.</p>
-          </section>
+          </details>
         </main>
       </ShareProvider>
       <SiteFooter />

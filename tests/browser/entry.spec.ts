@@ -27,7 +27,13 @@ test('MVP-07 empty state, Supporter XI name, initial MVP-13/14', async ({ page }
   await expect(page.locator('meta[name=description]')).toHaveAttribute('content', /starting XI for the next match/);
   await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', /opengraph-image/);
   await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute('content', 'summary_large_image');
-  await expect(page.getByRole('heading', { level: 2, name: 'What is Supporter XI?' })).toBeVisible();
+  // The About text is folded away until asked for, and is in the page either way.
+  const about = page.locator('details.sx-about');
+  await expect(about).toContainText('free Manchester United lineup builder');
+  await expect(about.locator('p').first()).toBeHidden();
+  await about.locator('summary').click();
+  await expect(about.locator('p').first()).toBeVisible();
+  await about.locator('summary').click();
   expect(JSON.parse(await page.locator('script[type="application/ld+json"]').textContent() ?? '')).toMatchObject({ '@type': 'WebApplication', url: 'https://supporterxi.com' });
   expect((await page.request.get('/manifest.webmanifest')).ok()).toBe(true);
   expect(await (await page.request.get('/robots.txt')).text()).toMatch(/Disallow: \/\s*$/m);
