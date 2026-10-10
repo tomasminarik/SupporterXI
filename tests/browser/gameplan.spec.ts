@@ -9,7 +9,7 @@ test('the design system page is live, readable and kept out of search engines (M
   page.on('request', (request) => {
     if (new URL(request.url()).origin !== 'http://127.0.0.1:3100' || request.method() !== 'GET' || request.url().includes('/api/')) unexpectedRequests.push(`${request.method()} ${request.url()}`);
   });
-  await page.goto('/gameplan');
+  expect((await page.goto('/gameplan'))?.headers()['x-robots-tag']).toBe('noindex, nofollow');
   await expect(page.getByRole('heading', { level: 1, name: 'Gameplan' })).toBeVisible();
   await expect(page).toHaveTitle(/^Gameplan/);
   // Never indexed, whatever the rest of the site asks for (tests/unit/design-tokens.test.ts covers the source).
