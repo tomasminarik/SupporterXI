@@ -2,7 +2,7 @@
 
 PNG export remains the last feature before final release. This checkpoint covers administration and publication recovery; it does not declare the MVP released.
 
-**Latest status:** The recovery fix is deployed. The scheduled import, live two-tab conflict and content rollback are verified. An isolated Preview build failed validation as intended and recovered after a new restoration commit. Alternate-account live OAuth rejection remains pending because the user confirmed no second account is available. Interface polish is mapped below; PNG and final device/screen-reader release checks remain.
+**Latest status:** The recovery fix is deployed. The scheduled import, live two-tab conflict and content rollback are verified. An isolated Preview build failed validation as intended and recovered after a new restoration commit. The user waived the live alternate-account OAuth drill on 10 October 2026 because no second account is needed; automated identity rejection remains required. Interface polish is mapped below; PNG and final device/screen-reader release checks remain.
 
 ## Production observations
 
@@ -62,7 +62,7 @@ Dependency review during the drill: `npm audit --omit=dev` reported zero vulnera
 ## Recovery procedure and remaining release checks
 
 1. The first scheduled run is verified above. For future operations, inspect the enabled cron's request logs after its scheduled window. Record execution time, production deployment and response status. Correlate any content-changing run with its content commit and Ready deployment; do not require a commit from a no-change import. Never log the scheduler credential or call the route without authorization merely to simulate a scheduled run.
-2. Exercise rejection with a real non-allowlisted account when one is available. Do not create an account solely for this drill. Unit tests already cover the identity rejection, but are not live OAuth evidence.
+2. The user waived the real alternate-account drill on 10 October 2026. Retain automated non-allowlisted identity rejection tests; do not create another account for release.
 3. The live two-tab and rollback drills are verified above. When repeating a two-tab drill, open fresh authenticated admin tabs at the same revision. Make an intended valid edit in one tab; attempt a different edit from the stale tab. Confirm rejection, preserved form input and no second content commit. Reload explicitly before reconciling.
 4. Before rollback, fetch current `main` again and capture both its commit and `content/shared.json` blob SHA. Identify an accepted recovery revision that includes the real fixtures. Review every difference, especially players, provider mappings, availability, featured selection and manual corrections. A pre-import empty snapshot is not an acceptable whole-file rollback target.
 5. Restore only the intended content changes on top of the latest source, retaining unrelated intervening admin/import changes. Validate the candidate with the current shared-content/admin schemas and existing tests. Use a **new commit** with the latest expected content SHA; abort and re-review on a conflict. Never reset or force-push history. Never publish synthetic fixtures to exercise recovery.

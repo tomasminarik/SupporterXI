@@ -201,3 +201,7 @@ Then:
 
 Desktop only for now. Do not start mobile, admin or PNG export, and do not change product scope. Ask me before committing, pushing or merging.
 ```
+
+## Administration follow-through — 10 October 2026
+
+The user requested Ant Design for slice 4. The route-scoped dark admin restyle is implemented and verified; see [admin restyle verification](../implementation/admin-restyle-verification.md). The existing GitHub administrator remains the only account. The live alternate-account drill was waived explicitly; server authorization tests remain mandatory. The user assigned design-system work to Claude, in read-only mode during this change. Connecting the purchased supporterxi.com domain at Websupport.sk is tracked in [domain launch](../implementation/domain-launch.md).

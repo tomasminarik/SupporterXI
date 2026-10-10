@@ -356,11 +356,17 @@ test('MVP-13: desktop labels stay apart in all 14 formations with the longest na
   const surname = (name: string) => name.split(' ').at(-1)!;
   const longest = [...players].sort((a, b) => surname(b.name).length - surname(a.name).length).slice(0, 11);
   const fixture = { id: '20000000-0000-4000-8000-000000000001', opponent: 'Preview opponent A (synthetic)', venue: 'home', competition: 'Development example', round: null, status: 'scheduled', kickoff: { kind: 'unknown' } };
+  // Seed before hydration: writing after navigation races the builder's initial memory effect.
+  const stagingKey = 'test:formation-draft';
+  await page.addInitScript(({ key, staging }) => {
+    const draft = sessionStorage.getItem(staging);
+    if (draft) localStorage.setItem(key, draft);
+  }, { key: previewDraftKey, staging: stagingKey });
+  await page.goto('/dev/workbench');
   for (const formation of formations) {
     const slots = Object.fromEntries(formation.slots.map((slot, index) => [slot[0], { playerId: longest[index].id, roleId: [...rolesForFamily(slot[4])].sort((a, b) => b.name.length - a.name.length)[0].id }]));
     const draft = { schemaVersion: 1, catalogueVersion, contentRevision: 'a'.repeat(64), fixture, players, lineup: { formationId: formation.id, slots } };
-    await page.goto('/dev/workbench');
-    await page.evaluate(([key, value]) => localStorage.setItem(key, value), [previewDraftKey, JSON.stringify(draft)]);
+    await page.evaluate(([key, value]) => sessionStorage.setItem(key, value), [stagingKey, JSON.stringify(draft)]);
     await page.reload();
     await expect(formationButton(page)).toHaveText(formation.name);
     await expect(page.locator('.sx-pill .sx-role')).toHaveCount(11);

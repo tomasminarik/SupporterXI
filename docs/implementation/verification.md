@@ -28,10 +28,12 @@ AR-06's compatibility invariant remains, but supporter server-save/Community ass
 
 ## Release gates
 
-The [9 October operational checkpoint](operations-verification.md) maps publication recovery regression tests to MVP-10/12, records completed live cron/stale-write/rollback and isolated deployment-recovery drills (MVP-09/10/12/15), and maps mobile focus polish to MVP-02/06/13. Alternate-account live rejection remains pending because no second account is available. PNG export is built and covered by automated checks ([sharing verification](sharing-verification.md)); the user confirmed sharing and the builder on their own phones on 9 October 2026, so MVP-08 is passed.
+The [9 October operational checkpoint](operations-verification.md) maps publication recovery regression tests to MVP-10/12, records completed live cron/stale-write/rollback and isolated deployment-recovery drills (MVP-09/10/12/15), and maps mobile focus polish to MVP-02/06/13. The user waived the live alternate-account drill on 10 October 2026; automated non-allowlisted identity rejection remains mandatory. PNG export is built and covered by automated checks ([sharing verification](sharing-verification.md)); the user confirmed sharing and the builder on their own phones on 9 October 2026, so MVP-08 is passed.
 
 All MVP-01–15 pass, with critical journeys exercised in a production-like deployment. No relevant blocking decision may be treated as passed through an assumed default. Add M-01 number cases and M-02 availability/restore/export cases after their approval.
 
 Check narrow/wide mobile, tablet and desktop; document actual tested widths during UI design. Manually exercise mobile Safari and Android Chrome (done by the user, 9 October 2026). By the user's decision of the same day, a manual desktop-keyboard and screen-reader pass is optional and no longer a release gate; the automated keyboard, focus and axe checks stay mandatory. Check loading/empty/error/stale states for public fixture, restore, player chooser, export, admin editing, imports and publishing. Include real long player names and missing kickoff.
 
 Each implementation PR identifies its current PRD requirement, MVP verification IDs, decision dependencies, and any content/local-storage migration. Old AC/AR release gates do not automatically apply. Do not defer all tests to the final phase.
+
+The [Ant Design admin verification](admin-restyle-verification.md) maps the administration restyle to MVP-09/10/12/13/14/15.

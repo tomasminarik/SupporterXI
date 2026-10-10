@@ -41,3 +41,7 @@ The user explicitly approved all 36 supplied players starting Active, with Avail
 ## Technical follow-through
 
 Architecture and selected integration mechanisms are documented separately. Free API coverage, admin GitHub authorization, deployment permissions and provider credentials require setup/testing, not additional product features. No paid plan is authorized by this record.
+
+## Release and administration decisions — 10 October 2026
+
+The user approved the rebuilt frontend and current PRD, requested Ant Design for administration, and waived the real alternate-account sign-in drill (no second account is needed). The single configured GitHub administrator and all server authorization/validation tests remain required. supporterxi.com was purchased through Websupport.sk; connecting that domain and preparing launch are authorized. Claude is preparing the design system in read-only mode during this implementation.
