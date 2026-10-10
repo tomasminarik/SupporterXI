@@ -6,5 +6,5 @@ import { isIndexable, publicOrigin } from '../domain/site';
 // crawler can only read if it is allowed to fetch them.
 export default function robots(): MetadataRoute.Robots {
   if (!isIndexable()) return { rules: { userAgent: '*', disallow: '/' } };
-  return { rules: { userAgent: '*', allow: '/', disallow: ['/api/', '/dev/'] }, sitemap: `${publicOrigin}/sitemap.xml`, host: publicOrigin };
+  return { rules: { userAgent: '*', allow: '/', disallow: ['/api/', '/dev/', '/sxi/'] }, sitemap: `${publicOrigin}/sitemap.xml`, host: publicOrigin };
 }

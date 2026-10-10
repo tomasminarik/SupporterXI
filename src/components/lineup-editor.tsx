@@ -4,6 +4,7 @@ import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type Keyb
 import { formations, roles, rolesForFamily, type Formation } from '../domain/catalogues';
 import type { PublicPlayer } from '../domain/featured-fixture';
 import type { Lineup } from '../domain/lineup';
+import { track } from '../analytics/analytics';
 import { assignRole, changeFormation, clearLineup, formationFor, movePlayer, placePlayer, removePlayer } from '../domain/lineup';
 import { Button, CloseButton } from '../design/button';
 import { crisp, ghostOut, glideFrom, reducedMotion } from '../design/motion';
@@ -132,6 +133,9 @@ export default function LineupEditor({ lineup, players, locked = false, onChange
     if (!dropped) ghostOut(editorRef.current?.querySelector(`[data-card="${player.id}"] .sx-card`), editorRef.current, [{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'scale(.6)' }], { duration: durations.quick });
     if (replaced) leave(slot[0]);
     if (!replaced && pickedIds.size === 10) setTimeout(cheer, 260);
+    // Usage only: that a lineup was begun or finished, never who is in it (src/analytics/analytics.ts).
+    if (!replaced && pickedIds.size === 0) track('lineup_started');
+    if (!replaced && pickedIds.size === 10) track('lineup_completed');
     onChange(placePlayer(lineup, slot[0], player.id, selectableIds));
     setNotice(`${player.name} placed at ${slot[1]}${replaced ? `, replacing ${replaced.name}` : ''}.`);
     resetSelection(); setQuery('');
