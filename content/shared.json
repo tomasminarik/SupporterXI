@@ -829,5 +829,11 @@
     }
   ],
   "featuredFixtureId": null,
-  "fixtureAvailability": []
+  "fixtureAvailability": [
+    {
+      "fixtureId": "0e783a4e-620b-4cff-b9c5-b6e585f0b78a",
+      "playerId": "f941bb0a-5f45-4ae2-aa88-ae45ffd16be1",
+      "status": "unavailable"
+    }
+  ]
 }
