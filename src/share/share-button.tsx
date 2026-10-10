@@ -1,4 +1,5 @@
 'use client';
+import { Button } from '../design/button';
 
 import { useRef, useState } from 'react';
 import ShareDialog from './share-dialog';
@@ -12,13 +13,13 @@ export default function ShareButton() {
   const [snapshot, setSnapshot] = useState<ShareSnapshot | null>(null);
   const button = useRef<HTMLButtonElement>(null);
   if (!source) return <>
-    <button type="button" className="sx-share" disabled aria-describedby="share-note">Share your XI</button>
+    <Button variant="action" disabled aria-describedby="share-note">Share your XI</Button>
     <span id="share-note" className="sr-only">There is no lineup to share yet.</span>
   </>;
   const missing = missingPlayers(source);
   // A locked XI that was never finished cannot be completed any more, so there is nothing to pick.
   if (missing > 0 && source.locked) return <>
-    <button type="button" className="sx-share" disabled aria-describedby="share-note">Share your XI</button>
+    <Button variant="action" disabled aria-describedby="share-note">Share your XI</Button>
     <span id="share-note" className="sr-only">This XI was not finished before the match locked, so it cannot be shared.</span>
   </>;
   if (missing > 0) {
@@ -28,13 +29,13 @@ export default function ShareButton() {
       empty?.focus({ preventScroll: true });
     };
     return <>
-      <button type="button" className="sx-share sx-share-waiting" aria-describedby="share-note" onClick={nextEmpty}>Pick {missing} more to share</button>
+      <Button variant="action" className="sx-share-waiting" aria-describedby="share-note" onClick={nextEmpty}>Pick {missing} more to share</Button>
       <span id="share-note" className="sr-only">Your XI needs {missing} more {missing === 1 ? 'player' : 'players'} before it can be shared as an image. This button moves to the next empty position.</span>
     </>;
   }
   // The snapshot is taken at this moment; the dialog only ever sees the copy.
   return <>
-    <button ref={button} type="button" className="sx-share" onClick={() => setSnapshot(takeSnapshot(source))}>Share your XI</button>
+    <Button variant="action" ref={button} onClick={() => setSnapshot(takeSnapshot(source))}>Share your XI</Button>
     {snapshot && <ShareDialog snapshot={snapshot} onClose={() => { setSnapshot(null); button.current?.focus(); }} />}
   </>;
 }

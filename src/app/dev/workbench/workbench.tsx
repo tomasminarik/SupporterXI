@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { Button } from '../../../design/button';
 import { initialSquad } from '../../../domain/squad';
 import { type FeaturedResponse } from '../../../domain/featured-fixture';
 import { previewDraftKey } from '../../../domain/draft';
@@ -25,7 +26,7 @@ export default function Workbench() {
       <main id="workbench" tabIndex={-1}>
         <div className="sx-dev">
           <p><strong>Preview only</strong> — these match labels are synthetic. Try the real builder and browser memory without publishing fixture data. This preview uses a separate browser draft from the live site. <Link href="/">Back to Supporter XI</Link></p>
-          <div className="sx-dev-controls"><button type="button" className="sx-secondary" onClick={() => setContext({ ...context, fixture: { ...context.fixture!, id: secondId, opponent: 'Preview opponent B (synthetic)' } })}>Simulate next fixture</button><button type="button" className="sx-secondary" onClick={() => setContext({ ...context, locked: !context.locked, nextRefreshAt: context.locked ? null : '2026-10-07T13:45:00Z' })}>{context.locked ? 'Unlock the match' : 'Simulate kick-off plus 15 minutes'}</button><button type="button" className="sx-secondary" onClick={() => setContext({ ...context, players: context.players.map((player, i) => i === 0 ? { ...player, selectable: !player.selectable } : player) })}>Toggle Senne Lammens availability</button></div>
+          <div className="sx-dev-controls"><Button onClick={() => setContext({ ...context, fixture: { ...context.fixture!, id: secondId, opponent: 'Preview opponent B (synthetic)' } })}>Simulate next fixture</Button><Button onClick={() => setContext({ ...context, locked: !context.locked, nextRefreshAt: context.locked ? null : '2026-10-07T13:45:00Z' })}>{context.locked ? 'Unlock the match' : 'Simulate kick-off plus 15 minutes'}</Button><Button onClick={() => setContext({ ...context, players: context.players.map((player, i) => i === 0 ? { ...player, selectable: !player.selectable } : player) })}>Toggle Senne Lammens availability</Button></div>
         </div>
         <FixtureBuilder context={context} storageKey={previewDraftKey}/>
       </main>

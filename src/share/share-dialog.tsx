@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useId, useRef, useState } from 'react';
-import Notice from '../components/notice';
+import { Button, CloseButton } from '../design/button';
+import Notice from '../design/notice';
 import { renderSharePng } from './render';
 import { describeSnapshot, shareFileName, shareFormats, type ShareFormat, type ShareSnapshot } from './snapshot';
 import './share.css';
@@ -67,22 +68,22 @@ export default function ShareDialog({ snapshot, onClose }: { snapshot: ShareSnap
     catch (error) { if ((error as Error).name !== 'AbortError') setMessage('Sharing did not work here. Download the image instead.'); }
   }
 
-  return <dialog ref={dialog} className="sx-share-dialog" aria-labelledby={titleId} onClose={onClose} onClick={(event) => { if (event.target === dialog.current) dialog.current?.close(); }}>
+  return <dialog ref={dialog} className="sx-panel sx-share-dialog" aria-labelledby={titleId} onClose={onClose} onClick={(event) => { if (event.target === dialog.current) dialog.current?.close(); }}>
     <div className="sx-share-body">
       <div className="sx-share-preview" data-format={format} aria-busy={result.status === 'drawing'}>
         {/* eslint-disable-next-line @next/next/no-img-element -- a local blob preview, not a served image */}
         {result.status === 'ready' && <img src={result.url} width={size.width} height={size.height} alt={`Preview of your image. ${describeSnapshot(snapshot)}`} />}
         {result.status === 'drawing' && <p className="sx-share-drawing" role="status"><span className="sx-share-spinner" aria-hidden="true" />Drawing your image…</p>}
-        {result.status === 'failed' && <Notice tone="problem" role="alert" title="The image could not be made." action={<button type="button" className="sx-secondary" onClick={retry}>Try again</button>}>Your XI is unchanged.</Notice>}
+        {result.status === 'failed' && <Notice tone="problem" role="alert" title="The image could not be made." action={<Button onClick={retry}>Try again</Button>}>Your XI is unchanged.</Notice>}
       </div>
       <div className="sx-share-panel">
         <div className="sx-share-head">
           <h2 id={titleId} ref={heading} tabIndex={-1}>Share your XI</h2>
-          <button type="button" className="sx-close" aria-label="Close" onClick={() => dialog.current?.close()}>×</button>
+          <CloseButton onClick={() => dialog.current?.close()} />
         </div>
         <fieldset className="sx-share-formats">
-          <legend>Image size</legend>
-          {formatIds.map((id) => <label key={id} className="sx-share-format">
+          <legend className="sx-label">Image size</legend>
+          {formatIds.map((id) => <label key={id} className="sx-tile sx-share-format">
             <input type="radio" name="share-format" value={id} checked={format === id} onChange={() => choose(id)} />
             <span className="sx-share-shape" data-format={id} aria-hidden="true" />
             <span className="sx-share-format-text"><strong>{shareFormats[id].label}</strong><span>{shareFormats[id].shape} · {shareFormats[id].width} × {shareFormats[id].height}</span></span>
@@ -90,7 +91,7 @@ export default function ShareDialog({ snapshot, onClose }: { snapshot: ShareSnap
         </fieldset>
         <div className="sx-share-actions">
           <button type="button" className="sx-share-go" disabled={result.status !== 'ready'} onClick={download}>Download image</button>
-          {canShare && <button type="button" className="sx-secondary" onClick={share}>Share…</button>}
+          {canShare && <Button onClick={share}>Share…</Button>}
         </div>
         <p className="sx-share-message" role="status">{message}</p>
         <p className="sx-share-note">The image is made in this browser and is not uploaded anywhere. Roles are not shown on it.</p>

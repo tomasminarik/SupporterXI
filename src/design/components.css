@@ -1,0 +1,84 @@
+/* The Supporter XI design system's shared parts (docs/design/design-system.md; shown live at /gameplan).
+   Loaded before every other stylesheet, so a screen can adjust a part for its own layout. Class names are
+   the parts' public names: the React components in this folder render exactly these. */
+
+/* Logo: the player pill. The word, then the XI disc. */
+.sx-logo { display: inline-flex; align-items: center; height: 40px; border-radius: 20px; background: var(--sx-club); border: 2px solid var(--sx-on-club); padding: 0 3px 0 16px; gap: 8px; color: var(--sx-on-club); font: 800 var(--sx-text-display-s)/1 var(--sx-font-display); text-transform: uppercase; white-space: nowrap; }
+.sx-logo-disc { width: 30px; height: 30px; border-radius: 50%; background: var(--sx-white); color: var(--sx-club-mark); display: grid; place-items: center; }
+
+/* Label: the small uppercase line above a group. */
+.sx-label { font: 600 var(--sx-text-label) var(--sx-font-body); text-transform: uppercase; letter-spacing: .8px; color: var(--sx-text-quiet); }
+
+/* Buttons: primary confirms, secondary is the other choice, quiet is a small action inside a heading,
+   and the action button (yellow) is for sharing only. */
+.sx-primary, .sx-secondary { min-height: var(--sx-control-m); padding: 0 18px; font: 600 var(--sx-text-body-m) var(--sx-font-body); cursor: pointer; }
+.sx-primary { background: var(--sx-club); color: var(--sx-on-club); border: 2px solid var(--sx-on-club); }
+.sx-primary:hover { background: var(--sx-club-hover); }
+.sx-primary, .sx-secondary, .sx-quiet, .sx-close { transition: background-color var(--sx-duration-quick) ease, border-color var(--sx-duration-quick) ease, color var(--sx-duration-quick) ease; }
+.sx-secondary { background: var(--sx-surface); color: var(--sx-text); border: 1px solid var(--sx-edge-control); }
+.sx-secondary:hover { border-color: var(--sx-text); }
+.sx-quiet { min-height: var(--sx-control-m); padding: 0 12px; background: transparent; color: var(--sx-text-soft); border: 0; font: 500 var(--sx-text-body-m) var(--sx-font-body); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.sx-quiet:not(:disabled):hover { color: var(--sx-text); }
+.sx-quiet:disabled { color: var(--sx-text-disabled); cursor: default; text-decoration: none; }
+.sx-close { width: var(--sx-control-m); height: var(--sx-control-m); flex: none; background: transparent; border: 0; color: var(--sx-text-soft); display: grid; place-items: center; cursor: pointer; }
+.sx-close:hover { color: var(--sx-white); }
+.sx-share { height: var(--sx-control-m); padding: 0 20px; background: var(--sx-action); color: var(--sx-on-action); border: 1px solid var(--sx-action); font: 600 var(--sx-text-body-m) var(--sx-font-body); cursor: pointer; }
+.sx-share:hover:not(:disabled, .sx-share-waiting) { background: var(--sx-action-hover); }
+.sx-share:disabled { cursor: not-allowed; opacity: .55; }
+/* Not yet eleven: an outline that says what is missing; it fills in yellow when the XI is complete. */
+.sx-share-waiting { background: transparent; color: var(--sx-action); }
+.sx-share-waiting:hover { background: color-mix(in srgb, var(--sx-action) 12%, transparent); }
+
+/* Notices: one bar under the fixture details. A round mark, like a pill's number disc, carries the tone. */
+.sx-notice { max-width: 760px; margin: 22px auto 0; padding: 12px 14px 12px 12px; display: flex; align-items: center; gap: 8px 14px; border: 1px solid var(--sx-edge-strong); background: var(--sx-surface); color: var(--sx-text); font-size: var(--sx-text-body-m); line-height: 1.4; text-align: left; }
+.sx-notice + .sx-notice { margin-top: 8px; }
+/* A notice slides down under the fixture details and the pitch makes room. */
+@keyframes sx-notice-in { from { opacity: 0; translate: 0 -8px; max-height: 0; margin-top: 0; padding-top: 0; padding-bottom: 0; overflow: hidden; } to { max-height: 420px; overflow: hidden; } }
+.sx-notice { animation: sx-notice-in var(--sx-duration-standard) var(--sx-ease-crisp); }
+.sx-notice-mark { flex: none; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: var(--sx-white); color: var(--sx-on-action); font: 700 18px/1 var(--sx-font-body); }
+.sx-notice[data-tone=attention] .sx-notice-mark { background: var(--sx-action); }
+.sx-notice[data-tone=problem] .sx-notice-mark { background: var(--sx-club); color: var(--sx-on-club); border: 2px solid var(--sx-on-club); }
+.sx-notice-mark svg { width: 42%; height: 42%; }
+.sx-notice-text { flex: 1; min-width: 0; }
+.sx-notice-text strong { display: block; font-weight: 600; }
+.sx-notice-text p { margin: 2px 0 0; color: var(--sx-text-soft); font-size: var(--sx-text-body-s); }
+.sx-notice > button, .sx-notice-actions { flex: none; }
+.sx-notice-actions { display: flex; gap: 8px; }
+.sx-notice-block { max-width: 560px; margin: 48px auto 88px; padding: 36px 32px 32px; flex-direction: column; gap: 18px; text-align: center; }
+.sx-notice-block .sx-notice-mark { width: 44px; height: 44px; font-size: 28px; }
+.sx-notice-block .sx-notice-text strong { font: 800 var(--sx-text-display-m)/1.05 var(--sx-font-display); text-transform: uppercase; text-wrap: balance; }
+.sx-notice-block .sx-notice-text p { margin-top: 10px; font-size: var(--sx-text-body-m); line-height: 1.5; }
+
+/* Panel: anything that floats above the page. On phones a panel becomes a sheet fixed to the bottom of the
+   screen; a dialog is a panel over a dimmed page with the dialog shadow. */
+.sx-panel { background: var(--sx-surface); border: 1px solid var(--sx-edge-strong); box-shadow: var(--sx-shadow-panel); color: var(--sx-text); }
+
+/* Tile: a choice you can press. Hover lights the border; chosen turns white with dark text. */
+.sx-tile { background: var(--sx-surface); border: 1px solid var(--sx-edge); color: var(--sx-text); font-family: var(--sx-font-body); text-align: left; cursor: pointer; }
+.sx-tile:hover { border-color: var(--sx-text); }
+.sx-tile[aria-pressed=true], .sx-tile:has(input:checked) { background: var(--sx-white); border-color: var(--sx-white); color: var(--sx-on-action); }
+.sx-tile:has(input:focus-visible) { outline: var(--sx-focus-ring); outline-offset: var(--sx-focus-offset); }
+
+/* Option list: one choice from a few, each with a line of explanation. */
+.sx-options { margin: 0 -6px; padding: 3px 6px; min-height: 0; overflow-y: auto; display: grid; gap: 2px; scrollbar-color: var(--sx-edge-strong) transparent;
+  /* Edge shadows appear only where more roles are scrolled out of view. */
+  background: linear-gradient(var(--sx-surface) 40%, transparent) top / 100% 28px no-repeat local, linear-gradient(transparent, var(--sx-surface) 60%) bottom / 100% 28px no-repeat local, linear-gradient(rgba(0,0,0,.55), transparent) top / 100% 12px no-repeat scroll, linear-gradient(transparent, rgba(0,0,0,.55)) bottom / 100% 12px no-repeat scroll; }
+.sx-options-label { flex: none; margin: 0 0 6px; }
+.sx-options-label span { margin-left: 6px; font-weight: 400; text-transform: none; letter-spacing: 0; }
+.sx-option { position: relative; display: flex; align-items: flex-start; gap: 10px; padding: 7px 10px; border: 1px solid transparent; cursor: pointer; }
+.sx-option input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.sx-option:hover { background: var(--sx-surface-hover); }
+.sx-option:has(input:checked) { background: var(--sx-surface-active); border-color: var(--sx-edge-strong); }
+.sx-option:has(input:focus-visible) { outline: var(--sx-focus-ring); outline-offset: 1px; }
+.sx-option-dot { flex: none; width: 16px; height: 16px; margin-top: 2px; border-radius: 50%; border: 2px solid var(--sx-text-disabled); }
+.sx-option:has(input:checked) .sx-option-dot { border-color: var(--sx-on-club); background: var(--sx-club); }
+.sx-option-text { display: grid; gap: 2px; min-width: 0; }
+.sx-option-name { font-weight: 600; font-size: var(--sx-text-body-m); line-height: 20px; }
+.sx-option-def { font-size: var(--sx-text-caption); line-height: 1.35; color: var(--sx-text-soft); }
+
+/* Player pill: number disc, short name, and tags beneath for a role or a state. */
+.sx-pill-body { height: 32px; display: flex; align-items: center; gap: 8px; padding: 0 13px 0 2px; border-radius: 16px; background: var(--sx-club); border: 2px solid var(--sx-on-club); color: var(--sx-on-club); font-weight: 600; font-size: 14px; letter-spacing: .5px; text-transform: uppercase; white-space: nowrap; box-shadow: var(--sx-shadow-marker); }
+.sx-no { font: 800 17px/24px var(--sx-font-display); min-width: 24px; height: 24px; padding: 0 3px; border-radius: 12px; background: var(--sx-white); color: var(--sx-club-pressed); text-align: center; letter-spacing: 0; }
+.sx-role { height: 20px; padding: 0 9px; border-radius: 10px; background: color-mix(in srgb, var(--sx-page) 72%, transparent); color: var(--sx-text); font-size: 12.5px; font-weight: 500; line-height: 20px; white-space: nowrap; }
+.sx-unavailable .sx-pill-body { background: var(--sx-club-unavailable); border-style: dashed; }
+.sx-role.sx-flag { background: var(--sx-text); color: var(--sx-on-action); }

@@ -85,6 +85,10 @@ export const groups: TokenGroup[] = [
   ] },
 ];
 
+const ms = (name: string) => Math.round(parseFloat(groups.flatMap((group) => group.tokens).find((token) => token.name === name)!.value) * 1000);
+/** The three speeds in milliseconds, for animations scripted in code. */
+export const durations = { quick: ms('duration-quick'), standard: ms('duration-standard'), entrance: ms('duration-entrance') } as const;
+
 /** Media queries cannot read CSS variables, so the two widths live here and in the stylesheets as numbers. */
 export const breakpoints = { phone: 700, flatPitch: 900 } as const;
 

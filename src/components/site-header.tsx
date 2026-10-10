@@ -1,4 +1,4 @@
-import { Logo } from './brand';
+import { Logo } from '../design/brand';
 import ShareButton from '../share/share-button';
 
 // The share action needs the builder's XI; pages without a builder leave it out.

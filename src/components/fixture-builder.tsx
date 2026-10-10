@@ -6,7 +6,8 @@ import { initializeSession, sessionReducer } from '../domain/builder-session';
 import { formatClock, type FeaturedResponse } from '../domain/featured-fixture';
 import { FixtureHeadline, FixtureMessage } from './fixture-headline';
 import LineupEditor from './lineup-editor';
-import Notice from './notice';
+import Notice from '../design/notice';
+import { Button } from '../design/button';
 import { usePublishShareSource } from '../share/share-context';
 
 const subscribe = () => () => {};
@@ -55,16 +56,16 @@ function Session({ context, storageKey = draftKey, alert }: Props) {
     {alert}
     {state.recovery && <Notice block tone={state.recovery === 'invalid' ? 'problem' : 'attention'}
       title={state.recovery === 'invalid' ? 'This browser’s lineup could not be restored.' : `Your remembered XI belongs to ${state.previousOpponent}.`}
-      action={<button type="button" className="sx-primary" onClick={startCurrent}>{context.fixture ? 'Reset and start this fixture' : 'Discard remembered XI'}</button>}>
+      action={<Button variant="primary" onClick={startCurrent}>{context.fixture ? 'Reset and start this fixture' : 'Discard remembered XI'}</Button>}>
       {state.recovery === 'invalid' ? 'Its format or players no longer match this builder. Reset it to start again.' : 'Players will not be carried into a different fixture. Start fresh when you’re ready.'}
     </Notice>}
     {changed && (confirming && context.fixture
       ? <div onKeyDown={(event) => { if (event.key === 'Escape') { event.stopPropagation(); keep(); } }}><Notice tone="attention" title={`Start ${context.fixture.opponent} with an empty XI?`}
-          action={<div className="sx-notice-actions"><button type="button" className="sx-secondary" data-action="keep" onClick={keep}>Keep this XI</button><button type="button" className="sx-primary" onClick={startCurrent}>Start with an empty XI</button></div>}>
+          action={<div className="sx-notice-actions"><Button data-action="keep" onClick={keep}>Keep this XI</Button><Button variant="primary" onClick={startCurrent}>Start with an empty XI</Button></div>}>
           This replaces the lineup remembered in this browser.
         </Notice></div>
       : <Notice tone="attention" title={context.fixture ? `The featured match is now ${context.fixture.opponent}.` : 'This match is no longer featured.'}
-          action={context.fixture && <button type="button" className="sx-secondary" data-action="ask" onClick={askStart}>Start new fixture</button>}>
+          action={context.fixture && <Button data-action="ask" onClick={askStart}>Start new fixture</Button>}>
           Your open XI belongs to the earlier match and can no longer be changed.
         </Notice>)}
     {state.draft && context.locked && !changed && <Notice title="This match has kicked off. Your XI is locked.">

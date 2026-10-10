@@ -1,6 +1,6 @@
 /* Share dialog: preview on the left, choices on the right. Below 900px it is a sheet fixed to the
    bottom of the screen, like the squad and role sheets. */
-.sx-share-dialog { width: min(920px, calc(100vw - 32px)); max-width: none; max-height: calc(100dvh - 32px); padding: 0; background: var(--sx-surface); color: var(--sx-text); border: 1px solid var(--sx-edge-strong); box-shadow: var(--sx-shadow-dialog); font-family: var(--sx-font-body); overflow: hidden; }
+.sx-share-dialog { width: min(920px, calc(100vw - 32px)); max-width: none; max-height: calc(100dvh - 32px); padding: 0; box-shadow: var(--sx-shadow-dialog); font-family: var(--sx-font-body); overflow: hidden; }
 .sx-share-dialog::backdrop { background: rgba(6,7,6,.78); }
 .sx-share-dialog[open] { animation: sx-grow var(--sx-duration-quick) var(--sx-ease-crisp); }
 .sx-share-body { display: grid; grid-template-columns: minmax(0, 1fr) 340px; }
@@ -17,12 +17,9 @@
 .sx-share-head h2:focus { outline: none; }
 .sx-share-head .sx-close { margin-right: -14px; }
 .sx-share-formats { margin: 12px 0 0; padding: 0; border: 0; display: grid; gap: 8px; }
-.sx-share-formats legend { padding: 0; margin: 0 0 8px; font: 600 var(--sx-text-label) var(--sx-font-body); text-transform: uppercase; letter-spacing: .8px; color: var(--sx-text-quiet); }
-.sx-share-format { position: relative; display: flex; align-items: center; gap: 14px; min-height: 64px; padding: 8px 14px; background: var(--sx-page); border: 1px solid var(--sx-edge); cursor: pointer; }
+.sx-share-formats legend { padding: 0; margin: 0 0 8px; }
+.sx-share-format { position: relative; display: flex; align-items: center; gap: 14px; min-height: 64px; padding: 8px 14px; background: var(--sx-page); }
 .sx-share-format input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
-.sx-share-format:hover { border-color: var(--sx-text); }
-.sx-share-format:has(input:checked) { background: var(--sx-white); border-color: var(--sx-white); color: var(--sx-on-action); }
-.sx-share-format:has(input:focus-visible) { outline: var(--sx-focus-ring); outline-offset: var(--sx-focus-offset); }
 .sx-share-shape { flex: none; width: 24px; border: 2px solid currentColor; border-radius: 2px; }
 .sx-share-shape[data-format=square] { aspect-ratio: 1; }
 .sx-share-shape[data-format=portrait] { width: 16px; margin: 0 4px; aspect-ratio: 9 / 16; }
