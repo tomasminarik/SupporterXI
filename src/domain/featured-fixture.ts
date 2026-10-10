@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { effectiveFixture, fixtureValuesSchema, type SharedContent } from './content';
+import { effectiveFixture, fixtureValuesSchema, playerAvailability, type SharedContent } from './content';
 
 export const publicPlayerSchema = z.strictObject({ id: z.uuid(), name: z.string().min(1), shirtNumber: z.number().int().nullable(), selectable: z.boolean() });
 export type PublicPlayer = z.infer<typeof publicPlayerSchema>;
@@ -46,8 +46,7 @@ export function selectFeaturedFixture(content: SharedContent, nowMs: number) {
 
 export function featuredResponse(content: SharedContent, revision: string, nowMs: number): FeaturedResponse {
   const { fixture, nextRefreshAt, locked } = selectFeaturedFixture(content, nowMs);
-  const unavailable = new Set(content.fixtureAvailability.filter((entry) => entry.fixtureId === fixture?.id && entry.status === 'unavailable').map((entry) => entry.playerId));
-  const players = fixture ? content.players.map(({ id, name, shirtNumber, active }) => ({ id, name, shirtNumber, selectable: active && !unavailable.has(id) })) : [];
+  const players = fixture ? content.players.map(({ id, name, shirtNumber, active }) => ({ id, name, shirtNumber, selectable: active && playerAvailability(content, id, fixture.id) === 'available' })) : [];
   return { schemaVersion: 2, contentRevision: revision, serverNow: new Date(nowMs).toISOString(), nextRefreshAt, locked, fixture, players };
 }
 

@@ -25,7 +25,8 @@ body:has(.admin-app) { background: #0c0e0d; color-scheme: dark; }
 .admin-publication { margin-bottom: 24px; }
 .admin-publication .ant-tag { white-space: normal; }
 .admin-roster { margin-top: 24px; }
-.admin-roster-row { display: grid; grid-template-columns: minmax(0, 1fr) 180px; gap: 20px; align-items: center; padding: 14px 0; border-top: 1px solid #343b35; }
+.admin-roster-row { display: grid; grid-template-columns: minmax(0, 1fr) 240px; gap: 20px; align-items: center; padding: 14px 0; border-top: 1px solid #343b35; }
+.admin-availability-status { display: block; margin-top: 4px; font-size: 14px; color: #b9bcb2; }
 .admin-roster-row > div:first-child { display: flex; gap: 16px; align-items: center; min-width: 0; }
 .admin-number { width: 34px; flex: none; font: 800 28px/1 'Big Shoulders Display', sans-serif; color: #f3f1ea; }
 .admin-roster-row .ant-tag { margin-left: 10px; }

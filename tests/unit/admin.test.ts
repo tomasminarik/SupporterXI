@@ -7,6 +7,7 @@ import { applyAdminCommand, validateAdminContent } from '../../src/domain/admin'
 import { adminConfig, authorizedWrite, nonce, readSession, seal, unseal, type AdminConfig } from '../../src/server/admin/security';
 import { readSource, saveSource, publication } from '../../src/server/admin/github';
 import { GET, POST } from '../../src/app/api/admin/content/route';
+import { featuredResponse } from '../../src/domain/featured-fixture';
 const data = contentSchema.parse(raw);
 const id = '10000000-0000-4000-8000-000000000001';
 const fixtureValues = { opponent: 'Synthetic FC', venue: 'home' as const, competition: null, round: null, status: 'scheduled' as const, kickoff: { kind: 'unknown' as const } };
@@ -40,6 +41,36 @@ describe('MVP-10 admin mutations and approved M-01', () => {
   it('rejects timezone-free timestamps and client-assigned creation identity', () => {
     expect(() => applyAdminCommand(data, { kind: 'fixture', id: null, values: { ...fixtureValues, kickoff: { kind: 'confirmed', at: '2026-10-25T12:00:00' } } }, () => id)).toThrow();
     expect(() => applyAdminCommand(data, { kind: 'player', id, values: { name: 'New', active: true, shirtNumber: 99 } }, () => id)).toThrow();
+  });
+  it('applies ongoing unavailability to current and future fixtures with reversible match overrides', () => {
+    const playerId = data.players[0].id;
+    const secondId = '10000000-0000-4000-8000-000000000002';
+    const create = (source: typeof data, fixtureId: string) => applyAdminCommand(source, { kind: 'fixture', id: null, values: fixtureValues }, () => fixtureId);
+    const unavailable = applyAdminCommand(create(data, id), { kind: 'ongoing-availability', playerId, unavailableUntilCleared: true }, () => 'unused');
+    const later = create(unavailable, secondId);
+    const selectable = (source: typeof data, fixtureId: string) => featuredResponse({ ...source, featuredFixtureId: fixtureId }, 'a'.repeat(64), Date.now()).players.find((p) => p.id === playerId)!.selectable;
+    expect(selectable(later, id)).toBe(false);
+    expect(selectable(later, secondId)).toBe(false);
+    expect(later.players[0]).toMatchObject({ id: playerId, active: true, shirtNumber: data.players[0].shirtNumber });
+    const exception = applyAdminCommand(later, { kind: 'availability', fixtureId: id, playerId, status: 'available' }, () => 'unused');
+    expect(selectable(exception, id)).toBe(true);
+    expect(selectable(exception, secondId)).toBe(false);
+    const inherited = applyAdminCommand(exception, { kind: 'availability', fixtureId: id, playerId, status: 'default' }, () => 'unused');
+    expect(inherited.fixtureAvailability).toEqual([]);
+    expect(selectable(inherited, id)).toBe(false);
+    const matchOut = applyAdminCommand(inherited, { kind: 'availability', fixtureId: secondId, playerId, status: 'unavailable' }, () => 'unused');
+    const cleared = applyAdminCommand(matchOut, { kind: 'ongoing-availability', playerId, unavailableUntilCleared: false }, () => 'unused');
+    expect(selectable(cleared, id)).toBe(true);
+    expect(selectable(cleared, secondId)).toBe(false);
+    const inactive = applyAdminCommand(exception, { kind: 'player', id: playerId, values: { name: 'Senne Lammens', active: false, shirtNumber: null } }, () => 'unused');
+    expect(selectable(inactive, id)).toBe(false);
+    expect(inactive.players[0].unavailableUntilCleared).toBe(true);
+    expect(() => applyAdminCommand(later, { kind: 'ongoing-availability', playerId: secondId, unavailableUntilCleared: true }, () => 'unused')).toThrow('Player no longer exists');
+    expect(() => applyAdminCommand(later, { kind: 'availability', fixtureId: secondId, playerId: secondId, status: 'default' }, () => 'unused')).toThrow();
+  });
+  it('reads legacy content as available by default and rejects malformed injury settings', () => {
+    expect(contentSchema.parse(raw).players.every((p) => !p.unavailableUntilCleared)).toBe(true);
+    expect(() => contentSchema.parse({ ...raw, players: [{ ...raw.players[0], unavailableUntilCleared: 'yes' }] })).toThrow();
   });
 });
 

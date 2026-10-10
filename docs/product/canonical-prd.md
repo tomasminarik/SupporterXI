@@ -48,6 +48,8 @@ Roles remain optional; compatibility depends only on slot role family. The choos
 
 New selections must be active and Available for the fixture. Active players are Available by default unless manually marked Unavailable. How a later availability change affects an already-selected browser lineup requires the narrow decision in the current register; do not import MVP+ saved-submission grandfathering by assumption.
 
+User decision, 10 October 2026: an administrator can mark a player Unavailable until cleared across all matches, including fixtures added later. A match-specific Available or Unavailable setting overrides this default; Use default removes the match exception. Inactive players remain ineligible regardless of availability. M-02 still governs already-selected browser lineups.
+
 ## 5. Browser memory
 
 Remember working state on this browser where storage is available. This does not identify a person, sync devices, create an account, or promise permanent storage. Browser clearing/private browsing may prevent restoration.

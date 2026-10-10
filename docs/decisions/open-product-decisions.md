@@ -45,3 +45,5 @@ Architecture and selected integration mechanisms are documented separately. Free
 ## Release and administration decisions — 10 October 2026
 
 The user approved the rebuilt frontend and current PRD, requested Ant Design for administration, and waived the real alternate-account sign-in drill (no second account is needed). The single configured GitHub administrator and all server authorization/validation tests remain required. supporterxi.com was purchased through Websupport.sk; connecting that domain and preparing launch are authorized. Claude is preparing the design system in read-only mode during this implementation.
+
+The user approved Unavailable until cleared across all matches for long-term injuries, with match-specific Available/Unavailable exceptions. Use default removes an exception. Clearing ongoing unavailability does not clear explicit match exceptions. Active status and M-02 are unchanged.
