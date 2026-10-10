@@ -10,7 +10,7 @@ The redesign of 9–10 October 2026 is agreed and live, but its values were scat
 
 - **Two layers.** Future work is most likely more Supporter XI screens and/or the same product for other clubs. The *club layer* holds what would change for another club (the club colour and its shades, the text colour on it). The *product layer* holds everything else. Nothing outside the club layer names a red. No club switcher is built.
 - **Code plus a live page.** The reference is published at `/gameplan` on the live site.
-- **`/gameplan` is never indexed by search engines; the rest of the site is.** The page carries its own `noindex`. It is deliberately not in the robots file's disallow list: a crawler blocked there never reads the `noindex`. It is not linked from the builder (a default, not a user decision).
+- **`/gameplan` is never indexed by search engines; the rest of the site is.** The page carries its own `noindex`. It is deliberately not in the robots file's disallow list: a crawler blocked there never reads the `noindex`. It is public but nothing links to it (user decision, 10 October 2026).
 - **The admin stays separate.** `/gaffer` keeps Ant Design and its own copy of the colours. Accepted cost: a brand colour change is made in two places.
 
 ## What is in it
@@ -70,7 +70,6 @@ Colour roles, two typefaces and a size scale, a spacing scale and control height
 
 - A named stacking order (the stylesheets use seven raw `z-index` values).
 - Spacing in the existing screens is still written by hand (see step 2).
-- Whether `/gameplan` should be linked from the builder.
 
 ## Verification (step 1)
 
@@ -87,3 +86,5 @@ Colour roles, two typefaces and a size scale, a spacing scale and control height
 ## Pages built from it
 
 - **The 404 page** (`src/app/not-found.tsx`, 10 October 2026, user direction): an outline pitch set up in a "4-0-4", built only from tokens. The midfield three appear, drift off, and the line "Like our midfield, this page has gone missing." takes their place. The animation plays once (about 2.5 seconds) and is off under reduced motion, where the page simply shows its resting state. The line is a joke at the club's expense, chosen by the user; it is club-specific copy and would be rewritten for another club. Evidence: `tests/browser/not-found.spec.ts` at 320, 390, 768 and 1440px, with and without motion: 404 status, `noindex`, the way back, no overlap, no horizontal scroll, no API or third-party request, axe WCAG 2.2 AA (MVP-13, MVP-14).
+
+- **The footer** (`src/components/site-footer.tsx`, 10 October 2026, user request): one shared footer on the builder, `/gameplan` and the 404 page, with the contact address `dugout` at the site's domain and nothing else added. To cut address harvesting, the address is not in the page source: it is put together in the browser, and without scripts it reads "dugout at supporterxi.com". Evidence: `tests/browser/entry.spec.ts` "the footer gives a contact address that is not written in the page source".

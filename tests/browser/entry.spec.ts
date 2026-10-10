@@ -38,3 +38,21 @@ test('MVP-14: excluded supporter destinations have no routes', async ({ request 
     expect((await request.get(route)).status()).toBe(404);
   }
 });
+
+test('the footer gives a contact address that is not written in the page source', async ({ page }) => {
+  await page.route('**/api/featured-fixture', (route) => route.fulfill({ json: { schemaVersion: 2, contentRevision: 'a'.repeat(64), serverNow: new Date().toISOString(), nextRefreshAt: null, fixture: null, players: [] } }));
+  for (const path of ['/', '/gameplan', '/no-such-page']) {
+    // What a harvester reading the raw page gets: no address and no mailto link.
+    const source = await (await page.request.get(path)).text();
+    expect(source, path).not.toMatch(/dugout@|mailto:/i);
+    expect(source, path).toContain('dugout at supporterxi.com');
+    await page.goto(path);
+    const link = page.getByRole('contentinfo').getByRole('link', { name: 'dugout@supporterxi.com' });
+    await expect(link).toHaveAttribute('href', 'mailto:dugout@supporterxi.com');
+    expect((await link.boundingBox())!.height).toBeGreaterThanOrEqual(24);
+    // It is the footer's only link: /gameplan is public but nothing links to it (user decision, 10 October 2026).
+    await expect(page.getByRole('contentinfo').getByRole('link')).toHaveCount(1);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  }
+  expect((await new AxeBuilder({ page }).include('footer').withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze()).violations).toEqual([]);
+});

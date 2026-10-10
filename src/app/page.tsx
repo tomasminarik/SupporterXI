@@ -1,4 +1,5 @@
 import FeaturedFixture from '../components/featured-fixture';
+import SiteFooter from '../components/site-footer';
 import SiteHeader from '../components/site-header';
 import { ShareProvider } from '../share/share-context';
 
@@ -16,7 +17,7 @@ export default function Home() {
           <FeaturedFixture />
         </main>
       </ShareProvider>
-      <footer className="sx-footer"><span>Supporter XI</span><span>Independent supporter project</span></footer>
+      <SiteFooter />
     </div>
   );
 }
