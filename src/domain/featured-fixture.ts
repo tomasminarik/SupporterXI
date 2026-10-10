@@ -1,7 +1,10 @@
 import { z } from 'zod';
 import { effectiveFixture, fixtureValuesSchema, playerAvailability, type SharedContent } from './content';
 
-export const publicPlayerSchema = z.strictObject({ id: z.uuid(), name: z.string().min(1), shirtNumber: z.number().int().nullable(), selectable: z.boolean() });
+// `unavailable` is a squad player who is out for this match: listed, but not pickable. A player who has
+// left the squad is neither selectable nor unavailable, and is not listed. Lineups remembered before the
+// field existed read as false.
+export const publicPlayerSchema = z.strictObject({ id: z.uuid(), name: z.string().min(1), shirtNumber: z.number().int().nullable(), selectable: z.boolean(), unavailable: z.boolean().default(false) });
 export type PublicPlayer = z.infer<typeof publicPlayerSchema>;
 
 export const featuredResponseSchema = z.strictObject({
@@ -46,7 +49,10 @@ export function selectFeaturedFixture(content: SharedContent, nowMs: number) {
 
 export function featuredResponse(content: SharedContent, revision: string, nowMs: number): FeaturedResponse {
   const { fixture, nextRefreshAt, locked } = selectFeaturedFixture(content, nowMs);
-  const players = fixture ? content.players.map(({ id, name, shirtNumber, active }) => ({ id, name, shirtNumber, selectable: active && playerAvailability(content, id, fixture.id) === 'available' })) : [];
+  const players = fixture ? content.players.map(({ id, name, shirtNumber, active }) => {
+    const available = playerAvailability(content, id, fixture.id) === 'available';
+    return { id, name, shirtNumber, selectable: active && available, unavailable: active && !available };
+  }) : [];
   return { schemaVersion: 2, contentRevision: revision, serverNow: new Date(nowMs).toISOString(), nextRefreshAt, locked, fixture, players };
 }
 

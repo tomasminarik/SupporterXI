@@ -9,6 +9,8 @@ export const adminCommandSchema = z.discriminatedUnion('kind', [
   z.strictObject({ kind: z.literal('player'), id: z.uuid().nullable(), values: playerFields }),
   z.strictObject({ kind: z.literal('ongoing-availability'), playerId: z.uuid(), unavailableUntilCleared: z.boolean() }),
   z.strictObject({ kind: z.literal('availability'), fixtureId: z.uuid(), playerId: z.uuid(), status: z.enum(['default', 'available', 'unavailable']) }),
+  // Several players in one write: each listed player is out until cleared, or out for exactly the listed matches.
+  z.strictObject({ kind: z.literal('availability-plan'), players: z.array(z.strictObject({ playerId: z.uuid(), unavailableUntilCleared: z.boolean(), unavailableFixtureIds: z.array(z.uuid()).max(100) })).min(1).max(100) }),
 ]);
 export type AdminCommand = z.infer<typeof adminCommandSchema>;
 export const adminRequestSchema = z.strictObject({ revision: z.string().regex(/^[a-f0-9]{40}$/), command: adminCommandSchema });
@@ -67,6 +69,17 @@ export function applyAdminCommand(current: SharedContent, input: unknown, newId:
       if (!next.players.some((p) => p.id === command.playerId) || !next.fixtures.some((f) => f.id === command.fixtureId)) throw new Error('Availability reference does not resolve');
       next.fixtureAvailability = next.fixtureAvailability.filter((a) => a.fixtureId !== command.fixtureId || a.playerId !== command.playerId);
       if (command.status !== 'default') next.fixtureAvailability.push({ fixtureId: command.fixtureId, playerId: command.playerId, status: command.status }); break;
+    }
+    case 'availability-plan': {
+      for (const entry of command.players) {
+        const player = next.players.find((p) => p.id === entry.playerId);
+        if (!player) throw new Error('Player no longer exists');
+        player.unavailableUntilCleared = entry.unavailableUntilCleared;
+        // The plan replaces the player's match settings; duplicate or unknown references fail content validation.
+        next.fixtureAvailability = next.fixtureAvailability.filter((a) => a.playerId !== entry.playerId);
+        for (const fixtureId of entry.unavailableFixtureIds) next.fixtureAvailability.push({ fixtureId, playerId: entry.playerId, status: 'unavailable' });
+      }
+      break;
     }
   }
   return validateAdminContent(next);

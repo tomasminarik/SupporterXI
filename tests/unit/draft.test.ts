@@ -32,6 +32,11 @@ describe('MVP-06 browser memory and M-02 eligibility', () => {
     expect(writeDraft(() => storage, draft)).toBe(true);
     expect(readDraft(() => storage)).toEqual({ kind: 'valid', draft });
   });
+  it('still reads a lineup remembered before players carried the unavailable flag', () => {
+    const older = JSON.stringify({ ...draft, players: draft.players.map(({ id, name, shirtNumber, selectable }) => ({ id, name, shirtNumber, selectable })) });
+    const read = readDraft(() => ({ getItem: () => older, setItem: () => {}, removeItem: () => {} }));
+    expect(read.kind === 'valid' && read.draft.players.every((p) => p.unavailable === false)).toBe(true);
+  });
   it('handles blocked reads and quota failures without crashing', () => {
     const blocked = () => { throw new Error('blocked'); };
     expect(readDraft(blocked)).toEqual({ kind: 'unavailable' });

@@ -38,7 +38,7 @@ export function sessionReducer(state: BuilderSession, action: SessionAction): Bu
       // the latest public eligibility controls only new selections.
       const players = [...action.context.players];
       for (const player of state.draft.players) {
-        if (!players.some((p) => p.id === player.id) && Object.values(state.draft.lineup.slots).some((slot) => slot?.playerId === player.id)) players.push({ ...player, selectable: false });
+        if (!players.some((p) => p.id === player.id) && Object.values(state.draft.lineup.slots).some((slot) => slot?.playerId === player.id)) players.push({ ...player, selectable: false, unavailable: false });
       }
       return { ...state, draft: { ...state.draft, fixture: action.context.fixture, players, contentRevision: action.context.contentRevision } };
     }

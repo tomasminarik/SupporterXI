@@ -99,6 +99,10 @@ body.sx-dragging, body.sx-dragging * { cursor: grabbing !important; user-select:
 .sx-card[aria-pressed=true] .sx-card-no { color: var(--sx-club-pressed); }
 .sx-card-no { font: 800 var(--sx-text-display-l)/1 var(--sx-font-display); color: var(--sx-club); }
 .sx-card-name { font-size: var(--sx-text-body-m); font-weight: 500; line-height: 1.2; overflow-wrap: anywhere; }
+/* Out for this match: listed last, cannot be picked. Said in words as well as shown. */
+.sx-card-out, .sx-card-out:hover { cursor: not-allowed; background: transparent; border: 1px dashed var(--sx-edge-strong); color: var(--sx-text-quiet); }
+.sx-card-out .sx-card-no { color: var(--sx-text-quiet); }
+.sx-card-flag { display: block; margin-top: 2px; font-size: var(--sx-text-body-s); font-weight: 400; }
 .sx-empty-list { color: var(--sx-text-quiet); margin: 12px 0; }
 
 /* Formation picker: opens above its button so the pitch stays in view; hovering or

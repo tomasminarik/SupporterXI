@@ -4,7 +4,8 @@ test('MVP-10/13: manual fixture, validated squad and availability forms', async 
   const writes: string[] = [];
   page.on('request', (request) => { if (request.method() !== 'GET') writes.push(request.url()); });
   await page.goto('/dev/admin');
-  await expect(page.getByRole('heading', { name: 'The club desk.' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Gaffer' })).toBeVisible();
+  await page.getByRole('tab', { name: 'Fixtures', exact: true }).click();
   await page.getByLabel('Opponent', { exact: true }).fill('Synthetic Admin FC');
   await page.getByLabel('Kickoff with timezone').fill('2026-10-25T12:00:00');
   await page.getByRole('button', { name: 'Create fixture', exact: true }).click();
@@ -27,29 +28,44 @@ test('MVP-10/13: manual fixture, validated squad and availability forms', async 
   await page.getByRole('button', { name: 'Save player', exact: true }).click();
   await expect(page.getByLabel('Active', { exact: true })).not.toBeChecked();
   await page.getByRole('tab', { name: 'Availability', exact: true }).click();
-  const ongoing = page.getByRole('combobox', { name: 'Ongoing availability: Senne Lammens', exact: true });
-  const match = page.getByRole('combobox', { name: 'Availability: Senne Lammens', exact: true });
-  await ongoing.click();
-  await page.getByRole('option', { name: 'Unavailable until cleared', exact: true }).click();
-  await expect(match.locator('..')).toContainText('Use default (Unavailable)');
-  await match.click();
-  await page.getByRole('option', { name: 'Available', exact: true }).click();
-  await expect(match.locator('..')).toContainText('Available');
-  await expect(ongoing.locator('..')).toContainText('Unavailable until cleared');
-  await match.click();
-  await page.getByRole('option', { name: 'Use default (Unavailable)', exact: true }).click();
-  await expect(match.locator('..')).toContainText('Use default (Unavailable)');
-  await ongoing.click();
-  await page.getByRole('option', { name: 'Available by default', exact: true }).click();
-  await expect(match.locator('..')).toContainText('Use default (Available)');
-  await page.getByRole('combobox', { name: 'Availability: Senne Lammens', exact: true }).click();
-  await page.getByRole('option', { name: 'Unavailable', exact: true }).click();
-  await expect(page.getByRole('combobox', { name: 'Availability: Senne Lammens', exact: true }).locator('..')).toContainText('Unavailable');
+  // One list: pick who is out, then save everything together.
+  const lammens = page.getByRole('radiogroup', { name: 'Availability: Senne Lammens', exact: true });
+  const dalot = page.getByRole('radiogroup', { name: 'Availability: Diogo Dalot', exact: true });
+  const row = (name: string) => page.locator('.admin-roster-row', { hasText: name });
+  await expect(page.getByText('Next match: Synthetic Admin FC (H), date to be confirmed.')).toBeVisible();
+  await expect(lammens).toHaveCount(0);
+  await expect(page.getByText('Players who have left are switched to Inactive in Squad', { exact: false })).toBeVisible();
+  await dalot.getByText('Out next match', { exact: true }).click();
+  await expect(row('Diogo Dalot')).toContainText('Out vs Synthetic Admin FC only');
+  await expect(row('Diogo Dalot')).toContainText('Not saved');
+  await page.getByRole('radiogroup', { name: 'Availability: Harry Maguire', exact: true }).getByText('Out until cleared', { exact: true }).click();
+  await expect(row('Harry Maguire')).toContainText('Out until you clear it');
+  await page.getByRole('button', { name: 'Pick matches: Mason Mount', exact: true }).click();
+  await page.getByRole('checkbox', { name: 'Synthetic Admin FC (H) · date to be confirmed', exact: true }).check();
+  await page.getByRole('button', { name: 'Done', exact: true }).click();
+  const unsaved = page.getByRole('region', { name: 'Unsaved availability changes' });
+  await expect(unsaved).toContainText('3 unsaved changes');
+  // Putting a player back as they were is not a change.
+  await page.getByRole('radiogroup', { name: 'Availability: Mason Mount', exact: true }).getByText('Available', { exact: true }).click();
+  await expect(unsaved).toContainText('2 unsaved changes');
+  await expect(unsaved).toContainText('Diogo Dalot, Harry Maguire');
+  expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze()).violations).toEqual([]);
+  await unsaved.getByRole('button', { name: 'Save and publish', exact: true }).click();
+  await expect(unsaved).toHaveCount(0);
+  await expect(page.getByText('Applied in this preview only.', { exact: false })).toBeVisible();
+  for (const name of ['Diogo Dalot', 'Harry Maguire']) await expect(page.locator('.admin-availability-head')).toContainText(name);
+  await expect(page.locator('.admin-availability-head')).not.toContainText('Mason Mount');
+  await expect(row('Harry Maguire')).not.toContainText('Not saved');
+  await expect(page.getByRole('radiogroup', { name: 'Availability: Harry Maguire', exact: true }).getByRole('radio', { name: 'Out until cleared', exact: true })).toBeChecked();
+  await dalot.getByText('Available', { exact: true }).click();
+  await unsaved.getByRole('button', { name: 'Discard', exact: true }).click();
+  await expect(row('Diogo Dalot')).toContainText('Out vs Synthetic Admin FC only');
   expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze()).violations).toEqual([]);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   expect(writes).toEqual([]);
   await page.screenshot({ path: `test-results/admin-${test.info().project.name}.png`, fullPage: true });
   await page.reload();
+  await page.getByRole('tab', { name: 'Fixtures', exact: true }).click();
   await page.getByLabel('Featured match').click();
   await expect(page.getByRole('option')).toHaveCount(1);
   expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze()).violations).toEqual([]);
@@ -57,6 +73,7 @@ test('MVP-10/13: manual fixture, validated squad and availability forms', async 
 
 test('MVP-10/13: fixture editing with keyboard and accessible Ant Design sections', async ({ page }) => {
   await page.goto('/dev/admin');
+  await page.getByRole('tab', { name: 'Fixtures', exact: true }).click();
   await expect(page.getByText('Lineups lock 15 minutes after kickoff.', { exact: false })).toBeVisible();
   await page.getByLabel('Opponent', { exact: true }).fill('Synthetic Keyboard FC');
   await page.getByLabel('Kickoff with timezone').fill('2026-10-25T16:30:00+00:00');
@@ -74,4 +91,14 @@ test('MVP-10/13: fixture editing with keyboard and accessible Ant Design section
   expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze()).violations).toEqual([]);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.screenshot({ path: `test-results/admin-fixtures-${test.info().project.name}.png`, fullPage: true });
+});
+
+test('MVP-13: the signed-out backoffice is one accessible card', async ({ page }) => {
+  await page.goto('/dev/admin?view=sign-in-failed');
+  await expect(page.getByRole('heading', { name: 'Gaffer' })).toBeVisible();
+  await expect(page.locator('.ant-alert')).toContainText('Sign-in didn’t work');
+  await expect(page.getByRole('link', { name: 'Sign in with GitHub' })).toBeVisible();
+  expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze()).violations).toEqual([]);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.screenshot({ path: `test-results/admin-sign-in-${test.info().project.name}.png`, fullPage: true });
 });
