@@ -16,6 +16,8 @@ Admin and import mutations require server authorization, schema validation and o
 
 M-01 was approved on 8 October 2026: Active players require unique integer shirt numbers 1–99; only Inactive players may omit a number. See the decision register.
 
+Ongoing availability (approved 10 October 2026) is a player boolean `unavailableUntilCleared`, defaulting to false when reading existing schema-version-2 content. Match-specific Available/Unavailable records take precedence. Use default removes a match record. Active state always remains a separate eligibility requirement. Imports and player-detail edits preserve the ongoing setting; no supporter storage or identity migration is required. The new setting is written only through the existing authorized, validated, revision-checked content operation.
+
 ## Imports
 
 Use football-data.org only for supported United Premier League/Champions League fixtures. Store the provider's stable ID and provenance. Repeated imports are idempotent. Only non-overridden fields change; clearing an override resumes the latest accepted imported value if available. Unknown/ambiguous identity is flagged for admin resolution, never merged by opponent/date guesses. Provider errors, malformed payloads or missing records never erase accepted content. Absence from a feed does not imply cancellation.

@@ -7,7 +7,8 @@ export const adminCommandSchema = z.discriminatedUnion('kind', [
   z.strictObject({ kind: z.literal('clear-override'), id: z.uuid(), field: fixtureValuesSchema.keyof() }),
   z.strictObject({ kind: z.literal('featured'), id: z.uuid().nullable() }),
   z.strictObject({ kind: z.literal('player'), id: z.uuid().nullable(), values: playerFields }),
-  z.strictObject({ kind: z.literal('availability'), fixtureId: z.uuid(), playerId: z.uuid(), status: z.enum(['available', 'unavailable']) }),
+  z.strictObject({ kind: z.literal('ongoing-availability'), playerId: z.uuid(), unavailableUntilCleared: z.boolean() }),
+  z.strictObject({ kind: z.literal('availability'), fixtureId: z.uuid(), playerId: z.uuid(), status: z.enum(['default', 'available', 'unavailable']) }),
 ]);
 export type AdminCommand = z.infer<typeof adminCommandSchema>;
 export const adminRequestSchema = z.strictObject({ revision: z.string().regex(/^[a-f0-9]{40}$/), command: adminCommandSchema });
@@ -48,7 +49,7 @@ export function applyAdminCommand(current: SharedContent, input: unknown, newId:
     }
     case 'featured': next.featuredFixtureId = command.id; break;
     case 'player': {
-      if (!command.id) next.players.push({ id: newId(), ...command.values });
+      if (!command.id) next.players.push({ id: newId(), ...command.values, unavailableUntilCleared: false });
       else {
         const player = next.players.find((p) => p.id === command.id);
         if (!player) throw new Error('Player no longer exists');
@@ -56,9 +57,16 @@ export function applyAdminCommand(current: SharedContent, input: unknown, newId:
       }
       break;
     }
+    case 'ongoing-availability': {
+      const player = next.players.find((p) => p.id === command.playerId);
+      if (!player) throw new Error('Player no longer exists');
+      player.unavailableUntilCleared = command.unavailableUntilCleared;
+      break;
+    }
     case 'availability': {
+      if (!next.players.some((p) => p.id === command.playerId) || !next.fixtures.some((f) => f.id === command.fixtureId)) throw new Error('Availability reference does not resolve');
       next.fixtureAvailability = next.fixtureAvailability.filter((a) => a.fixtureId !== command.fixtureId || a.playerId !== command.playerId);
-      next.fixtureAvailability.push({ fixtureId: command.fixtureId, playerId: command.playerId, status: command.status }); break;
+      if (command.status !== 'default') next.fixtureAvailability.push({ fixtureId: command.fixtureId, playerId: command.playerId, status: command.status }); break;
     }
   }
   return validateAdminContent(next);

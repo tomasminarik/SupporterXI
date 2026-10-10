@@ -24,7 +24,7 @@ export const fixtureSchema = z.strictObject({
 });
 // Active state approved on 7 October 2026. M-01 approved on 8 October 2026; admin writes enforce number policy.
 // This remains a content-read schema, not an admin write authorization boundary.
-const playerSchema = z.strictObject({ id: z.uuid(), name: label, shirtNumber: z.number().int().nullable(), active: z.boolean() });
+const playerSchema = z.strictObject({ id: z.uuid(), name: label, shirtNumber: z.number().int().nullable(), active: z.boolean(), unavailableUntilCleared: z.boolean().default(false) });
 export const contentSchema = z.strictObject({
   schemaVersion: z.literal(2),
   players: z.array(playerSchema),
@@ -51,6 +51,11 @@ export const contentSchema = z.strictObject({
 export type SharedContent = z.infer<typeof contentSchema>;
 export type Fixture = z.infer<typeof fixtureSchema>;
 export type EffectiveFixture = z.infer<typeof fixtureValuesSchema> & { id: string };
+
+export function playerAvailability(content: SharedContent, playerId: string, fixtureId: string): 'available' | 'unavailable' {
+  const override = content.fixtureAvailability.find((entry) => entry.playerId === playerId && entry.fixtureId === fixtureId);
+  return override?.status ?? (content.players.find((player) => player.id === playerId)?.unavailableUntilCleared ? 'unavailable' : 'available');
+}
 
 export function effectiveFixture(fixture: Fixture): EffectiveFixture {
   // Merge per field, so an explicit null/unknown correction stays authoritative.

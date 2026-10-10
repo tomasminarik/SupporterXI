@@ -51,10 +51,12 @@ describe('MVP-11 fixture reconciliation', () => {
     const first = reconcileFixtures(seed, { matches: [match] }, () => fixtureId).content;
     first.fixtures[0].overrides = { opponent: 'Corrected FC', kickoff: { kind: 'unknown' } };
     first.fixtureAvailability = [{ fixtureId, playerId: seed.players[0].id, status: 'unavailable' }];
+    first.players[0].unavailableUntilCleared = true;
     const second = reconcileFixtures(first, { matches: [{ ...match, utcDate: '2026-11-02T18:00:00Z', awayTeam: { id: 67, name: 'New provider spelling' } }] }, () => 'wrong');
     expect(second.report.updated).toBe(1);
     expect(second.content.fixtures[0]).toMatchObject({ id: fixtureId, values: { opponent: 'New provider spelling', kickoff: { at: '2026-11-02T18:00:00Z' } }, overrides: { opponent: 'Corrected FC', kickoff: { kind: 'unknown' } } });
     expect(second.content.fixtureAvailability).toEqual(first.fixtureAvailability);
+    expect(second.content.players).toEqual(first.players);
     expect(first.fixtures[0].values.opponent).toBe('Synthetic FC');
   });
   it('flags possible manual duplicates without guessing an identity or merging', () => {
