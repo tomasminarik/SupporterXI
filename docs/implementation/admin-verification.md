@@ -4,7 +4,7 @@
 
 ## Implemented scope
 
-`/admin` supports single-admin GitHub OAuth, fixture and squad forms, per-fixture availability, featured override, per-field imported-value/correction display and explicit override clearing. No destructive delete or catalogue CRUD exists. `/dev/admin` is a clearly labelled in-memory form preview enabled only locally and on Vercel Preview; it never writes GitHub.
+`/gaffer` supports single-admin GitHub OAuth, fixture and squad forms, per-fixture availability, featured override, per-field imported-value/correction display and explicit override clearing. No destructive delete or catalogue CRUD exists. `/dev/admin` is a clearly labelled in-memory form preview enabled only locally and on Vercel Preview; it never writes GitHub.
 
 M-01 was approved on 8 October: Active shirt numbers are unique integers 1–99; Inactive players may omit a number. Existing IDs and the supplied 36 records remain unchanged. Player number schemas now accept null for inactive records; browser snapshots remain version 1 because this is a backward-compatible field expansion. Selected unavailable/inactive players still follow approved M-02.
 
