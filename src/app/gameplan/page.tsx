@@ -5,6 +5,7 @@ import { Button, CloseButton } from '../../design/button';
 import { PillBody, RoleTag } from '../../design/player-pill';
 import { PanelDemo, TileDemo } from './demos';
 import Notice from '../../design/notice';
+import SiteFooter from '../../components/site-footer';
 import SiteHeader from '../../components/site-header';
 import { breakpoints, groups, type Token, type TokenGroup } from '../../design/tokens';
 import './gameplan.css';
@@ -190,6 +191,6 @@ export default function Gameplan() {
         <p className="gp-note">Outside the system: the pitch, which is a single illustration, and the administration pages, which use their own kit. The club&apos;s colour and name are kept apart from everything else, so they could be swapped for another club.</p>
       </section>
     </main>
-    <footer className="sx-footer"><span>Supporter XI</span><span>Independent supporter project</span></footer>
+    <SiteFooter />
   </div>;
 }

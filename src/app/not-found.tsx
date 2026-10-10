@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import SiteFooter from '../components/site-footer';
 import SiteHeader from '../components/site-header';
 import './not-found.css';
 
@@ -42,6 +43,6 @@ export default function NotFound() {
       </div>
       <p className="nf-action"><Link className="sx-primary nf-back" href="/">Back to the builder</Link></p>
     </main>
-    <footer className="sx-footer"><span>Supporter XI</span><span>Independent supporter project</span></footer>
+    <SiteFooter />
   </div>;
 }

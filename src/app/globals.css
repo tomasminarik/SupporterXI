@@ -63,6 +63,9 @@ main:focus { outline: none; }
 .sx-dev a { color: var(--sx-text); }
 .sx-dev-controls { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
 .sx-footer { max-width: 1376px; margin: 0 auto; padding: 24px 32px 32px; display: flex; justify-content: space-between; gap: 16px; font-size: var(--sx-text-caption); color: var(--sx-text-quiet); border-top: 1px solid var(--sx-edge); }
+/* The contact address: a padded box so the link is easy to hit although the type is small. */
+.sx-footer-link { display: inline-block; margin: -6px 0; padding: 6px 0; color: var(--sx-text-soft); text-underline-offset: 3px; }
+.sx-footer-link:hover { color: var(--sx-text); }
 
 
 @media (max-width: 700px) {
