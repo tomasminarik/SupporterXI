@@ -1,4 +1,5 @@
 import { plane } from '../components/pitch-geometry';
+import { tokenValue } from '../design/tokens';
 import { fitHeadline, frame, landscape, landscapeNearEdge, markerFor, placePills, placePlayers, type Box, type Measure } from './layout';
 import { shareAddress, shareFormats, type ShareFormat, type ShareSnapshot } from './snapshot';
 
@@ -6,7 +7,8 @@ import { shareAddress, shareFormats, type ShareFormat, type ShareSnapshot } from
 // fonts, original local assets). Nothing is captured from the page and nothing leaves the browser.
 const display = '"Big Shoulders Display"';
 const body = 'Barlow';
-const colour = { page: '#0c0e0d', red: '#da362e', deep: '#b3261e', white: '#ffffff', text: '#f3f1ea', soft: '#b9bcb2', quiet: '#9a9d94', v: '#8a8d86', line: '#f4f6ee', yellow: '#f5c518' };
+// Colours come from the design tokens; the pitch's own paint (lines, grass, soil) is not part of the system.
+const colour = { page: tokenValue('page'), red: tokenValue('club'), deep: tokenValue('club-pressed'), white: tokenValue('white'), text: tokenValue('text'), soft: tokenValue('text-soft'), quiet: tokenValue('text-quiet'), v: tokenValue('text-versus'), line: '#f4f6ee', yellow: tokenValue('action') };
 
 export type ShareAssets = { turf: CanvasImageSource };
 
@@ -144,7 +146,7 @@ function drawLogo(ctx: CanvasRenderingContext2D, right: number, y: number, heigh
   ctx.save();
   ctx.translate(cx - 18 * k, cy - 14 * k);
   ctx.scale(k, k);
-  ctx.strokeStyle = '#c42a23';
+  ctx.strokeStyle = tokenValue('club-mark');
   ctx.lineWidth = 6.5;
   ctx.lineCap = 'butt';
   ctx.stroke(new Path2D('M4 2L18 26M18 2L4 26M31.5 2V26'));

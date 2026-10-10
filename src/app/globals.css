@@ -20,12 +20,12 @@ main:focus { outline: none; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; } }
 
 /* Supporter XI public page (docs/design/reference/full-xi-pills.dc.html). */
-body:has(.sx) { background: #0c0e0d; color-scheme: dark; }
+body:has(.sx) { background: var(--sx-page); color-scheme: dark; }
 .sx {
-  --bg: #0c0e0d; --surface: #171a18; --edge: #2b2f2c; --edge-strong: #3a3e3a; --text: #f3f1ea; --soft: #b9bcb2; --quiet: #9a9d94;
-  /* #e0372f measured 4.41:1 under white 14px text; #da362e is the nearest red that passes AA. */
-  --red: #da362e; --red-hover: #c22e27; --red-deep: #b3261e; --yellow: #f5c518; --on-yellow: #14160f;
-  --display: 'Big Shoulders Display', 'Arial Narrow', sans-serif; --body: Barlow, 'Helvetica Neue', sans-serif;
+  /* Short names for the design tokens (src/design/tokens.css), kept while the stylesheets move over to them. */
+  --bg: var(--sx-page); --surface: var(--sx-surface); --edge: var(--sx-edge); --edge-strong: var(--sx-edge-strong); --text: var(--sx-text); --soft: var(--sx-text-soft); --quiet: var(--sx-text-quiet);
+  --red: var(--sx-club); --red-hover: var(--sx-club-hover); --red-deep: var(--sx-club-pressed); --yellow: var(--sx-action); --on-yellow: var(--sx-on-action);
+  --display: var(--sx-font-display); --body: var(--sx-font-body);
   min-height: 100vh; background: var(--bg); color: var(--text); font-family: var(--body); overflow-x: clip;
 }
 .sx :focus-visible { outline: 3px solid #ffffff; outline-offset: 3px; }

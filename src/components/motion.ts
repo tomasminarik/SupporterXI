@@ -1,6 +1,8 @@
+import { tokenValue } from '../design/tokens';
+
 /** Small motion helpers for the builder. Each does nothing when the visitor asks for reduced motion;
     the CSS animations are switched off for those visitors in globals.css. */
-export const crisp = 'cubic-bezier(.2, .8, .2, 1)';
+export const crisp = tokenValue('ease-crisp');
 export const reducedMotion = () => typeof window === 'undefined' || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /** Leaves an inert copy of an element where it stood and animates the copy away, so something that
