@@ -21,7 +21,8 @@ const sourceSchema = z.object({ revision: z.string(), content: contentSchema, cs
 async function call(url: string, init?: RequestInit) {
   // Publication may need the live probe (10s) and two GitHub requests (12s each).
   const response = await fetch(url, { ...init, cache: 'no-store', signal: init?.signal ?? AbortSignal.timeout(60_000) });
-  const body = await response.json();
+  // A platform error page is not JSON; fall through to the message below.
+  const body = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error(body.error ?? 'Request failed. Your edits are still here.');
   return body;
 }

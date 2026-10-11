@@ -13,7 +13,7 @@ export function FixtureHeadline({ fixture }: { fixture: Fixture }) {
   return <section className="sx-fixture" aria-labelledby="fixture-title">
     <h1 id="fixture-title" className={long ? 'sx-headline sx-long' : 'sx-headline'}><span className="sx-club">{club.name}</span> <span className="sx-versus"><span className="sx-v">v</span> <span className="sx-opponent">{first}</span></span>{rest.length > 0 && <span className="sx-opponent"> {rest.join(' ')}</span>}</h1>
     <p className="sx-details">
-      {[fixture.competition, fixture.round, fixture.venue === 'home' ? 'Home' : 'Away'].filter(Boolean).map((part) => <span key={part}>{part}</span>)}
+      {[fixture.competition, fixture.round, fixture.venue === 'home' ? 'Home' : 'Away'].filter(Boolean).map((part, index) => <span key={index}>{part}</span>)}
       <span>{fixture.kickoff.kind === 'confirmed' ? <time dateTime={fixture.kickoff.at}>{formatKickoff(fixture.kickoff.at, 'en-GB')}</time> : 'Time to be confirmed'}</span>
     </p>
   </section>;
