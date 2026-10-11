@@ -4,7 +4,7 @@ import { effectiveFixture, fixtureValuesSchema, playerAvailability, type SharedC
 // `unavailable` is a squad player who is out for this match: listed, but not pickable. A player who has
 // left the squad is neither selectable nor unavailable, and is not listed. Lineups remembered before the
 // field existed read as false.
-export const publicPlayerSchema = z.strictObject({ id: z.uuid(), name: z.string().min(1), shirtNumber: z.number().int().nullable(), selectable: z.boolean(), unavailable: z.boolean().default(false) });
+export const publicPlayerSchema = z.strictObject({ id: z.uuid(), name: z.string().min(1).max(200), shirtNumber: z.number().int().nullable(), selectable: z.boolean(), unavailable: z.boolean().default(false) });
 export type PublicPlayer = z.infer<typeof publicPlayerSchema>;
 
 export const featuredResponseSchema = z.strictObject({

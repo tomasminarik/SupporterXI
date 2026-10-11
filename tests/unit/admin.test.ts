@@ -39,6 +39,13 @@ describe('MVP-10 admin mutations and approved M-01', () => {
     expect(() => applyAdminCommand(data, { kind: 'availability', fixtureId: id, playerId: data.players[0].id, status: 'unavailable' }, () => id)).toThrow();
     expect(validateAdminContent(data)).toEqual(data);
   });
+  it('rejects control characters and invisible direction marks in names, and keeps accented ones', () => {
+    for (const name of ['Bru\u202eno', 'Bruno\u0000', 'Bru\nno', '\u2066Bruno\u2069', 'Bruno\u200f', 'Bru\ufeffno']) {
+      expect(() => applyAdminCommand(data, { kind: 'player', id: null, values: { name, shirtNumber: 98, active: false } }, () => id)).toThrow();
+      expect(() => applyAdminCommand(data, { kind: 'fixture', id: null, values: { ...fixtureValues, opponent: name } }, () => id)).toThrow();
+    }
+    expect(applyAdminCommand(data, { kind: 'fixture', id: null, values: { ...fixtureValues, opponent: 'Bodø/Glimt', competition: 'Fotbalová asociace České republiky' } }, () => id).fixtures[0].values.opponent).toBe('Bodø/Glimt');
+  });
   it('rejects timezone-free timestamps and client-assigned creation identity', () => {
     expect(() => applyAdminCommand(data, { kind: 'fixture', id: null, values: { ...fixtureValues, kickoff: { kind: 'confirmed', at: '2026-10-25T12:00:00' } } }, () => id)).toThrow();
     expect(() => applyAdminCommand(data, { kind: 'player', id, values: { name: 'New', active: true, shirtNumber: 99 } }, () => id)).toThrow();
@@ -140,6 +147,9 @@ describe('MVP-09 session and request security', () => {
     expect(authorizedWrite(headers, config, 'test')).toBe(true);
     expect(authorizedWrite(headers, config, 'different')).toBe(false);
     headers.set('origin', 'https://evil.test'); expect(authorizedWrite(headers, config, 'test')).toBe(false);
+    headers.set('origin', config.origin);
+    for (const site of ['cross-site', 'same-site', 'none']) { headers.set('sec-fetch-site', site); expect(authorizedWrite(headers, config, 'test')).toBe(false); }
+    headers.set('sec-fetch-site', 'same-origin'); expect(authorizedWrite(headers, config, 'test')).toBe(true);
   });
   it('disables preview authority even when credentials were accidentally supplied', () => {
     const env = { VERCEL_ENV: 'production', ADMIN_ORIGIN: config.origin, GITHUB_OAUTH_CLIENT_ID: config.clientId, GITHUB_OAUTH_CLIENT_SECRET: config.clientSecret, ADMIN_SESSION_SECRET: config.secret, ADMIN_GITHUB_USER_ID: config.userId, GITHUB_CONTENT_TOKEN: config.token };

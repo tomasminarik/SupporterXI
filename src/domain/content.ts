@@ -4,7 +4,10 @@ import { z } from 'zod';
 // policy (next.config.ts) forbids and reports. Every schema in the app reaches the browser through this file.
 z.config({ jitless: true });
 
-const label = z.string().trim().min(1).max(200);
+// Names are shown on the page, drawn on share images and committed to the repository. Control characters
+// and the invisible marks that reverse or hide text have no place in them, whoever supplies the value.
+const invisible = /[\p{Cc}\u200e\u200f\u2028-\u202e\u2066-\u2069\ufeff]/u;
+export const label = z.string().trim().min(1).max(200).refine((value) => !invisible.test(value), 'Invisible or control characters are not allowed');
 export const kickoffSchema = z.discriminatedUnion('kind', [
   z.strictObject({ kind: z.literal('unknown') }),
   z.strictObject({ kind: z.literal('confirmed'), at: z.iso.datetime({ offset: true }).refine((value) => Number.isFinite(Date.parse(value)), 'Invalid instant') }),
