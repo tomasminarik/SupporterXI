@@ -22,7 +22,7 @@ type EventProps = {
   share_failed: { fixture: string; size: Size };
 };
 
-/** Requests go to this path on our own domain and are passed on to PostHog's EU servers (next.config.ts). */
+/** Requests go to this path on our own domain and are passed on to PostHog's EU servers (src/proxy.ts). */
 export const proxyPath = '/sxi';
 export const posthogHosts = { ingest: 'https://eu.i.posthog.com', assets: 'https://eu-assets.i.posthog.com', app: 'https://eu.posthog.com' };
 const automatic = ['$pageview', '$pageleave', '$web_vitals'];

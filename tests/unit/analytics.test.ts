@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import type { CaptureResult } from 'posthog-js';
-import { allow, events, options, shouldTrack, startAnalytics, track } from '../../src/analytics/analytics';
+import { NextRequest } from 'next/server';
+import { allow, events, options, posthogHosts, proxyPath, shouldTrack, startAnalytics, track } from '../../src/analytics/analytics';
+import { config, proxy } from '../../src/proxy';
 
 const sent = (event: string, properties: Record<string, unknown> = {}) => ({ event, properties, uuid: 'u' }) as unknown as CaptureResult;
 
@@ -30,5 +32,27 @@ describe('usage tracking is cookieless and never carries a lineup (user decision
   it('does nothing when tracking is off', () => {
     startAnalytics(undefined);
     expect(() => track('lineup_started')).not.toThrow();
+  });
+});
+
+describe('the tracking proxy hands PostHog no credentials (MVP-09, MVP-14)', () => {
+  const forwarded = (path: string, headers: Record<string, string>) => {
+    const response = proxy(new NextRequest(`https://supporterxi.com${path}`, { headers }));
+    const kept = (response.headers.get('x-middleware-override-headers') ?? '').split(',');
+    return { destination: response.headers.get('x-middleware-rewrite'), kept, value: (name: string) => response.headers.get(`x-middleware-request-${name}`) };
+  };
+  it('removes the backoffice session and any authorization before the request leaves the site', () => {
+    const result = forwarded('/sxi/e/?ip=0', { cookie: '__Host-xi-admin=sealed; __Host-xi-oauth=flow', authorization: 'Bearer secret', 'user-agent': 'browser' });
+    expect(result.kept).not.toContain('cookie');
+    expect(result.kept).not.toContain('authorization');
+    expect(result.value('cookie')).toBeNull();
+    expect(result.value('authorization')).toBeNull();
+    expect(result.value('user-agent')).toBe('browser');
+  });
+  it('sends events and scripts to PostHog\'s EU servers only, keeping the trailing slash and query', () => {
+    expect(forwarded('/sxi/e/?ip=0', {}).destination).toBe(`${posthogHosts.ingest}/e/?ip=0`);
+    expect(forwarded('/sxi/static/array.js', {}).destination).toBe(`${posthogHosts.assets}/static/array.js`);
+    for (const path of ['/sxi//evil.example/x', '/sxi/\\\\evil.example/x', '/sxi/@evil.example/x', '/sxi']) expect(new URL(forwarded(path, {}).destination!).origin).toBe(posthogHosts.ingest);
+    expect(config.matcher).toBe(`${proxyPath}/:path*`);
   });
 });
