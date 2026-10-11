@@ -47,6 +47,9 @@ export default function LineupEditor({ lineup, players, locked = false, onChange
   const [dragged, setDragged] = useState<Dragged | null>(null);
   const dropRef = useRef<(drag: Dragged) => void>(() => {});
   const suppressClick = useRef(false);
+  // A drag in progress is abandoned if the editor goes away under it.
+  const endDrag = useRef<(() => void) | null>(null);
+  useEffect(() => () => endDrag.current?.(), []);
   // Motion: the first second is the arrival wave; Clear XI replays a shorter one.
   const [wave, setWave] = useState<'arrive' | 'clear' | null>('arrive');
   const pendingGlide = useRef<Map<string, { x: number; y: number }> | null>(null);
@@ -133,13 +136,16 @@ export default function LineupEditor({ lineup, players, locked = false, onChange
 
   function place(slot: Slot, player: PublicPlayer, dropped = false) {
     const replaced = occupantOf(slot[0]);
+    const next = placePlayer(lineup, slot[0], player.id, selectableIds);
+    // Refused when the player was picked or became unavailable since the card was chosen.
+    if (next === lineup) { resetSelection(); setNotice(`${player.name} can no longer be picked.`); return; }
     if (!dropped) ghostOut(editorRef.current?.querySelector(`[data-card="${player.id}"] .sx-card`), editorRef.current, [{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'scale(.6)' }], { duration: durations.quick });
     if (replaced) leave(slot[0]);
     if (!replaced && pickedIds.size === 10) setTimeout(cheer, 260);
     // Usage only: that a lineup was begun or finished, never who is in it (src/analytics/analytics.ts).
     if (!replaced && pickedIds.size === 0) track('lineup_started');
     if (!replaced && pickedIds.size === 10) track('lineup_completed');
-    onChange(placePlayer(lineup, slot[0], player.id, selectableIds));
+    onChange(next);
     setNotice(`${player.name} placed at ${slot[1]}${replaced ? `, replacing ${replaced.name}` : ''}.`);
     resetSelection(); setQuery('');
     focusSlot(slot[0]);
@@ -272,8 +278,11 @@ export default function LineupEditor({ lineup, players, locked = false, onChange
     const finish = (commit: boolean) => {
       window.removeEventListener('pointermove', onMove);
       window.removeEventListener('pointerup', onUp);
+      window.removeEventListener('pointercancel', onCancel);
+      window.removeEventListener('blur', onCancel);
       window.removeEventListener('keydown', onKey);
       document.body.classList.remove('sx-dragging');
+      endDrag.current = null;
       if (!current) return;
       suppressClick.current = true;
       setTimeout(() => { suppressClick.current = false; }, 0);
@@ -281,10 +290,14 @@ export default function LineupEditor({ lineup, players, locked = false, onChange
       if (commit) dropRef.current(current);
     };
     const onUp = () => finish(true);
+    const onCancel = () => finish(false);
     const onKey = (key: globalThis.KeyboardEvent) => { if (key.key === 'Escape') finish(false); };
     window.addEventListener('pointermove', onMove);
     window.addEventListener('pointerup', onUp);
+    window.addEventListener('pointercancel', onCancel);
+    window.addEventListener('blur', onCancel);
     window.addEventListener('keydown', onKey);
+    endDrag.current = onCancel;
   }
   const draggedPlayer = dragged && (dragged.kind === 'player' ? byId(dragged.id) : occupantOf(dragged.id));
 

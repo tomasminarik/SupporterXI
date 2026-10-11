@@ -21,6 +21,7 @@ export default function ShareDialog({ snapshot, onClose }: { snapshot: ShareSnap
   const [attempt, setAttempt] = useState(0);
   const [message, setMessage] = useState('');
   const urls = useRef<string[]>([]);
+  const drawn = useRef(new Set<ShareFormat>());
   const result = results[format] ?? { status: 'drawing' };
 
   useEffect(() => {
@@ -34,11 +35,15 @@ export default function ShareDialog({ snapshot, onClose }: { snapshot: ShareSnap
 
   // Each size is drawn once, when first chosen, from the same snapshot.
   useEffect(() => {
+    if (drawn.current.has(format)) return;
     let current = true;
     renderSharePng(snapshot, format).then((blob) => {
+      // Kept even if another size was chosen meanwhile, so coming back to this one is immediate.
+      if (drawn.current.has(format)) return;
+      drawn.current.add(format);
       const url = URL.createObjectURL(blob);
       urls.current.push(url);
-      if (current) setResults((previous) => ({ ...previous, [format]: { status: 'ready', blob, url } }));
+      setResults((previous) => ({ ...previous, [format]: { status: 'ready', blob, url } }));
     }, () => { if (current) { setResults((previous) => ({ ...previous, [format]: { status: 'failed' } })); track('share_failed', { fixture: snapshot.fixtureId, size: format }); } });
     return () => { current = false; };
   }, [snapshot, format, attempt]);

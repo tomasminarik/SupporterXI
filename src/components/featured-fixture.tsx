@@ -7,6 +7,8 @@ import Notice from '../design/notice';
 import { Button } from '../design/button';
 import { featuredResponseSchema, type FeaturedResponse } from '../domain/featured-fixture';
 
+const retryMs = 5_000;
+
 export default function FeaturedFixture() {
   const [data, setData] = useState<FeaturedResponse | null>(null);
   const [failed, setFailed] = useState(false);
@@ -32,7 +34,11 @@ export default function FeaturedFixture() {
         const remaining = next.nextRefreshAt ? Date.parse(next.nextRefreshAt) - Date.parse(next.serverNow) : null;
         if (remaining !== null) timer = setTimeout(refresh, Math.min(Math.max(remaining, 100), 2_147_000_000));
       } catch {
-        if (!disposed) setFailed(true);
+        if (disposed) return;
+        setFailed(true);
+        // A refresh that was due, such as the lock, must not be lost to one bad request.
+        clearTimeout(timer);
+        timer = setTimeout(refresh, retryMs);
       } finally { clearTimeout(timeout); pending = false; }
     };
     void refresh();

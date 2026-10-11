@@ -95,3 +95,12 @@ test('MVP-07: when the next match takes over, the open XI stays locked and a new
   await expect(page.getByRole('heading', { name: 'Pick your XI' })).toBeVisible();
   await expect(page.getByRole('button', { name: /: Empty$/ })).toHaveCount(11);
 });
+
+test('MVP-07: a refresh that fails at the lock is tried again without the visitor doing anything', async ({ page }) => {
+  let requests = 0;
+  await page.route('**/api/featured-fixture', (route) => { requests++; return requests === 1 ? route.fulfill({ json: open }) : requests === 2 ? route.abort() : route.fulfill({ json: locked }); });
+  await remember(page, 11);
+  await page.goto('/');
+  await expect(page.getByRole('status').filter({ hasText: 'This match has kicked off. Your XI is locked.' })).toBeVisible({ timeout: 12_000 });
+  expect(requests).toBeGreaterThanOrEqual(3);
+});

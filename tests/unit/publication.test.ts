@@ -7,6 +7,8 @@ import { contentSchema, type SharedContent } from '../../src/domain/content';
 import { publication, readEditor, writeSource } from '../../src/server/admin/github';
 import { seal, sessionCookie } from '../../src/server/admin/security';
 import { GET, POST } from '../../src/app/api/admin/content/route';
+import shared from '../../content/shared.json';
+import { readFeaturedFixture } from '../../src/server/published-content';
 
 const origin = 'https://example.test';
 const commit = 'c'.repeat(40);
@@ -116,5 +118,17 @@ describe('MVP-10/12 mocked operational recovery rehearsal', () => {
     expect(source.players.map((p) => p.id)).toEqual(accepted.players.map((p) => p.id));
     expect(source.fixtures[0].source).toEqual(accepted.fixtures[0].source);
     expect(await publication(restored.commit!, restored.digest!, config.token, origin, fetcher)).toBe('live');
+  });
+});
+
+describe('MVP-12: the public revision is the digest the backoffice waits for', () => {
+  it('hashes the content as parsed, so key order or omitted defaults in the file cannot leave a change pending', () => {
+    const digest = (value: unknown) => createHash('sha256').update(JSON.stringify(value)).digest('hex');
+    expect(readFeaturedFixture().contentRevision).toBe(digest(contentSchema.parse(shared)));
+    // The same content laid out differently on disk parses to the same digest.
+    const { players, ...rest } = shared;
+    const reordered = { players: players.map(({ unavailableUntilCleared, ...player }) => ({ unavailableUntilCleared, ...player })), ...rest };
+    expect(digest(reordered)).not.toBe(digest(shared));
+    expect(digest(contentSchema.parse(reordered))).toBe(digest(contentSchema.parse(shared)));
   });
 });
