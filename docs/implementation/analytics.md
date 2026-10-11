@@ -8,7 +8,7 @@ The user decided on 10 October 2026, after launch, to measure how the site is us
 - **Cookieless:** `cookieless_mode: 'always'` with in-memory persistence. No cookie, local storage or session storage is written, so there is no consent banner. PostHog counts visitors with a salted hash that changes every day, so a visitor cannot be followed from one day to the next. Returning-visitor and retention figures are therefore not available.
 - **No people, no recordings:** no person profiles, autocapture, session replay, heatmaps, surveys, feature flags or error capture. IP addresses are discarded by the project.
 - **Production only:** tracking starts only when `NEXT_PUBLIC_POSTHOG_KEY` is set, which it is in Vercel Production alone. Local runs, the checks and previews send nothing. It never starts on `/gaffer`, `/dev` or `/api`.
-- **Own domain:** requests go to `/sxi/*` on supporterxi.com and are passed on to PostHog's EU servers by a rewrite in `next.config.ts`.
+- **Own domain:** requests go to `/sxi/*` on supporterxi.com and are passed on to PostHog's EU servers by `src/proxy.ts`, which removes the `Cookie` and `Authorization` headers first so the backoffice session never reaches PostHog.
 
 ## What is sent
 

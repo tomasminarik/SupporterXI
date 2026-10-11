@@ -1,6 +1,4 @@
 import type { NextConfig } from 'next';
-import { posthogHosts, proxyPath } from './src/analytics/analytics';
-
 const noindex = { key: 'X-Robots-Tag', value: 'noindex, nofollow' };
 const adminHeaders = [
   { key: 'X-Frame-Options', value: 'DENY' },
@@ -13,14 +11,9 @@ const adminHeaders = [
 const nextConfig: NextConfig = {
   // Preserve the repository's user-owned AGENTS.md during local development.
   agentRules: false,
-  // Usage tracking goes through our own domain to PostHog's EU servers (src/analytics/analytics.ts).
+  // Usage tracking goes through our own domain to PostHog's EU servers (src/proxy.ts), whose addresses
+  // end in a slash that must survive.
   skipTrailingSlashRedirect: true,
-  async rewrites() {
-    return [
-      { source: `${proxyPath}/static/:path*`, destination: `${posthogHosts.assets}/static/:path*` },
-      { source: `${proxyPath}/:path*`, destination: `${posthogHosts.ingest}/:path*` },
-    ];
-  },
   async headers() {
     return [
       ...['/gaffer', '/gaffer/:path*', '/api/admin/:path*'].map((source) => ({ source, headers: adminHeaders })),
