@@ -8,7 +8,7 @@ The backoffice is hard to take over. Sign-in is GitHub OAuth for one allowlisted
 
 The review found one real leak (S1) and a set of missing defences. Everything that could be fixed in code is fixed and live. What remains is on the accounts behind the site, which only Tomas can check.
 
-**The front door is the GitHub account.** Whoever controls it can sign in to the backoffice, push to `main` and read nothing more than that, but that is everything. The account checklist at the end matters more than any remaining code finding.
+**The front door is the GitHub account.** Whoever controls it can sign in to the backoffice and push code to `main`, which is full control of the site. The account checklist at the end matters more than any remaining code finding.
 
 ## Findings
 
