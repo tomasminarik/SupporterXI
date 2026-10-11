@@ -1,7 +1,7 @@
 import { z } from 'zod';
-import { contentSchema, fixtureValuesSchema, type SharedContent } from './content';
+import { contentSchema, fixtureValuesSchema, label, type SharedContent } from './content';
 
-const playerFields = z.strictObject({ name: z.string().trim().min(1).max(200), shirtNumber: z.number().int().min(1).max(99).nullable(), active: z.boolean() }).refine((p) => !p.active || p.shirtNumber !== null, 'Active players need a number');
+const playerFields = z.strictObject({ name: label, shirtNumber: z.number().int().min(1).max(99).nullable(), active: z.boolean() }).refine((p) => !p.active || p.shirtNumber !== null, 'Active players need a number');
 export const adminCommandSchema = z.discriminatedUnion('kind', [
   z.strictObject({ kind: z.literal('fixture'), id: z.uuid().nullable(), values: fixtureValuesSchema }),
   z.strictObject({ kind: z.literal('clear-override'), id: z.uuid(), field: fixtureValuesSchema.keyof() }),

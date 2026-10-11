@@ -77,6 +77,12 @@ describe('MVP-11 fixture reconciliation', () => {
 });
 
 describe('MVP-11/15 import boundary', () => {
+  it('refuses a feed whose names carry control characters or invisible direction marks (MVP-11)', () => {
+    for (const name of ['Synthetic\u202e FC', 'Synthetic\u0007 FC']) {
+      expect(() => reconcileFixtures(seed, { matches: [{ ...match, awayTeam: { id: 67, name } }] }, () => fixtureId)).toThrow();
+      expect(() => reconcileFixtures(seed, { matches: [{ ...match, competition: { code: 'PL', name } }] }, () => fixtureId)).toThrow();
+    }
+  });
   it('uses a bounded team-specific request and retries provider throttling', async () => {
     expect(providerWindow(new Date('2026-10-08T12:00:00Z'))).toContain('/v4/teams/66/matches?dateFrom=2026-10-01&dateTo=2027-04-06&limit=500');
     const fetcher = vi.fn<typeof fetch>().mockResolvedValueOnce(new Response('', { status: 429, headers: { 'X-RequestCounter-Reset': '0' } })).mockResolvedValueOnce(Response.json({ matches: [match] }));

@@ -40,5 +40,6 @@ export function readSession(cookie: string | undefined, config: AdminConfig, now
   return result.success && result.data.userId === config.userId && result.data.exp > now ? result.data : null;
 }
 export function authorizedWrite(headers: Headers, config: AdminConfig, csrf: string): boolean {
-  return headers.get('origin') === config.origin && headers.get('sec-fetch-site') !== 'cross-site' && equal(headers.get('x-csrf-token') ?? '', csrf) && headers.get('content-type')?.split(';')[0] === 'application/json';
+  // Browsers say where a request came from; anything but this origin itself, a sibling subdomain included, is refused.
+  return headers.get('origin') === config.origin && (headers.get('sec-fetch-site') ?? 'same-origin') === 'same-origin' && equal(headers.get('x-csrf-token') ?? '', csrf) && headers.get('content-type')?.split(';')[0] === 'application/json';
 }
