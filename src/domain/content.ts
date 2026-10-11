@@ -1,5 +1,9 @@
 import { z } from 'zod';
 
+// Zod otherwise tests whether it may compile validators with eval, which the site's content security
+// policy (next.config.ts) forbids and reports. Every schema in the app reaches the browser through this file.
+z.config({ jitless: true });
+
 const label = z.string().trim().min(1).max(200);
 export const kickoffSchema = z.discriminatedUnion('kind', [
   z.strictObject({ kind: z.literal('unknown') }),
