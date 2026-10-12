@@ -26,7 +26,7 @@ test('MVP-13, MVP-14: the privacy notice names who runs the site and what is and
   for (const title of ['Your lineup stays with you', 'Visit statistics', 'Hosting', 'Email', 'Players', 'Your rights', 'No guarantees']) await expect(page.getByRole('heading', { level: 2, name: title })).toBeVisible();
   const main = page.getByRole('main');
   await expect(main).toContainText('Sweden');
-  await expect(main).toContainText('We never record which players, formation or roles you choose.');
+  await expect(main).toContainText('I never record which players, formation or roles you choose.');
   await expect(main).toContainText('IMY');
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
   await page.getByRole('main').getByRole('link', { name: 'Back to the builder' }).click();

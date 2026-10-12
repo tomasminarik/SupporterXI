@@ -20,6 +20,8 @@ export default function PageError({ reset }: { error: Error; reset: () => void }
       <p>Try again first. If the page keeps stopping, start over with an empty XI.</p>
       <div className="pl-actions">
         <Button variant="primary" onClick={reset}>Try again</Button>
+        {/* A full reload on purpose: the page that failed is thrown away, not navigated within. */}
+        {/* eslint-disable-next-line @next/next/no-location-assign-relative-destination */}
         <Button onClick={() => { discardDraft(() => localStorage); window.location.assign('/'); }}>Clear my saved XI and reload</Button>
       </div>
     </main>
