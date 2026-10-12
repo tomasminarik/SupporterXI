@@ -71,7 +71,7 @@ Every response now carries a policy that allows scripts, styles, images, fonts a
 
 ## For Tomas
 
-1. **GitHub account:** confirm two-factor sign-in with a passkey or authenticator app (not SMS), store the recovery codes offline, and review active sessions, authorised OAuth apps and personal access tokens.
+1. **GitHub account** (12 October 2026: Tomas runs the account without two-factor sign-in and accepts that risk; it remains the largest one): confirm two-factor sign-in with a passkey or authenticator app (not SMS), store the recovery codes offline, and review active sessions, authorised OAuth apps and personal access tokens.
 2. **Protect `main`:** add a ruleset that blocks force-pushes and deletion. Do not require pull requests there without a bypass: the backoffice commits content straight to `main`.
 3. **Content token:** replace `GITHUB_CONTENT_TOKEN` before 7 November 2026. Confirm it is limited to this repository with Contents read/write and Deployments read.
 4. **Dependabot:** turn on alerts and security updates in the repository's security settings.

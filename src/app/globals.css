@@ -72,7 +72,7 @@ main:focus { outline: none; }
 .sx-about summary:hover { color: var(--sx-text); }
 .sx-about p { max-width: 68ch; margin: 0 0 var(--sx-space-2); line-height: 1.55; color: var(--sx-text-soft); }
 .sx-about p:last-child { margin-bottom: var(--sx-space-4); }
-.sx-footer { max-width: 1376px; margin: 0 auto; padding: 24px 32px 32px; display: flex; justify-content: space-between; gap: 16px; font-size: var(--sx-text-caption); color: var(--sx-text-quiet); border-top: 1px solid var(--sx-edge); }
+.sx-footer { max-width: 1376px; margin: 0 auto; padding: 24px 32px 32px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 24px; font-size: var(--sx-text-caption); color: var(--sx-text-quiet); border-top: 1px solid var(--sx-edge); }
 /* The contact address: a padded box so the link is easy to hit although the type is small. */
 .sx-footer-link { display: inline-block; margin: -6px 0; padding: 6px 0; color: var(--sx-text-soft); text-underline-offset: 3px; }
 .sx-footer-link:hover { color: var(--sx-text); }
@@ -91,7 +91,8 @@ main:focus { outline: none; }
   .sx-share { height: var(--sx-control-s); padding: 0 14px; font-size: var(--sx-text-body-s); white-space: nowrap; }
   .sx-dev { margin-left: 16px; margin-right: 16px; }
   .sx-memory, .sx-footer, .sx-about { padding-left: 16px; padding-right: 16px; }
-  .sx-footer { flex-direction: column; gap: 4px; }
+  /* Two links stacked: the gap keeps their padded targets from touching. */
+  .sx-footer { flex-direction: column; gap: 12px; }
 }
 /* The narrowest phones: the logo collapses to its disc (red with a white XI), leaving room for the button. */
 @media (max-width: 359px) {

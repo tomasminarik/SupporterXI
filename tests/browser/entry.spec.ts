@@ -63,8 +63,8 @@ test('the footer gives a contact address that is not written in the page source'
     const link = page.getByRole('contentinfo').getByRole('link', { name: 'dugout@supporterxi.com' });
     await expect(link).toHaveAttribute('href', 'mailto:dugout@supporterxi.com');
     expect((await link.boundingBox())!.height).toBeGreaterThanOrEqual(24);
-    // It is the footer's only link: /gameplan is public but nothing links to it (user decision, 10 October 2026).
-    await expect(page.getByRole('contentinfo').getByRole('link')).toHaveCount(1);
+    // The address and the privacy notice are the footer's only links: /gameplan is public but nothing links to it (user decision, 10 October 2026).
+    await expect(page.getByRole('contentinfo').getByRole('link')).toHaveCount(2);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   }
   expect((await new AxeBuilder({ page }).include('footer').withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze()).violations).toEqual([]);

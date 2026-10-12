@@ -1,0 +1,16 @@
+/* Plain text pages: the privacy notice and the error page. Same shell as the builder, one readable column. */
+.pl-main { max-width: 760px; margin: 0 auto; padding: var(--sx-space-6) var(--sx-space-8) var(--sx-space-12); }
+.pl-main:focus { outline: none; }
+.pl-main h1 { margin: var(--sx-space-1) 0 var(--sx-space-8); font: 800 min(84px, 18vw)/.92 var(--sx-font-display); letter-spacing: 0; text-transform: uppercase; color: var(--sx-white); }
+.pl-main h2 { margin: var(--sx-space-8) 0 var(--sx-space-2); font: 800 var(--sx-text-display-m)/1.1 var(--sx-font-display); letter-spacing: 0; text-transform: uppercase; }
+.pl-main p { max-width: 68ch; margin: 0 0 var(--sx-space-3); line-height: 1.55; color: var(--sx-text-soft); font-size: var(--sx-text-body-m); }
+.pl-main .sx-label { margin: 0; color: var(--sx-text-quiet); }
+.pl-main a { color: var(--sx-text); text-underline-offset: 3px; }
+.pl-main a:hover { color: var(--sx-white); }
+.pl-lead { color: var(--sx-text); font-size: var(--sx-text-body-l); }
+.pl-main .pl-updated { margin-top: var(--sx-space-8); font-size: var(--sx-text-caption); color: var(--sx-text-quiet); }
+.pl-actions { display: flex; flex-wrap: wrap; gap: var(--sx-space-3); margin-top: var(--sx-space-6); }
+.pl-actions a { display: inline-flex; align-items: center; text-decoration: none; }
+@media (max-width: 760px) {
+  .pl-main { padding: var(--sx-space-4) var(--sx-space-4) var(--sx-space-12); }
+}
