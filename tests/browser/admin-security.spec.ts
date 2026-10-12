@@ -14,7 +14,7 @@ test('MVP-09/14: unconfigured administration fails closed', async ({ page, reque
     expect(result.headers()['x-robots-tag']).toBe('noindex, nofollow');
   }
   for (const path of ['/api/admin/content', '/api/admin/auth/logout']) expect([401, 503]).toContain((await request.post(path, { data: {} })).status());
-  expect((await request.get('/dev/admin')).status()).toBe(404);
+  for (const path of ['/dev/admin', '/dev/error']) expect((await request.get(path)).status()).toBe(404);
 });
 
 test('MVP-09: every page limits what it may load and refuses to be framed', async ({ page, request }) => {

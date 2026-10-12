@@ -102,3 +102,14 @@ test('MVP-13: the signed-out backoffice is one accessible card', async ({ page }
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.screenshot({ path: `test-results/admin-sign-in-${test.info().project.name}.png`, fullPage: true });
 });
+
+test('code review C9: a page that fails to draw offers a retry and a way to clear the saved XI', async ({ page }) => {
+  await page.addInitScript(() => { if (!sessionStorage.getItem('seeded')) { localStorage.setItem('starting-xi:working:v1', '{}'); sessionStorage.setItem('seeded', '1'); } });
+  await page.goto('/dev/error');
+  await expect(page.getByRole('heading', { level: 1, name: 'Play has stopped' })).toBeFocused();
+  await expect(page.getByRole('alert').filter({ hasText: 'Your XI is still saved in this browser.' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Try again' })).toBeVisible();
+  await page.getByRole('button', { name: 'Clear my saved XI and reload' }).click();
+  await expect(page).toHaveURL('/');
+  expect(await page.evaluate(() => localStorage.getItem('starting-xi:working:v1'))).toBeNull();
+});

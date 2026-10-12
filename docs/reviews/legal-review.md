@@ -78,17 +78,17 @@ The site plainly addresses people in the UK, so UK data protection law applies a
 >
 > Supporter XI is run by [full name], [country]. Contact: dugout@supporterxi.com.
 >
-> **Your lineup stays with you.** The team you build is saved in your browser so it is still there when you come back. It is never sent to us. Clearing your browser data removes it.
+> **Your lineup stays with you.** The team you build is saved in your browser so it is still there when you come back. It is never sent to me. Clearing your browser data removes it.
 >
-> **Visit statistics.** We count visits and a few actions, such as opening the share dialog, to see whether the site is used. We use PostHog, on servers in the EU. No cookies are set, nothing is stored on your device, your IP address is not kept, and no profile of you is built. We never record which players, formation or roles you choose. We do this on the basis of our legitimate interest in knowing how the site is used.
+> **Visit statistics.** I count visits and a few actions, such as opening the share dialog, to see whether the site is used. I use PostHog, on servers in the EU. No cookies are set, nothing is stored on your device, your IP address is not kept, and no profile of you is built. I never record which players, formation or roles you choose. I do this on the basis of my legitimate interest in knowing how the site is used.
 >
 > **Hosting.** The site is hosted by Vercel, which processes technical request data, including IP addresses, to deliver the site and keep it secure. Vercel is a US company and may process this data outside the EU under approved transfer safeguards.
 >
-> **Email.** If you write to us, we use your message and address only to reply.
+> **Email.** If you write to me, I use your message and address only to reply.
 >
-> **Players.** The squad list shows professional players' names and shirt numbers, taken from public information. If you are a player or act for one and want something corrected, write to us.
+> **Players.** The squad list shows professional players' names and shirt numbers, taken from public information. If you are a player or act for one and want something corrected, write to me.
 >
-> **Your rights.** You can ask what data we hold about you, ask for it to be corrected or deleted, and object to its use. Because we keep no data that identifies visitors, there will usually be nothing to find. You can complain to the data protection authority in your country[, or in [country]: [authority]].
+> **Your rights.** You can ask what data I hold about you, ask for it to be corrected or deleted, and object to its use. Because I keep no data that identifies visitors, there will usually be nothing to find. You can complain to the data protection authority in your country[, or in [country]: [authority]].
 >
 > Last updated [date].
 
