@@ -90,7 +90,7 @@
       "name": "Patrick Dorgu",
       "shirtNumber": 13,
       "active": true,
-      "unavailableUntilCleared": false
+      "unavailableUntilCleared": true
     },
     {
       "id": "fcb1eaae-7f56-4518-b235-617fe5a9c589",
@@ -139,7 +139,7 @@
       "name": "Tom Heaton",
       "shirtNumber": 22,
       "active": true,
-      "unavailableUntilCleared": false
+      "unavailableUntilCleared": true
     },
     {
       "id": "090bfcc4-b776-4a14-8de8-24f636f08868",
@@ -167,7 +167,7 @@
       "name": "Benjamin Šeško",
       "shirtNumber": 30,
       "active": true,
-      "unavailableUntilCleared": false
+      "unavailableUntilCleared": true
     },
     {
       "id": "3f82d5bd-c206-4d89-98cf-2a9d27219ce9",
