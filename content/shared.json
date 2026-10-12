@@ -139,7 +139,7 @@
       "name": "Tom Heaton",
       "shirtNumber": 22,
       "active": true,
-      "unavailableUntilCleared": true
+      "unavailableUntilCleared": false
     },
     {
       "id": "090bfcc4-b776-4a14-8de8-24f636f08868",
@@ -888,6 +888,51 @@
     {
       "fixtureId": "0e783a4e-620b-4cff-b9c5-b6e585f0b78a",
       "playerId": "f941bb0a-5f45-4ae2-aa88-ae45ffd16be1",
+      "status": "unavailable"
+    },
+    {
+      "fixtureId": "65adb079-4983-42d5-b642-806bebcaa66d",
+      "playerId": "6b8a5ee1-de47-4514-9957-1f7d393bcd11",
+      "status": "unavailable"
+    },
+    {
+      "fixtureId": "65adb079-4983-42d5-b642-806bebcaa66d",
+      "playerId": "090bfcc4-b776-4a14-8de8-24f636f08868",
+      "status": "unavailable"
+    },
+    {
+      "fixtureId": "65adb079-4983-42d5-b642-806bebcaa66d",
+      "playerId": "dfd0318a-996b-4403-bd77-ef0d4dcbfbd6",
+      "status": "unavailable"
+    },
+    {
+      "fixtureId": "65adb079-4983-42d5-b642-806bebcaa66d",
+      "playerId": "afcca466-1f7d-4288-9d29-c873afc5a930",
+      "status": "unavailable"
+    },
+    {
+      "fixtureId": "65adb079-4983-42d5-b642-806bebcaa66d",
+      "playerId": "d5513b5b-4ab2-4644-93ed-7fe4f55ffa92",
+      "status": "unavailable"
+    },
+    {
+      "fixtureId": "65adb079-4983-42d5-b642-806bebcaa66d",
+      "playerId": "718ec806-45a0-462a-9baa-bfb2f6e56b9e",
+      "status": "unavailable"
+    },
+    {
+      "fixtureId": "65adb079-4983-42d5-b642-806bebcaa66d",
+      "playerId": "73d868cb-9839-4cda-83c3-4c2d6c641147",
+      "status": "unavailable"
+    },
+    {
+      "fixtureId": "65adb079-4983-42d5-b642-806bebcaa66d",
+      "playerId": "ea861718-bd35-4b9f-a89d-becbf2fdaa07",
+      "status": "unavailable"
+    },
+    {
+      "fixtureId": "65adb079-4983-42d5-b642-806bebcaa66d",
+      "playerId": "eb6f636b-3d74-4c4e-a129-fb53869f1f99",
       "status": "unavailable"
     }
   ]
