@@ -20,7 +20,7 @@ Ten findings. Seven are fixed in this change; three are left for a decision.
 | C6 | Bug | `src/components/lineup-editor.tsx` | A desktop drag ended only on pointer-up or Escape. A cancelled pointer, a window losing focus, or the editor being replaced mid-drag left the ghost pill and the page's dragging state behind. | Fixed |
 | C7 | Waste | `src/share/share-dialog.tsx` | Each size was redrawn and re-encoded every time it was selected again, despite the "drawn once" comment, and every redraw kept another image in memory until the dialog closed. | Fixed |
 | C8 | Waste | `src/components/lineup-editor.tsx` | A layout effect without dependencies measures every squad card on every render, and a drag renders on every pointer move. | Deferred |
-| C9 | Gap | `src/app` | There is no `error.tsx` or `global-error.tsx`. A render exception shows the framework's bare error screen. | Waiting on Tomas |
+| C9 | Gap | `src/app` | There is no `error.tsx` or `global-error.tsx`. A render exception shows the framework's bare error screen. | Fixed 12 October 2026: an error page with "Try again" and "Clear my saved XI and reload" |
 | C10 | Bug | `src/components/fixture-headline.tsx` | The details row used its text as the React key, so identical competition and round text collided. | Fixed |
 
 ### Why three are open

@@ -31,6 +31,7 @@ export default function Home() {
             <p>Supporter XI is a free {club.name} lineup builder. Pick your starting XI for the next match from the current squad, choose one of 14 formations, and give each player a role if you like.</p>
             <p>When your team is ready, share it as an image. There is no account and nothing to sign up for: your lineup stays in your browser.</p>
             <p>This is an independent supporter project. It is not connected to {club.name}.</p>
+            <p>Fixture information: Football data provided by the Football-Data.org API.</p>
           </details>
         </main>
       </ShareProvider>
