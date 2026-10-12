@@ -862,6 +862,25 @@
         }
       },
       "overrides": {}
+    },
+    {
+      "id": "44c4b993-e15d-4257-9826-65b483541b41",
+      "source": {
+        "kind": "football-data.org",
+        "providerId": "560844"
+      },
+      "values": {
+        "opponent": "Hull City AFC",
+        "venue": "home",
+        "competition": "Premier League",
+        "round": "Matchday 31",
+        "status": "scheduled",
+        "kickoff": {
+          "kind": "confirmed",
+          "at": "2027-04-10T14:00:00Z"
+        }
+      },
+      "overrides": {}
     }
   ],
   "featuredFixtureId": null,
