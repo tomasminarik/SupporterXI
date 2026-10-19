@@ -20,7 +20,7 @@
       "name": "Noussair Mazraoui",
       "shirtNumber": 3,
       "active": true,
-      "unavailableUntilCleared": true
+      "unavailableUntilCleared": false
     },
     {
       "id": "7dae19a5-5a34-485e-85b3-fa3d6e32f351",
