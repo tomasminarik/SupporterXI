@@ -881,6 +881,25 @@
         }
       },
       "overrides": {}
+    },
+    {
+      "id": "d4d2ac1b-1c53-4471-b5d4-bdff894fdfab",
+      "source": {
+        "kind": "football-data.org",
+        "providerId": "560858"
+      },
+      "values": {
+        "opponent": "Ipswich Town FC",
+        "venue": "away",
+        "competition": "Premier League",
+        "round": "Matchday 32",
+        "status": "scheduled",
+        "kickoff": {
+          "kind": "confirmed",
+          "at": "2027-04-17T14:00:00Z"
+        }
+      },
+      "overrides": {}
     }
   ],
   "featuredFixtureId": null,
