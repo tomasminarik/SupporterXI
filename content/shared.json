@@ -146,7 +146,7 @@
       "name": "Luke Shaw",
       "shirtNumber": 23,
       "active": true,
-      "unavailableUntilCleared": false
+      "unavailableUntilCleared": true
     },
     {
       "id": "f941bb0a-5f45-4ae2-aa88-ae45ffd16be1",
@@ -188,7 +188,7 @@
       "name": "Kobbie Mainoo",
       "shirtNumber": 37,
       "active": true,
-      "unavailableUntilCleared": false
+      "unavailableUntilCleared": true
     },
     {
       "id": "53f6b065-a660-4e83-aa13-b5b0d8f8ef6f",
@@ -911,17 +911,7 @@
     },
     {
       "fixtureId": "65adb079-4983-42d5-b642-806bebcaa66d",
-      "playerId": "090bfcc4-b776-4a14-8de8-24f636f08868",
-      "status": "unavailable"
-    },
-    {
-      "fixtureId": "65adb079-4983-42d5-b642-806bebcaa66d",
       "playerId": "dfd0318a-996b-4403-bd77-ef0d4dcbfbd6",
-      "status": "unavailable"
-    },
-    {
-      "fixtureId": "65adb079-4983-42d5-b642-806bebcaa66d",
-      "playerId": "afcca466-1f7d-4288-9d29-c873afc5a930",
       "status": "unavailable"
     },
     {
@@ -947,6 +937,26 @@
     {
       "fixtureId": "65adb079-4983-42d5-b642-806bebcaa66d",
       "playerId": "eb6f636b-3d74-4c4e-a129-fb53869f1f99",
+      "status": "unavailable"
+    },
+    {
+      "fixtureId": "88cfbc3b-7fb7-42e8-ae42-6c6635882073",
+      "playerId": "e51fafae-f2fb-4275-a38e-f9e079baa042",
+      "status": "unavailable"
+    },
+    {
+      "fixtureId": "88cfbc3b-7fb7-42e8-ae42-6c6635882073",
+      "playerId": "8fff649c-a5d3-40de-ad88-efcc27c1bc55",
+      "status": "unavailable"
+    },
+    {
+      "fixtureId": "88cfbc3b-7fb7-42e8-ae42-6c6635882073",
+      "playerId": "fcb1eaae-7f56-4518-b235-617fe5a9c589",
+      "status": "unavailable"
+    },
+    {
+      "fixtureId": "88cfbc3b-7fb7-42e8-ae42-6c6635882073",
+      "playerId": "5f1e3188-e662-46e4-b36a-39324621fcb0",
       "status": "unavailable"
     }
   ]
