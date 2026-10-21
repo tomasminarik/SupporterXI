@@ -478,7 +478,7 @@
         "status": "scheduled",
         "kickoff": {
           "kind": "confirmed",
-          "at": "2026-12-02T20:00:00Z"
+          "at": "2026-12-02T20:15:00Z"
         }
       },
       "overrides": {}
@@ -535,7 +535,7 @@
         "status": "scheduled",
         "kickoff": {
           "kind": "confirmed",
-          "at": "2026-12-12T15:00:00Z"
+          "at": "2026-12-13T19:00:00Z"
         }
       },
       "overrides": {}
@@ -554,7 +554,7 @@
         "status": "scheduled",
         "kickoff": {
           "kind": "confirmed",
-          "at": "2026-12-19T15:00:00Z"
+          "at": "2026-12-20T16:30:00Z"
         }
       },
       "overrides": {}
