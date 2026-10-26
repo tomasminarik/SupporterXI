@@ -900,6 +900,25 @@
         }
       },
       "overrides": {}
+    },
+    {
+      "id": "d18bb067-e274-435f-94ad-846cc4d73cd3",
+      "source": {
+        "kind": "football-data.org",
+        "providerId": "560865"
+      },
+      "values": {
+        "opponent": "Crystal Palace FC",
+        "venue": "home",
+        "competition": "Premier League",
+        "round": "Matchday 33",
+        "status": "scheduled",
+        "kickoff": {
+          "kind": "confirmed",
+          "at": "2027-04-24T14:00:00Z"
+        }
+      },
+      "overrides": {}
     }
   ],
   "featuredFixtureId": null,
