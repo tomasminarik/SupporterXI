@@ -188,7 +188,7 @@
       "name": "Kobbie Mainoo",
       "shirtNumber": 37,
       "active": true,
-      "unavailableUntilCleared": true
+      "unavailableUntilCleared": false
     },
     {
       "id": "53f6b065-a660-4e83-aa13-b5b0d8f8ef6f",
@@ -960,11 +960,6 @@
     },
     {
       "fixtureId": "88cfbc3b-7fb7-42e8-ae42-6c6635882073",
-      "playerId": "e51fafae-f2fb-4275-a38e-f9e079baa042",
-      "status": "unavailable"
-    },
-    {
-      "fixtureId": "88cfbc3b-7fb7-42e8-ae42-6c6635882073",
       "playerId": "8fff649c-a5d3-40de-ad88-efcc27c1bc55",
       "status": "unavailable"
     },
@@ -976,6 +971,11 @@
     {
       "fixtureId": "88cfbc3b-7fb7-42e8-ae42-6c6635882073",
       "playerId": "5f1e3188-e662-46e4-b36a-39324621fcb0",
+      "status": "unavailable"
+    },
+    {
+      "fixtureId": "70e89caf-810d-4888-85f0-b84f77d5143d",
+      "playerId": "e51fafae-f2fb-4275-a38e-f9e079baa042",
       "status": "unavailable"
     }
   ]
