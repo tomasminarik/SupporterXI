@@ -919,6 +919,25 @@
         }
       },
       "overrides": {}
+    },
+    {
+      "id": "e9348bb1-2422-46db-a6ca-778ac7fd7850",
+      "source": {
+        "kind": "football-data.org",
+        "providerId": "560874"
+      },
+      "values": {
+        "opponent": "Coventry City FC",
+        "venue": "away",
+        "competition": "Premier League",
+        "round": "Matchday 34",
+        "status": "scheduled",
+        "kickoff": {
+          "kind": "confirmed",
+          "at": "2027-05-01T14:00:00Z"
+        }
+      },
+      "overrides": {}
     }
   ],
   "featuredFixtureId": null,
