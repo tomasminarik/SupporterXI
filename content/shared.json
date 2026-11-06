@@ -132,7 +132,7 @@
       "name": "Carlos Baleba",
       "shirtNumber": 20,
       "active": true,
-      "unavailableUntilCleared": false
+      "unavailableUntilCleared": true
     },
     {
       "id": "d4b9da27-6d53-4a3f-b3da-924161c2e158",
