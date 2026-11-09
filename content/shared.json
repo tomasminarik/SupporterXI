@@ -938,6 +938,25 @@
         }
       },
       "overrides": {}
+    },
+    {
+      "id": "1b3079b5-d054-4746-a57d-d1130c1a1435",
+      "source": {
+        "kind": "football-data.org",
+        "providerId": "560891"
+      },
+      "values": {
+        "opponent": "AFC Bournemouth",
+        "venue": "away",
+        "competition": "Premier League",
+        "round": "Matchday 35",
+        "status": "scheduled",
+        "kickoff": {
+          "kind": "confirmed",
+          "at": "2027-05-08T14:00:00Z"
+        }
+      },
+      "overrides": {}
     }
   ],
   "featuredFixtureId": null,
