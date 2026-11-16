@@ -957,6 +957,25 @@
         }
       },
       "overrides": {}
+    },
+    {
+      "id": "efb5d31b-98d1-41d4-8cc3-bc55aeb902d7",
+      "source": {
+        "kind": "football-data.org",
+        "providerId": "560897"
+      },
+      "values": {
+        "opponent": "Leeds United FC",
+        "venue": "home",
+        "competition": "Premier League",
+        "round": "Matchday 36",
+        "status": "scheduled",
+        "kickoff": {
+          "kind": "confirmed",
+          "at": "2027-05-15T14:00:00Z"
+        }
+      },
+      "overrides": {}
     }
   ],
   "featuredFixtureId": null,
