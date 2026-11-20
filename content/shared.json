@@ -649,7 +649,7 @@
         "status": "scheduled",
         "kickoff": {
           "kind": "confirmed",
-          "at": "2027-01-16T15:00:00Z"
+          "at": "2027-01-16T17:30:00Z"
         }
       },
       "overrides": {}
@@ -687,7 +687,7 @@
         "status": "scheduled",
         "kickoff": {
           "kind": "confirmed",
-          "at": "2027-01-23T15:00:00Z"
+          "at": "2027-01-24T16:30:00Z"
         }
       },
       "overrides": {}
@@ -725,7 +725,7 @@
         "status": "scheduled",
         "kickoff": {
           "kind": "confirmed",
-          "at": "2027-01-30T15:00:00Z"
+          "at": "2027-02-01T20:00:00Z"
         }
       },
       "overrides": {}
