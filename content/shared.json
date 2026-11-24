@@ -976,6 +976,25 @@
         }
       },
       "overrides": {}
+    },
+    {
+      "id": "7a02ae2b-21a5-4fe5-9565-d01151d5d484",
+      "source": {
+        "kind": "football-data.org",
+        "providerId": "560904"
+      },
+      "values": {
+        "opponent": "Tottenham Hotspur FC",
+        "venue": "away",
+        "competition": "Premier League",
+        "round": "Matchday 37",
+        "status": "scheduled",
+        "kickoff": {
+          "kind": "confirmed",
+          "at": "2027-05-23T14:00:00Z"
+        }
+      },
+      "overrides": {}
     }
   ],
   "featuredFixtureId": null,
